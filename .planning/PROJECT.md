@@ -48,6 +48,11 @@
 | 결과 링크는 영구 보관 | 초기에는 만료 정책보다 단순한 공유 경험이 더 중요해 | — Pending |
 | 관리자 기능은 통계 중심으로 제한 | 운영 복잡도를 낮추고 핵심 사용자 경험에 집중하기 위해 | — Pending |
 | Coolify 배포를 전제로 설계 | 실제 운영 환경과 배포 제약을 초기에 반영하기 위해 | — Pending |
+| 평가 계약은 코드 파일을 단일 원본으로 관리 | 초기에는 운영 수정 기능보다 버전 고정과 계약 안정성이 더 중요하기 때문에 | ✓ Good |
+| 결과 계산은 서버 권위 방식으로 수행 | 클라이언트 드리프트를 막고 이후 영구 스냅샷 저장과 일관되게 연결하기 위해 | ✓ Good |
+| 결과는 assessment/scoring/copy 버전을 모두 포함해야 함 | 과거 링크와 결과를 당시 기준으로 재현 가능하게 유지하기 위해 | ✓ Good |
+| 주 유형 동점은 낮은 유형 번호 우선으로 판정 | Phase 1에서 결정적이고 재현 가능한 tie-break 규칙이 필요하기 때문에 | ✓ Good |
+| 근접 유형은 상위 3개까지 보존 | 이후 결과 설명 단계에서 애매한 결과를 설명할 여지를 남기기 위해 | ✓ Good |
 
 ## Evolution
 
@@ -67,4 +72,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-29 after initialization*
+*Last updated: 2026-03-29 after Phase 1 completion*
