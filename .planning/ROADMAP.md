@@ -14,7 +14,7 @@
 - [x] **Phase 2: Persistent Result Snapshots** - 저장된 결과 스냅샷과 영구 공유 링크를 제공한다. (completed 2026-03-29)
 - [x] **Phase 3: Mobile Assessment Flow** - 익명 사용자가 모바일에서 검사를 끝까지 진행하고 제출할 수 있게 한다. (completed 2026-03-29)
 - [x] **Phase 4: Result Interpretation & Share Loop** - 결과 이해와 공유받은 사용자의 재검사 유입 루프를 완성한다. (completed 2026-03-29)
-- [ ] **Phase 5: Aggregate Admin Stats** - 재식별 위험을 억제한 보호된 운영 통계를 제공한다.
+- [x] **Phase 5: Aggregate Admin Stats** - 재식별 위험을 억제한 보호된 운영 통계를 제공한다. (completed 2026-03-29)
 - [ ] **Phase 6: Coolify Launch Hardening** - 배포, 백업, 메타데이터, 운영 복구 기준을 갖춘다.
 
 ## Phase Details
@@ -95,12 +95,12 @@ Plans:
   3. 관리자가 주 유형 분포와 날개 분포를 집계로 확인할 수 있다.
   4. 관리자가 공유 결과 페이지 유입 뒤 `검사해보기` 클릭 수를 확인할 수 있다.
   5. 시스템이 재식별 위험이 있는 소표본 통계를 그대로 노출하지 않는다.
-**Plans**: 4 plans
+**Plans**: 4/4 plans complete
 Plans:
-- [ ] 05-01-PLAN.md — Add the protected admin auth boundary and dedicated login/session guard
-- [ ] 05-02-PLAN.md — Persist append-only start and shared-result restart events at server mutation boundaries
-- [ ] 05-03-PLAN.md — Build the centralized suppression layer and protected aggregate stats API
-- [ ] 05-04-PLAN.md — Ship the protected admin dashboard with browser/server verification
+- [x] 05-01-PLAN.md — Add the protected admin auth boundary and dedicated login/session guard
+- [x] 05-02-PLAN.md — Persist append-only start and shared-result restart events at server mutation boundaries
+- [x] 05-03-PLAN.md — Build the centralized suppression layer and protected aggregate stats API
+- [x] 05-04-PLAN.md — Ship the protected admin dashboard with browser/server verification
 **UI hint**: yes
 
 ### Phase 6: Coolify Launch Hardening
@@ -124,5 +124,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. Persistent Result Snapshots | 2/2 | Complete | 2026-03-29 |
 | 3. Mobile Assessment Flow | 4/4 | Complete | 2026-03-29 |
 | 4. Result Interpretation & Share Loop | 4/4 | Complete | 2026-03-29 |
-| 5. Aggregate Admin Stats | 0/TBD | Not started | - |
+| 5. Aggregate Admin Stats | 4/4 | Complete | 2026-03-29 |
 | 6. Coolify Launch Hardening | 0/TBD | Not started | - |

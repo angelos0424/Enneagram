@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 04 complete
-last_updated: "2026-03-29T15:24:48Z"
-last_activity: 2026-03-29 -- Phase 04 execution completed
+stopped_at: Phase 05 complete
+last_updated: "2026-03-29T23:31:00Z"
+last_activity: 2026-03-29 -- Phase 05 execution completed
 progress:
   total_phases: 6
-  completed_phases: 4
-  total_plans: 14
-  completed_plans: 14
-  percent: 67
+  completed_phases: 5
+  total_plans: 18
+  completed_plans: 18
+  percent: 83
 ---
 
 # Project State
@@ -21,24 +21,24 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** 사용자가 로그인 없이도 모바일에서 빠르게 에니어그램 검사를 완료하고, 이해하기 쉬운 상세 결과를 공유할 수 있어야 한다.
-**Current focus:** Phase 05 — aggregate-admin-stats
+**Current focus:** Phase 06 — coolify-launch-hardening
 
 ## Current Position
 
-Phase: 05 (aggregate-admin-stats) — READY
+Phase: 06 (coolify-launch-hardening) — READY
 Plan: Not started
-Status: Ready to plan Phase 05
-Last activity: 2026-03-29 -- Phase 04 execution completed
+Status: Ready to plan Phase 06
+Last activity: 2026-03-29 -- Phase 05 execution completed
 
-Progress: [███████░░░] 67%
+Progress: [████████░░] 83%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 14
-- Average duration: 9.5 min
-- Total execution time: 2.2 hours
+- Total plans completed: 18
+- Average duration: 9.4 min
+- Total execution time: 2.8 hours
 
 **By Phase:**
 
@@ -48,11 +48,12 @@ Progress: [███████░░░] 67%
 | 02-persistent-result-snapshots | 2 | 23 min | 11.5 min |
 | 03-mobile-assessment-flow | 4 | 39 min | 9.75 min |
 | 04-result-interpretation-share-loop | 4 | 38 min | 9.5 min |
+| 05-aggregate-admin-stats | 4 | 29 min | 7.25 min |
 
 **Recent Trend:**
 
-- Last 5 plans: 04-result-interpretation-share-loop-04 (14 min), 04-result-interpretation-share-loop-03 (7 min), 04-result-interpretation-share-loop-02 (9 min), 04-result-interpretation-share-loop-01 (8 min), 03-mobile-assessment-flow-04 (13 min)
-- Trend: Stable with share-loop UI and browser plans clustering near the phase average
+- Last 5 plans: 05-aggregate-admin-stats-04 (8 min), 05-aggregate-admin-stats-03 (6 min), 05-aggregate-admin-stats-02 (7 min), 05-aggregate-admin-stats-01 (8 min), 04-result-interpretation-share-loop-04 (14 min)
+- Trend: Stable with admin stats read-model and browser plans landing below the historical average
 
 | Phase 01 P02 | 7 | 2 tasks | 6 files |
 | Phase 01-assessment-contract-scoring-core P03 | 12 | 3 tasks | 7 files |
@@ -76,6 +77,9 @@ Recent decisions affecting current work:
 - Phase 2: 공유 결과는 재계산이 아니라 영구 스냅샷 렌더링을 기준으로 한다.
 - Phase 4: 공유 페이지는 결과-first 위계를 유지하면서 상단 `검사해보기` CTA를 항상 노출한다.
 - Phase 5: 관리자 범위는 재식별 위험을 낮춘 집계 통계로만 제한한다.
+- Phase 5: 관리자 인증은 env 기반 단일 비밀번호와 signed `HttpOnly` cookie로 구현한다.
+- Phase 5: 시작/재시작만 append-only event로 저장하고 완료/분포는 기존 결과 스냅샷에서 집계한다.
+- Phase 5: 소표본 임계값 `5` 미만 버킷은 숨기고, 숨김 버킷이 있으면 정확한 분포 합계도 숨긴다.
 - [Phase 01-assessment-contract-scoring-core]: Pinned the bootstrap workspace to exact Next.js, React, TypeScript, and Vitest versions so later assessment-domain plans can assume a stable toolchain.
 - [Phase 01-assessment-contract-scoring-core]: Kept the initial app shell intentionally limited to the bootstrap placeholder so Phase 1 foundation work stays separate from later assessment UI.
 - [Phase 01]: Assessment content, option labels, and type copy are pinned in typed code modules as the Phase 1 source of truth.
@@ -114,10 +118,10 @@ None yet.
 ### Blockers/Concerns
 
 - 한국어 문항 세트와 점수 규칙의 품질 검증이 부족하면 이후 모든 결과 신뢰도에 영향을 준다.
-- 공유 미리보기의 실제 채널 동작은 구현 후 디바이스 기반 QA가 필요하다.
+- 공유 미리보기의 실제 채널 동작과 Coolify 배포 복구 절차는 Phase 06에서 검증이 필요하다.
 
 ## Session Continuity
 
-Last session: 2026-03-29T15:24:48Z
-Stopped at: Phase 04 complete
+Last session: 2026-03-29T23:31:00Z
+Stopped at: Phase 05 complete
 Resume file: None

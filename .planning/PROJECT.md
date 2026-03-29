@@ -16,11 +16,10 @@
 - [x] Phase 02 validated: 사용자가 완료한 결과를 영구 스냅샷 링크로 저장하고, 공개 결과 페이지에서 같은 스냅샷을 프라이버시 기본값과 함께 다시 볼 수 있어야 한다.
 - [x] Phase 03 validated: 익명 사용자가 모바일에서 검사를 시작하고, 새로고침 뒤에도 응답을 복구하며, 제출 후 저장된 결과 페이지로 이동할 수 있어야 한다.
 - [x] Phase 04 validated: 사용자가 결과 중심 공개 페이지에서 상세 해석을 읽고 결과를 공유하며, 공유받은 사람도 상단 CTA로 새 검사를 시작할 수 있어야 한다.
+- [x] Phase 05 validated: 운영자가 보호된 화면에서 시작/완료/재시작과 결과 분포를 집계로 확인하되, 소표본 값은 그대로 노출되지 않아야 한다.
 
 ### Active
 
-- [ ] 운영자가 검사 결과 통계를 확인할 수 있어야 한다.
-- [ ] 운영자가 공유 결과 페이지 유입 이후의 재검사 클릭을 포함한 집계 통계를 확인할 수 있어야 한다.
 - [ ] 운영자가 Coolify 배포와 백업 복구 기준을 갖춘 운영 환경을 준비할 수 있어야 한다.
 
 ### Out of Scope
@@ -62,6 +61,9 @@
 | 제출 성공 시 서버가 draft를 finalize한 뒤 `publicResult.href`로만 리다이렉트한다 | 클라이언트 추측 URL과 선행 로컬 정리는 결과 일관성과 재시도 안전성을 깨뜨리기 때문에 | ✓ Good |
 | 공유 결과 CTA는 `/`로 바로 보내지 않고 서버 draft 삭제 경계를 먼저 통과한다 | Phase 3의 draft 복구 기본값 때문에 공유받은 사용자가 stale progress로 진입하면 루프가 깨지기 때문에 | ✓ Good |
 | 추천 섹션의 재검사 링크는 실제 CTA 앵커를 가리킨다 | 하단 추천에서 같은 fresh-start 행동을 재사용하면서 bare link drift를 막기 위해 | ✓ Good |
+| 관리자 인증은 env 기반 단일 비밀번호와 signed `HttpOnly` cookie로 유지한다 | 운영 통계 범위가 한 화면이므로 사용자 계정 시스템보다 작은 app-owned 경계가 더 적절하기 때문에 | ✓ Good |
+| 시작/재시작만 append-only event로 기록하고 완료/분포는 결과 스냅샷에서 집계한다 | 기존 결과 저장소로 복구 가능한 값은 중복 저장하지 않고, 사라지는 사실만 최소 범위로 남기기 위해 | ✓ Good |
+| 소표본 통계는 서버에서 5건 미만을 숨기고 숨김 버킷이 있으면 정확한 합계도 숨긴다 | UI 단계 마스킹만으로는 누출 지점이 늘고, 합계를 그대로 두면 숨김 값이 역산될 수 있기 때문에 | ✓ Good |
 
 ## Evolution
 
@@ -81,4 +83,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-29 after Phase 4 completion*
+*Last updated: 2026-03-29 after Phase 5 completion*

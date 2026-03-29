@@ -44,12 +44,12 @@
 
 ### Admin Stats
 
-- [ ] **STAT-01**: 관리자만 보호된 통계 화면에 접근할 수 있다.
-- [ ] **STAT-02**: 관리자는 날짜별 검사 시작 수와 완료 수를 확인할 수 있다.
-- [ ] **STAT-03**: 관리자는 주 유형 분포를 확인할 수 있다.
-- [ ] **STAT-04**: 관리자는 날개 분포를 확인할 수 있다.
-- [ ] **STAT-05**: 관리자는 공유 결과 페이지 유입 후 `검사해보기` 클릭 수를 확인할 수 있다.
-- [ ] **STAT-06**: 시스템은 재식별 위험이 있는 소표본 통계를 그대로 노출하지 않는다.
+- [x] **STAT-01**: 관리자만 보호된 통계 화면에 접근할 수 있다.
+- [x] **STAT-02**: 관리자는 날짜별 검사 시작 수와 완료 수를 확인할 수 있다.
+- [x] **STAT-03**: 관리자는 주 유형 분포를 확인할 수 있다.
+- [x] **STAT-04**: 관리자는 날개 분포를 확인할 수 있다.
+- [x] **STAT-05**: 관리자는 공유 결과 페이지 유입 후 `검사해보기` 클릭 수를 확인할 수 있다.
+- [x] **STAT-06**: 시스템은 재식별 위험이 있는 소표본 통계를 그대로 노출하지 않는다.
 
 ### Operations And Deployment
 
@@ -118,12 +118,12 @@
 | SHAR-05 | Phase 4 | Complete |
 | SHAR-06 | Phase 2 | Complete |
 | SHAR-07 | Phase 4 | Complete |
-| STAT-01 | Phase 5 | Pending |
-| STAT-02 | Phase 5 | Pending |
-| STAT-03 | Phase 5 | Pending |
-| STAT-04 | Phase 5 | Pending |
-| STAT-05 | Phase 5 | Pending |
-| STAT-06 | Phase 5 | Pending |
+| STAT-01 | Phase 5 | Complete |
+| STAT-02 | Phase 5 | Complete |
+| STAT-03 | Phase 5 | Complete |
+| STAT-04 | Phase 5 | Complete |
+| STAT-05 | Phase 5 | Complete |
+| STAT-06 | Phase 5 | Complete |
 | OPER-01 | Phase 6 | Pending |
 | OPER-02 | Phase 2 | Complete |
 | OPER-03 | Phase 6 | Pending |
@@ -136,4 +136,4 @@
 
 ---
 *Requirements defined: 2026-03-29*
-*Last updated: 2026-03-29 after Phase 4 completion*
+*Last updated: 2026-03-29 after Phase 5 completion*
