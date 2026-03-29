@@ -152,6 +152,28 @@ describe("public result page", () => {
     expect(markup).toContain(typeCopyDefinition.entries[8].recommendations[0].description);
   });
 
+  it("renders the primary result hero before the supporting interpretation sections", async () => {
+    repositoryState.record = buildStoredRecord("PublicResultHeroHierarchy");
+
+    const { default: PublicResultPage } = await import("@/app/results/[publicId]/page");
+    const markup = renderToStaticMarkup(
+      await PublicResultPage({
+        params: Promise.resolve({ publicId: repositoryState.record.publicId }),
+      }),
+    );
+
+    expect(markup.indexOf("핵심 결과")).toBeGreaterThanOrEqual(0);
+    expect(markup.indexOf(typeCopyDefinition.entries[8].title)).toBeLessThan(
+      markup.indexOf("상세 결과 요약"),
+    );
+    expect(markup.indexOf("상세 결과 요약")).toBeLessThan(
+      markup.indexOf("정규화 점수 분포"),
+    );
+    expect(markup.indexOf("정규화 점수 분포")).toBeLessThan(
+      markup.indexOf(typeCopyDefinition.entries[8].disclaimer.title),
+    );
+  });
+
   it("uses the route not-found behavior when the public id does not exist", async () => {
     const { default: PublicResultPage } = await import("@/app/results/[publicId]/page");
 
