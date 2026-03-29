@@ -11,7 +11,7 @@
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [ ] **Phase 1: Assessment Contract & Scoring Core** - 버전된 문항과 서버 점수 계산 규칙을 고정한다.
-- [ ] **Phase 2: Persistent Result Snapshots** - 저장된 결과 스냅샷과 영구 공유 링크를 제공한다.
+- [x] **Phase 2: Persistent Result Snapshots** - 저장된 결과 스냅샷과 영구 공유 링크를 제공한다. (completed 2026-03-29)
 - [ ] **Phase 3: Mobile Assessment Flow** - 익명 사용자가 모바일에서 검사를 끝까지 진행하고 제출할 수 있게 한다.
 - [ ] **Phase 4: Result Interpretation & Share Loop** - 결과 이해와 공유받은 사용자의 재검사 유입 루프를 완성한다.
 - [ ] **Phase 5: Aggregate Admin Stats** - 재식별 위험을 억제한 보호된 운영 통계를 제공한다.
@@ -44,7 +44,7 @@ Plans:
   2. 공유 링크를 연 사용자는 로그인 없이 공개 결과 페이지를 볼 수 있다.
   3. 공개 결과 페이지는 저장된 스냅샷으로 렌더링되어 이후 계산 로직이나 콘텐츠가 바뀌어도 기존 링크 내용이 유지된다.
   4. 공유 결과 페이지에는 검색엔진 비노출과 기본 프라이버시 보호 설정이 적용된다.
-**Plans**: 2 plans
+**Plans**: 2/2 plans complete
 Plans:
 - [x] 02-01-PLAN.md — Extend the snapshot persistence contract with opaque public/admin tokens and repository lookup boundaries
 - [x] 02-02-PLAN.md — Persist snapshots on submit and add immutable public result retrieval with privacy defaults
@@ -106,7 +106,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Assessment Contract & Scoring Core | 2/4 | In Progress | 01-01, 01-02 |
-| 2. Persistent Result Snapshots | 0/TBD | Not started | - |
+| 2. Persistent Result Snapshots | 2/2 | Complete | 2026-03-29 |
 | 3. Mobile Assessment Flow | 0/TBD | Not started | - |
 | 4. Result Interpretation & Share Loop | 0/TBD | Not started | - |
 | 5. Aggregate Admin Stats | 0/TBD | Not started | - |
