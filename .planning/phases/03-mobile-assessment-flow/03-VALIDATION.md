@@ -1,9 +1,9 @@
 ---
 phase: 03
 slug: mobile-assessment-flow
-status: ready
+status: needs-wave-0
 nyquist_compliant: true
-wave_0_complete: true
+wave_0_complete: false
 created: 2026-03-29
 updated: 2026-03-29
 ---
@@ -31,7 +31,7 @@ updated: 2026-03-29
 - **After every task commit:** Run the task-local Vitest or Playwright command plus `npm run typecheck` when TSX or route files change.
 - **After every plan wave:** Run touched-file Vitest coverage, then the relevant Playwright mobile scenario for session recovery or submit redirect, then `npm run typecheck`.
 - **Before `$gsd-verify-work`:** `npm exec vitest run && npm run typecheck && npm run build && npx playwright test test/e2e/mobile-assessment.spec.ts`
-- **Max feedback latency:** 45 seconds
+- **Max feedback latency:** 45-90 seconds once browser coverage is included
 
 ---
 
@@ -42,10 +42,11 @@ updated: 2026-03-29
 | 03-01-01 | 01 | 1 | FLOW-01, FLOW-02 | component/integration | `npm exec vitest run test/assessment/mobile-flow.test.ts` | ❌ W0 | ⬜ pending |
 | 03-01-02 | 01 | 1 | FLOW-02, FLOW-03 | component/integration | `npm exec vitest run test/assessment/mobile-flow.test.ts && npm run typecheck` | ❌ W0 | ⬜ pending |
 | 03-02-01 | 02 | 2 | FLOW-04 | browser-harness | `npx playwright test --list` | ❌ W0 | ⬜ pending |
-| 03-02-02 | 02 | 2 | FLOW-04 | route/schema | `npm exec vitest run test/assessment/assessment-session-route.test.ts && npm run typecheck && npm exec drizzle-kit generate && git diff --exit-code -- drizzle src/db/schema.ts` | ❌ W0 | ⬜ pending |
-| 03-02-03 | 02 | 2 | FLOW-04 | integration/e2e | `npm exec vitest run test/assessment/assessment-session-route.test.ts test/assessment/mobile-flow.test.ts && npm run typecheck && npx playwright test test/e2e/mobile-assessment.spec.ts -g "restores draft after refresh"` | ❌ W0 | ⬜ pending |
-| 03-03-01 | 03 | 3 | FLOW-05 | route/integration | `npm exec vitest run test/assessment/score-route.test.ts test/assessment/assessment-session-route.test.ts test/assessment/assessment-submit.test.ts` | ❌ W0 | ⬜ pending |
-| 03-03-02 | 03 | 3 | FLOW-05 | end-to-end integration | `npm exec vitest run test/assessment/assessment-submit.test.ts test/assessment/mobile-flow.test.ts && npm run typecheck && npm run build && npx playwright test test/e2e/mobile-assessment.spec.ts -g "submits completed assessment"` | ❌ W0 | ⬜ pending |
+| 03-02-02 | 02 | 2 | FLOW-04 | route/schema | `npm exec vitest run test/assessment/assessment-session-route.test.ts && npm run typecheck && npm exec drizzle-kit generate && test -f drizzle/0002_phase3_assessment_drafts.sql && test -f drizzle/meta/0002_snapshot.json` | ❌ W0 | ⬜ pending |
+| 03-03-01 | 03 | 3 | FLOW-04 | route/integration | `npm exec vitest run test/assessment/assessment-session-route.test.ts && npm run typecheck` | ❌ W0 | ⬜ pending |
+| 03-03-02 | 03 | 3 | FLOW-04 | integration/e2e | `npm exec vitest run test/assessment/assessment-session-route.test.ts test/assessment/mobile-flow.test.ts && npm run typecheck && npx playwright test test/e2e/mobile-assessment.spec.ts -g "restores draft after refresh"` | ❌ W0 | ⬜ pending |
+| 03-04-01 | 04 | 4 | FLOW-05 | route/integration | `npm exec vitest run test/assessment/score-route.test.ts test/assessment/assessment-session-route.test.ts test/assessment/assessment-submit.test.ts` | ❌ W0 | ⬜ pending |
+| 03-04-02 | 04 | 4 | FLOW-05 | end-to-end integration | `npm exec vitest run test/assessment/assessment-submit.test.ts test/assessment/mobile-flow.test.ts && npm run typecheck && npm run build && npx playwright test test/e2e/mobile-assessment.spec.ts -g "submits completed assessment"` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -79,7 +80,7 @@ Existing infrastructure covers Vitest route mocking and type/build verification;
 - [x] Sampling continuity: no 3 consecutive tasks without automated verify
 - [x] Wave 0 covers all missing test references
 - [x] No watch-mode flags
-- [x] Feedback latency < 45s
+- [ ] Feedback latency < 45s
 - [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** approved 2026-03-29
+**Approval:** revised 2026-03-29 after checker feedback; Wave 0 browser/session coverage still needs to be created during execution
