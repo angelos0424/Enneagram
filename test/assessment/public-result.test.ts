@@ -150,6 +150,7 @@ describe("public result page", () => {
     expect(markup).toContain(typeCopyDefinition.entries[8].disclaimer.body);
     expect(markup).toContain(typeCopyDefinition.entries[8].recommendations[0].title);
     expect(markup).toContain(typeCopyDefinition.entries[8].recommendations[0].description);
+    expect(markup).toContain("결과 공유하기");
   });
 
   it("renders the primary result hero before the supporting interpretation sections", async () => {
