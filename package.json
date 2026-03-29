@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:assessment": "vitest run test/assessment"
+    "test:assessment": "vitest run test/assessment",
+    "test:e2e:mobile": "playwright test test/e2e/mobile-assessment.spec.ts"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",
@@ -22,6 +23,7 @@
     "zod": "4.1.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "4.1.13",
     "@types/node": "24.6.0",
     "@types/pg": "^8.20.0",
