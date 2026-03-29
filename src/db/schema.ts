@@ -1,5 +1,6 @@
 import { pgTable, text, timestamp, uuid, jsonb } from "drizzle-orm/pg-core";
 
+import type { AssessmentDraftSessionSnapshot } from "@/features/assessment/types";
 import type { AssessmentResultSnapshotDraft } from "@/domain/assessment/result-snapshot";
 
 export const assessmentResults = pgTable("assessment_results", {
@@ -26,5 +27,21 @@ export const assessmentResults = pgTable("assessment_results", {
   createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).notNull(),
 });
 
+export const assessmentDraftSessions = pgTable("assessment_draft_sessions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  sessionToken: text("session_token").notNull().unique(),
+  assessmentVersion: text("assessment_version").notNull(),
+  draftAnswers: jsonb("draft_answers")
+    .$type<AssessmentDraftSessionSnapshot["answers"]>()
+    .notNull(),
+  draftProgress: jsonb("draft_progress")
+    .$type<AssessmentDraftSessionSnapshot["progress"]>()
+    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" }).notNull(),
+});
+
 export type AssessmentResultRecord = typeof assessmentResults.$inferSelect;
 export type AssessmentResultInsert = typeof assessmentResults.$inferInsert;
+export type AssessmentDraftSessionRecord = typeof assessmentDraftSessions.$inferSelect;
+export type AssessmentDraftSessionInsert = typeof assessmentDraftSessions.$inferInsert;

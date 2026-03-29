@@ -11,7 +11,10 @@ test.describe("mobile assessment flow", () => {
     await expect(page.getByRole("button", { name: "결과 만들기" })).toBeDisabled();
   });
 
-  test.fixme("restores draft answers after a refresh using the server session");
+  test.fixme(
+    "restores draft answers after a refresh using the server session",
+    async () => {},
+  );
 
-  test.fixme("redirects to the saved public result page after submit");
+  test.fixme("redirects to the saved public result page after submit", async () => {});
 });

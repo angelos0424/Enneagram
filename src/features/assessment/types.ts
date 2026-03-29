@@ -12,6 +12,19 @@ export type AssessmentDraft = {
   answers: AssessmentAnswerMap;
 };
 
+export type AssessmentDraftProgress = {
+  answeredCount: number;
+  totalQuestions: number;
+  currentQuestionId: AssessmentAnswer["questionId"] | null;
+  isComplete: boolean;
+};
+
+export type AssessmentDraftSessionSnapshot = {
+  assessmentVersion: AssessmentSubmission["assessmentVersion"];
+  answers: AssessmentAnswerMap;
+  progress: AssessmentDraftProgress;
+};
+
 export type AssessmentProgress = {
   answeredCount: number;
   totalQuestions: number;
