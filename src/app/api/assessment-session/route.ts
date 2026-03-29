@@ -2,6 +2,10 @@ import { cookies } from "next/headers";
 import { ZodError } from "zod";
 
 import { assessmentDefinition } from "@/content/assessments/ko/v1";
+import {
+  ADMIN_STATS_EVENT_TYPES,
+  DrizzleAdminStatsEventRepository,
+} from "@/db/repositories/admin-stats-event-repository";
 import { DrizzleAssessmentDraftSessionRepository } from "@/db/repositories/assessment-draft-session-repository";
 import { assessmentDraftSessionBootstrapSchema } from "@/domain/assessment/draft-schema";
 import {
@@ -108,6 +112,7 @@ export async function POST(request: Request) {
     }
 
     const repository = new DrizzleAssessmentDraftSessionRepository();
+    const adminStatsEventRepository = new DrizzleAdminStatsEventRepository();
     const sessionToken = createAssessmentDraftSessionToken();
     const session = buildEmptyDraftSession();
     const now = new Date();
@@ -117,6 +122,10 @@ export async function POST(request: Request) {
       ...session,
       createdAt: now,
       updatedAt: now,
+    });
+    await adminStatsEventRepository.recordEvent({
+      eventType: ADMIN_STATS_EVENT_TYPES.assessmentStarted,
+      occurredAt: now,
     });
 
     const cookieStore = await cookies();

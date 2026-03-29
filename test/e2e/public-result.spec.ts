@@ -92,7 +92,15 @@ test.describe("public result page", () => {
 
   test("returns shared-result visitors to a fresh assessment", async ({ page }) => {
     await completeAssessmentAndOpenResult(page);
+    const restartResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/admin-stats/restart") &&
+        response.request().method() === "DELETE" &&
+        response.ok(),
+    );
+
     await page.getByRole("button", { name: "검사해보기" }).click();
+    await restartResponse;
     await page.waitForURL("/");
     await expect(page.getByText("0 / 18", { exact: true }).last()).toBeVisible();
     await expect(page.getByRole("button", { name: "결과 만들기" })).toBeDisabled();

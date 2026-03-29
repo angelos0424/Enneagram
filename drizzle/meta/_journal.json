@@ -15,6 +15,13 @@
       "when": 1774790551896,
       "tag": "0002_phase3_assessment_drafts",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1774826541517,
+      "tag": "0003_phase5_admin_stats_events",
+      "breakpoints": true
     }
   ]
 }

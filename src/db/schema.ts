@@ -41,7 +41,15 @@ export const assessmentDraftSessions = pgTable("assessment_draft_sessions", {
   updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" }).notNull(),
 });
 
+export const adminStatsEvents = pgTable("admin_stats_events", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  eventType: text("event_type").notNull(),
+  occurredAt: timestamp("occurred_at", { withTimezone: true, mode: "date" }).notNull(),
+});
+
 export type AssessmentResultRecord = typeof assessmentResults.$inferSelect;
 export type AssessmentResultInsert = typeof assessmentResults.$inferInsert;
 export type AssessmentDraftSessionRecord = typeof assessmentDraftSessions.$inferSelect;
 export type AssessmentDraftSessionInsert = typeof assessmentDraftSessions.$inferInsert;
+export type AdminStatsEventRecord = typeof adminStatsEvents.$inferSelect;
+export type AdminStatsEventInsert = typeof adminStatsEvents.$inferInsert;

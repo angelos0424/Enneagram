@@ -5,6 +5,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { assessmentDefinition } from "@/content/assessments/ko/v1";
 import {
+  ADMIN_STATS_EVENT_TYPES,
+  type AdminStatsEventRepository,
+} from "@/db/repositories/admin-stats-event-repository";
+import {
   DrizzleAssessmentDraftSessionRepository,
   type AssessmentDraftSessionRepository,
 } from "@/db/repositories/assessment-draft-session-repository";
@@ -26,7 +30,12 @@ import {
 } from "@/domain/assessment/draft-session";
 import type { AssessmentDraftSessionSnapshot } from "@/features/assessment/types";
 
-const { cookiesMock, repositoryConstructorMock } = vi.hoisted(() => ({
+const {
+  adminStatsEventRepositoryConstructorMock,
+  cookiesMock,
+  repositoryConstructorMock,
+} = vi.hoisted(() => ({
+  adminStatsEventRepositoryConstructorMock: vi.fn(),
   cookiesMock: vi.fn(),
   repositoryConstructorMock: vi.fn(),
 }));
@@ -43,6 +52,17 @@ vi.mock("@/db/repositories/assessment-draft-session-repository", async () => {
   return {
     ...actual,
     DrizzleAssessmentDraftSessionRepository: repositoryConstructorMock,
+  };
+});
+
+vi.mock("@/db/repositories/admin-stats-event-repository", async () => {
+  const actual = await vi.importActual<
+    typeof import("@/db/repositories/admin-stats-event-repository")
+  >("@/db/repositories/admin-stats-event-repository");
+
+  return {
+    ...actual,
+    DrizzleAdminStatsEventRepository: adminStatsEventRepositoryConstructorMock,
   };
 });
 
@@ -223,6 +243,33 @@ class FakeDraftSessionRepository implements AssessmentDraftSessionRepository {
   }
 }
 
+class FakeAdminStatsEventRepository implements AdminStatsEventRepository {
+  readonly events: Array<{
+    eventType: string;
+    occurredAt: Date;
+  }> = [];
+
+  async recordEvent(input: { eventType: string; occurredAt: Date }) {
+    const record = {
+      id: `event-${this.events.length + 1}`,
+      eventType: input.eventType,
+      occurredAt: input.occurredAt,
+    };
+
+    this.events.push(record);
+
+    return record;
+  }
+
+  async listEvents() {
+    return this.events.map((event, index) => ({
+      id: `event-${index + 1}`,
+      eventType: event.eventType,
+      occurredAt: event.occurredAt,
+    }));
+  }
+}
+
 function buildDraftSnapshot(): AssessmentDraftSessionSnapshot {
   return {
     assessmentVersion: assessmentDefinition.version,
@@ -354,14 +401,19 @@ describe("assessment session routes", () => {
     vi.resetModules();
     cookiesMock.mockReset();
     repositoryConstructorMock.mockReset();
+    adminStatsEventRepositoryConstructorMock.mockReset();
   });
 
   it("bootstraps a canonical draft session and sets the anonymous cookie", async () => {
     const cookieStore = new FakeCookiesStore();
     const repository = new FakeDraftSessionRepository();
+    const adminStatsEventRepository = new FakeAdminStatsEventRepository();
 
     cookiesMock.mockResolvedValue(cookieStore);
     repositoryConstructorMock.mockImplementation(() => repository);
+    adminStatsEventRepositoryConstructorMock.mockImplementation(
+      () => adminStatsEventRepository,
+    );
 
     const { POST } = await import("@/app/api/assessment-session/route");
     const response = await POST(
@@ -393,6 +445,10 @@ describe("assessment session routes", () => {
       value: expect.any(String),
       options: ASSESSMENT_DRAFT_SESSION_COOKIE.options,
     });
+    expect(adminStatsEventRepository.events).toHaveLength(1);
+    expect(adminStatsEventRepository.events[0]?.eventType).toBe(
+      ADMIN_STATS_EVENT_TYPES.assessmentStarted,
+    );
   });
 
   it("reuses the cookie-backed draft session on bootstrap and load", async () => {
@@ -416,9 +472,13 @@ describe("assessment session routes", () => {
         ],
       ]),
     );
+    const adminStatsEventRepository = new FakeAdminStatsEventRepository();
 
     cookiesMock.mockResolvedValue(cookieStore);
     repositoryConstructorMock.mockImplementation(() => repository);
+    adminStatsEventRepositoryConstructorMock.mockImplementation(
+      () => adminStatsEventRepository,
+    );
 
     const routeModule = await import("@/app/api/assessment-session/route");
     const postResponse = await routeModule.POST(
@@ -439,6 +499,7 @@ describe("assessment session routes", () => {
       session: snapshot,
     });
     expect(cookieStore.setCalls).toHaveLength(0);
+    expect(adminStatsEventRepository.events).toEqual([]);
   });
 
   it("clears the canonical draft session through an explicit delete boundary", async () => {

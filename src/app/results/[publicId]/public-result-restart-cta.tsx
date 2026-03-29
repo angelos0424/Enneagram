@@ -17,7 +17,7 @@ export function PublicResultRestartCta({
     setErrorMessage(null);
 
     try {
-      const response = await fetch("/api/assessment-session", {
+      const response = await fetch("/api/admin-stats/restart", {
         method: "DELETE",
       });
 
