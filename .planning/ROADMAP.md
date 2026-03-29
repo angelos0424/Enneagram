@@ -59,7 +59,11 @@ Plans:
   2. 사용자가 모바일 화면에 맞는 문항 UI에서 현재 진행 상태를 보며 응답할 수 있다.
   3. 사용자가 새로고침하거나 잠시 이탈한 뒤 돌아와도 진행 중 응답을 복구할 수 있다.
   4. 사용자가 모든 필수 문항에 답하면 검사를 제출하고 저장된 결과 페이지로 이동할 수 있다.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 03-01-PLAN.md — Replace the bootstrap home route with the anonymous mobile assessment shell and progress contract
+- [ ] 03-02-PLAN.md — Add version-aware local draft persistence and refresh recovery for the assessment flow
+- [ ] 03-03-PLAN.md — Wire complete-answer submission, draft clearing, and redirect to the persisted public result page
 **UI hint**: yes
 
 ### Phase 4: Result Interpretation & Share Loop
@@ -107,7 +111,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Assessment Contract & Scoring Core | 2/4 | In Progress | 01-01, 01-02 |
 | 2. Persistent Result Snapshots | 2/2 | Complete | 2026-03-29 |
-| 3. Mobile Assessment Flow | 0/TBD | Not started | - |
+| 3. Mobile Assessment Flow | 0/3 | Not started | - |
 | 4. Result Interpretation & Share Loop | 0/TBD | Not started | - |
 | 5. Aggregate Admin Stats | 0/TBD | Not started | - |
 | 6. Coolify Launch Hardening | 0/TBD | Not started | - |
