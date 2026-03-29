@@ -11,6 +11,7 @@ import type { AssessmentResultSnapshotDraft } from "@/domain/assessment/result-s
 export interface AssessmentResultRepository {
   save(snapshot: AssessmentResultSnapshotDraft): Promise<AssessmentResultRecord>;
   findById(id: string): Promise<AssessmentResultRecord | null>;
+  findByPublicId(publicId: string): Promise<AssessmentResultRecord | null>;
 }
 
 export class DrizzleAssessmentResultRepository
@@ -41,6 +42,16 @@ export class DrizzleAssessmentResultRepository
       .select()
       .from(assessmentResults)
       .where(eq(assessmentResults.id, id))
+      .limit(1);
+
+    return savedResult ?? null;
+  }
+
+  async findByPublicId(publicId: string): Promise<AssessmentResultRecord | null> {
+    const [savedResult] = await this.db
+      .select()
+      .from(assessmentResults)
+      .where(eq(assessmentResults.publicId, publicId))
       .limit(1);
 
     return savedResult ?? null;

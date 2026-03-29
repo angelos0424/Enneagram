@@ -19,6 +19,8 @@ class SpyAssessmentResultRepository implements AssessmentResultRepository {
 
     return {
       id: "snapshot-1",
+      publicId: snapshot.publicId,
+      adminToken: snapshot.adminToken,
       assessmentVersion: snapshot.assessmentVersion,
       scoringVersion: snapshot.scoringVersion,
       copyVersion: snapshot.copyVersion,
@@ -38,6 +40,30 @@ class SpyAssessmentResultRepository implements AssessmentResultRepository {
     return this.savedSnapshots[0]
       ? {
           id,
+          publicId: this.savedSnapshots[0].publicId,
+          adminToken: this.savedSnapshots[0].adminToken,
+          assessmentVersion: this.savedSnapshots[0].assessmentVersion,
+          scoringVersion: this.savedSnapshots[0].scoringVersion,
+          copyVersion: this.savedSnapshots[0].copyVersion,
+          primaryType: String(this.savedSnapshots[0].primaryType),
+          wingType: String(this.savedSnapshots[0].wingType),
+          growthType: String(this.savedSnapshots[0].growthType),
+          stressType: String(this.savedSnapshots[0].stressType),
+          rawScores: this.savedSnapshots[0].rawScores,
+          normalizedScores: this.savedSnapshots[0].normalizedScores,
+          nearbyTypes: this.savedSnapshots[0].nearbyTypes,
+          answers: this.savedSnapshots[0].answers,
+          createdAt: this.savedSnapshots[0].createdAt,
+        }
+      : null;
+  }
+
+  async findByPublicId(publicId: string): Promise<AssessmentResultRecord | null> {
+    return this.savedSnapshots[0]
+      ? {
+          id: "snapshot-1",
+          publicId,
+          adminToken: this.savedSnapshots[0].adminToken,
           assessmentVersion: this.savedSnapshots[0].assessmentVersion,
           scoringVersion: this.savedSnapshots[0].scoringVersion,
           copyVersion: this.savedSnapshots[0].copyVersion,
@@ -56,7 +82,7 @@ class SpyAssessmentResultRepository implements AssessmentResultRepository {
 }
 
 describe("assessment result persistence contract", () => {
-  it("buildAssessmentResultSnapshot preserves version fields and score payload without share metadata", () => {
+  it("buildAssessmentResultSnapshot preserves version fields and score payload while attaching opaque share metadata", () => {
     const answers = buildTypeDominantAnswers(8);
     const scoredResult = scoreAssessment({
       assessmentVersion: assessmentDefinition.version,
@@ -74,8 +100,8 @@ describe("assessment result persistence contract", () => {
     expect(snapshot.nearbyTypes).toEqual(scoredResult.nearbyTypes);
     expect(snapshot.answers).toEqual(answers);
     expect(snapshot.createdAt).toEqual(createdAt);
-    expect("shareId" in snapshot).toBe(false);
-    expect((snapshot as { shareId?: unknown }).shareId).toBeUndefined();
+    expect(snapshot.publicId).toMatch(/^[A-Za-z]+$/);
+    expect(snapshot.adminToken).toMatch(/^[A-Za-z]+$/);
   });
 
   it("repository save(snapshot) preserves the version trio unchanged", async () => {
@@ -110,6 +136,8 @@ describe("assessment result persistence contract", () => {
         "assessmentVersion",
         "scoringVersion",
         "copyVersion",
+        "publicId",
+        "adminToken",
         "rawScores",
         "normalizedScores",
         "nearbyTypes",

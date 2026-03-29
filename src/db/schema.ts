@@ -4,6 +4,8 @@ import type { AssessmentResultSnapshotDraft } from "@/domain/assessment/result-s
 
 export const assessmentResults = pgTable("assessment_results", {
   id: uuid("id").defaultRandom().primaryKey(),
+  publicId: text("public_id").notNull().unique(),
+  adminToken: text("admin_token").notNull().unique(),
   assessmentVersion: text("assessment_version").notNull(),
   scoringVersion: text("scoring_version").notNull(),
   copyVersion: text("copy_version").notNull(),
