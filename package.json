@@ -14,7 +14,9 @@
     "test:assessment": "vitest run test/assessment"
   },
   "dependencies": {
+    "drizzle-orm": "^0.45.2",
     "next": "15.5.3",
+    "pg": "^8.20.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "zod": "4.1.5"
@@ -22,8 +24,10 @@
   "devDependencies": {
     "@tailwindcss/postcss": "4.1.13",
     "@types/node": "24.6.0",
+    "@types/pg": "^8.20.0",
     "@types/react": "19.1.13",
     "@types/react-dom": "19.1.9",
+    "drizzle-kit": "^0.31.10",
     "eslint": "9.35.0",
     "eslint-config-next": "15.5.3",
     "tailwindcss": "4.1.13",
