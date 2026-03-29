@@ -8,14 +8,39 @@ import {
 } from "@/domain/assessment/constants";
 import { scoreAssessment } from "@/domain/assessment/scoring";
 import type { EnneagramType } from "@/domain/assessment/types";
-import {
-  buildEqualTopAnswers,
-  buildTypeDominantAnswers,
-  buildUniformAnswers,
-} from "./fixtures";
+function buildPrimaryFocusedAnswers(typeId: EnneagramType) {
+  return assessmentDefinition.questions.map((question) => {
+    const targetFiveWeight = question.typeWeights[typeId][4];
+    const hasStrictHighestFiveWeight = Object.entries(question.typeWeights).every(
+      ([candidateTypeId, weights]) =>
+        Number(candidateTypeId) === typeId || targetFiveWeight > weights[4],
+    );
+
+    return {
+      questionId: question.id,
+      value: hasStrictHighestFiveWeight ? 5 : 1,
+    } as const;
+  });
+}
+
+function buildPairFocusedAnswers(typeIds: readonly [EnneagramType, EnneagramType]) {
+  return assessmentDefinition.questions.map((question) => {
+    const highestFiveWeight = Math.max(
+      ...Object.values(question.typeWeights).map((weights) => weights[4]),
+    );
+    const isFocusedOnPair = typeIds.some(
+      (typeId) => question.typeWeights[typeId][4] === highestFiveWeight,
+    );
+
+    return {
+      questionId: question.id,
+      value: isFocusedOnPair ? 5 : 1,
+    } as const;
+  });
+}
 
 function calculateRawScores(
-  answers: ReturnType<typeof buildUniformAnswers>,
+  answers: ReturnType<typeof buildPrimaryFocusedAnswers>,
 ): Record<EnneagramType, number> {
   const answerByQuestionId = new Map(
     answers.map((answer) => [answer.questionId, answer.value] as const),
@@ -51,7 +76,7 @@ function calculateRawScores(
 
 describe("scoreAssessment", () => {
   it("highest raw total wins primary type for a dominant result", () => {
-    const answers = buildTypeDominantAnswers(8);
+    const answers = buildPrimaryFocusedAnswers(8);
 
     const result = scoreAssessment({
       assessmentVersion: assessmentDefinition.version,
@@ -64,7 +89,7 @@ describe("scoreAssessment", () => {
   });
 
   it(`equal top raw totals resolve with PRIMARY_TYPE_TIE_BREAK = ${PRIMARY_TYPE_TIE_BREAK}`, () => {
-    const answers = buildEqualTopAnswers([2, 3]);
+    const answers = buildPairFocusedAnswers([2, 3]);
 
     const result = scoreAssessment({
       assessmentVersion: assessmentDefinition.version,
@@ -76,7 +101,7 @@ describe("scoreAssessment", () => {
   });
 
   it(`normalized scores use ${NORMALIZATION_FORMULA} and stay chart-ready`, () => {
-    const answers = buildTypeDominantAnswers(8);
+    const answers = buildPrimaryFocusedAnswers(8);
     const expectedRawScores = calculateRawScores(answers);
     const totalRawScore = Object.values(expectedRawScores).reduce(
       (sum, rawScore) => sum + rawScore,
@@ -105,7 +130,7 @@ describe("scoreAssessment", () => {
   });
 
   it(`wing is chosen from adjacent types only, breaking ties with ${WING_TIE_BREAK}`, () => {
-    const answers = buildEqualTopAnswers([1, 2]);
+    const answers = buildPrimaryFocusedAnswers(1);
 
     const result = scoreAssessment({
       assessmentVersion: assessmentDefinition.version,
@@ -118,7 +143,7 @@ describe("scoreAssessment", () => {
   });
 
   it("growthType and stressType come from fixed maps keyed by primary type", () => {
-    const answers = buildTypeDominantAnswers(5);
+    const answers = buildPrimaryFocusedAnswers(5);
 
     const result = scoreAssessment({
       assessmentVersion: assessmentDefinition.version,
@@ -131,7 +156,7 @@ describe("scoreAssessment", () => {
   });
 
   it("nearbyTypes keeps exactly the top 3 non-primary candidates sorted by raw score descending then type id ascending", () => {
-    const answers = buildUniformAnswers(5);
+    const answers = buildPrimaryFocusedAnswers(1);
 
     const result = scoreAssessment({
       assessmentVersion: assessmentDefinition.version,
