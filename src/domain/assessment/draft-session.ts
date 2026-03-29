@@ -21,6 +21,10 @@ export type AssessmentDraftSessionCookie = {
   options: typeof ASSESSMENT_DRAFT_SESSION_COOKIE.options;
 };
 
+type AssessmentDraftSessionCookieStore = {
+  get(name: string): { value: string } | undefined;
+};
+
 export function createAssessmentDraftSessionToken(): string {
   const bytes = randomBytes(SESSION_TOKEN_LENGTH);
   let token = "";
@@ -52,4 +56,12 @@ export function readAssessmentDraftSessionToken(
   const trimmedValue = value.trim();
 
   return trimmedValue.length > 0 ? trimmedValue : null;
+}
+
+export function readAssessmentDraftSessionTokenFromCookieStore(
+  cookieStore: AssessmentDraftSessionCookieStore,
+): string | null {
+  return readAssessmentDraftSessionToken(
+    cookieStore.get(ASSESSMENT_DRAFT_SESSION_COOKIE.name)?.value,
+  );
 }

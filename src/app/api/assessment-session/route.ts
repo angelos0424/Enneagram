@@ -7,7 +7,7 @@ import { assessmentDraftSessionBootstrapSchema } from "@/domain/assessment/draft
 import {
   ASSESSMENT_DRAFT_SESSION_COOKIE,
   createAssessmentDraftSessionToken,
-  readAssessmentDraftSessionToken,
+  readAssessmentDraftSessionTokenFromCookieStore,
 } from "@/domain/assessment/draft-session";
 import type { AssessmentDraftSessionSnapshot } from "@/features/assessment/types";
 
@@ -38,9 +38,7 @@ function toSnapshot(session: {
 
 async function readCanonicalDraft() {
   const cookieStore = await cookies();
-  const sessionToken = readAssessmentDraftSessionToken(
-    cookieStore.get(ASSESSMENT_DRAFT_SESSION_COOKIE.name)?.value,
-  );
+  const sessionToken = readAssessmentDraftSessionTokenFromCookieStore(cookieStore);
 
   if (!sessionToken) {
     return null;

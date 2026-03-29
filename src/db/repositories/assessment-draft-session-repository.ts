@@ -43,6 +43,7 @@ export interface AssessmentDraftSessionRepository {
     sessionToken: string,
     session: UpdateAssessmentDraftSessionInput,
   ): Promise<AssessmentDraftSessionRecord | null>;
+  finalizeDraftSession(sessionToken: string): Promise<void>;
   deleteDraftSession(sessionToken: string): Promise<void>;
 }
 
@@ -141,6 +142,10 @@ export class DrizzleAssessmentDraftSessionRepository
     await this.getDb()
       .delete(assessmentDraftSessions)
       .where(eq(assessmentDraftSessions.sessionToken, sessionToken));
+  }
+
+  async finalizeDraftSession(sessionToken: string): Promise<void> {
+    await this.deleteDraftSession(sessionToken);
   }
 }
 

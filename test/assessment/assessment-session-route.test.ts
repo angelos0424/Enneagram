@@ -211,6 +211,10 @@ class FakeDraftSessionRepository implements AssessmentDraftSessionRepository {
   async deleteDraftSession(sessionToken: string) {
     this.entries.delete(sessionToken);
   }
+
+  async finalizeDraftSession(sessionToken: string) {
+    await this.deleteDraftSession(sessionToken);
+  }
 }
 
 function buildDraftSnapshot(): AssessmentDraftSessionSnapshot {
