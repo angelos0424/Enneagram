@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Completed 01-04-PLAN.md
-last_updated: "2026-03-29T09:30:44.501Z"
+status: executing
+stopped_at: Completed 02-persistent-result-snapshots-01-PLAN.md
+last_updated: "2026-03-29T10:09:27.389Z"
 last_activity: 2026-03-29
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 6
+  completed_plans: 5
   percent: 50
 ---
 
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** 사용자가 로그인 없이도 모바일에서 빠르게 에니어그램 검사를 완료하고, 이해하기 쉬운 상세 결과를 공유할 수 있어야 한다.
-**Current focus:** Phase 01 — assessment-contract-scoring-core
+**Current focus:** Phase 02 — persistent-result-snapshots
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
-Status: Phase complete — ready for verification
+Phase: 02 (persistent-result-snapshots) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-03-29
 
 Progress: [█████░░░░░] 50%
@@ -54,6 +54,7 @@ Progress: [█████░░░░░] 50%
 | Phase 01 P02 | 7 | 2 tasks | 6 files |
 | Phase 01-assessment-contract-scoring-core P03 | 12 | 3 tasks | 7 files |
 | Phase 01-assessment-contract-scoring-core P04 | 7 | 3 tasks | 10 files |
+| Phase 02-persistent-result-snapshots P01 | 7 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,9 @@ Recent decisions affecting current work:
 - [Phase 01-assessment-contract-scoring-core]: Route-level 400 responses preserve machine-readable error codes for invalid shape, unknown version, duplicate question ids, and incomplete coverage.
 - [Phase 01-assessment-contract-scoring-core]: Nearby types are always the top three non-primary candidates sorted by raw score descending then type id ascending.
 - [Phase 01-assessment-contract-scoring-core]: Environment parsing stays lazy via getEnv() so schema and repository modules remain import-safe during tests.
+- [Phase 02-persistent-result-snapshots]: Snapshot drafts now generate opaque public/admin identifiers when the persistence payload is built, so later submit/share routes inherit permanent link tokens instead of minting them lazily.
+- [Phase 02-persistent-result-snapshots]: Public retrieval reads by publicId through the repository boundary, keeping database UUIDs out of downstream share-page routing.
+- [Phase 02-persistent-result-snapshots]: The schema stores publicId and adminToken as unique text columns and ships with checked-in Drizzle artifacts so PostgreSQL remains the canonical permanent snapshot store.
 
 ### Pending Todos
 
@@ -87,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-29T09:26:17.593Z
-Stopped at: Completed 01-04-PLAN.md
+Last session: 2026-03-29T10:09:27.383Z
+Stopped at: Completed 02-persistent-result-snapshots-01-PLAN.md
 Resume file: None

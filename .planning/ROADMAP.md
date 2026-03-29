@@ -46,7 +46,7 @@ Plans:
   4. 공유 결과 페이지에는 검색엔진 비노출과 기본 프라이버시 보호 설정이 적용된다.
 **Plans**: 2 plans
 Plans:
-- [ ] 02-01-PLAN.md — Extend the snapshot persistence contract with opaque public/admin tokens and repository lookup boundaries
+- [x] 02-01-PLAN.md — Extend the snapshot persistence contract with opaque public/admin tokens and repository lookup boundaries
 - [ ] 02-02-PLAN.md — Persist snapshots on submit and add immutable public result retrieval with privacy defaults
 **UI hint**: yes
 
