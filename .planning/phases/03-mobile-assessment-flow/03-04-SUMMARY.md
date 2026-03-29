@@ -105,8 +105,8 @@ Additional task-related fix:
 
 **3. [Rule 3 - Blocking] Stabilized Playwright submit verification in the shared parallel workspace**
 - **Found during:** Task 2
-- **Issue:** Browser submit verification needed result persistence without local PostgreSQL, and dev-server startup was racing when `.next` was deleted before `next dev`.
-- **Fix:** Added in-memory assessment result repository support for test runs and configured Playwright to run `next dev` with in-memory draft/result flags but without deleting `.next` on startup.
+- **Issue:** Browser submit verification needed result persistence without local PostgreSQL, and `next dev` startup proved brittle around stale or regenerated `.next` artifacts.
+- **Fix:** Added in-memory assessment result repository support for test runs and configured Playwright to boot from a clean `npm run build && next start` flow with in-memory draft/result flags.
 - **Files modified:** `src/db/repositories/assessment-result-repository.ts`, `playwright.config.ts`
 - **Verification:** `npx playwright test test/e2e/mobile-assessment.spec.ts -g "redirects to the saved public result page after submit"`
 - **Committed in:** `9df386e`, `707be75`
@@ -119,7 +119,7 @@ Additional task-related fix:
 ## Issues Encountered
 
 - Clean builds in this parallel workspace were more reliable after explicitly removing stale `.next` output before `npm run build`.
-- Playwright dev-server logs still emit a Next.js `allowedDevOrigins` warning for `127.0.0.1`, but it does not block the mobile submit flow or test pass.
+- A production-style `next start` server was more reliable than `next dev` for browser verification after repeated build/test cycles.
 
 ## User Setup Required
 

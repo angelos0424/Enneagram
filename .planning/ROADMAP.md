@@ -10,7 +10,7 @@
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Assessment Contract & Scoring Core** - 버전된 문항과 서버 점수 계산 규칙을 고정한다.
+- [x] **Phase 1: Assessment Contract & Scoring Core** - 버전된 문항과 서버 점수 계산 규칙을 고정한다. (completed 2026-03-29)
 - [x] **Phase 2: Persistent Result Snapshots** - 저장된 결과 스냅샷과 영구 공유 링크를 제공한다. (completed 2026-03-29)
 - [x] **Phase 3: Mobile Assessment Flow** - 익명 사용자가 모바일에서 검사를 끝까지 진행하고 제출할 수 있게 한다. (completed 2026-03-29)
 - [ ] **Phase 4: Result Interpretation & Share Loop** - 결과 이해와 공유받은 사용자의 재검사 유입 루프를 완성한다.
@@ -110,7 +110,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Assessment Contract & Scoring Core | 2/4 | In Progress | 01-01, 01-02 |
+| 1. Assessment Contract & Scoring Core | 4/4 | Complete | 2026-03-29 |
 | 2. Persistent Result Snapshots | 2/2 | Complete | 2026-03-29 |
 | 3. Mobile Assessment Flow | 4/4 | Complete | 2026-03-29 |
 | 4. Result Interpretation & Share Loop | 0/TBD | Not started | - |
