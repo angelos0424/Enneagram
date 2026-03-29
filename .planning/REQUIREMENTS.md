@@ -8,11 +8,11 @@
 ### Assessment Foundation
 
 - [x] **ASMT-01**: 운영자는 버전이 명시된 한국어 에니어그램 문항 세트와 선택지를 관리 가능한 형태로 유지할 수 있다.
-- [ ] **ASMT-02**: 시스템은 제출된 응답을 서버에서 계산하여 주 유형을 산출할 수 있다.
-- [ ] **ASMT-03**: 시스템은 제출된 응답을 서버에서 계산하여 유형별 점수 분포를 산출할 수 있다.
-- [ ] **ASMT-04**: 시스템은 산출된 주 유형과 점수 분포를 바탕으로 날개를 결정할 수 있다.
-- [ ] **ASMT-05**: 시스템은 주 유형을 기준으로 성장 방향과 스트레스 방향을 결정할 수 있다.
-- [ ] **ASMT-06**: 시스템은 결과 저장 시 문항 버전과 계산 버전을 함께 기록할 수 있다.
+- [x] **ASMT-02**: 시스템은 제출된 응답을 서버에서 계산하여 주 유형을 산출할 수 있다.
+- [x] **ASMT-03**: 시스템은 제출된 응답을 서버에서 계산하여 유형별 점수 분포를 산출할 수 있다.
+- [x] **ASMT-04**: 시스템은 산출된 주 유형과 점수 분포를 바탕으로 날개를 결정할 수 있다.
+- [x] **ASMT-05**: 시스템은 주 유형을 기준으로 성장 방향과 스트레스 방향을 결정할 수 있다.
+- [x] **ASMT-06**: 시스템은 결과 저장 시 문항 버전과 계산 버전을 함께 기록할 수 있다.
 
 ### Assessment Experience
 
@@ -94,11 +94,11 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | ASMT-01 | Phase 1 | Complete |
-| ASMT-02 | Phase 1 | Pending |
-| ASMT-03 | Phase 1 | Pending |
-| ASMT-04 | Phase 1 | Pending |
-| ASMT-05 | Phase 1 | Pending |
-| ASMT-06 | Phase 1 | Pending |
+| ASMT-02 | Phase 1 | Complete |
+| ASMT-03 | Phase 1 | Complete |
+| ASMT-04 | Phase 1 | Complete |
+| ASMT-05 | Phase 1 | Complete |
+| ASMT-06 | Phase 1 | Complete |
 | FLOW-01 | Phase 3 | Pending |
 | FLOW-02 | Phase 3 | Pending |
 | FLOW-03 | Phase 3 | Pending |

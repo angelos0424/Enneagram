@@ -32,8 +32,8 @@
 Plans:
 - [x] 01-01-PLAN.md — Bootstrap the greenfield app/tooling and validation harness
 - [x] 01-02-PLAN.md — Lock the authoritative Korean assessment contracts, constants, fixtures, and definition tests
-- [ ] 01-03-PLAN.md — Implement the deterministic scoring engine and server-side scoring endpoint
-- [ ] 01-04-PLAN.md — Define the persistence-ready result snapshot contract and Drizzle schema boundary
+- [x] 01-03-PLAN.md — Implement the deterministic scoring engine and server-side scoring endpoint
+- [x] 01-04-PLAN.md — Define the persistence-ready result snapshot contract and Drizzle schema boundary
 
 ### Phase 2: Persistent Result Snapshots
 **Goal**: 사용자가 완료한 결과가 영구 보관 가능한 스냅샷으로 저장되고, 추측 불가능한 공개 링크에서 동일한 결과를 다시 볼 수 있다.
