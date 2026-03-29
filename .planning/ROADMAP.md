@@ -28,11 +28,12 @@
   2. 시스템이 동일한 응답 입력에 대해 서버에서 항상 같은 주 유형과 유형별 점수 분포를 계산한다.
   3. 시스템이 계산된 주 유형과 점수 분포를 바탕으로 날개와 성장/스트레스 방향을 함께 결정한다.
   4. 저장 대상 결과에는 문항 버전과 계산 버전이 함께 남아 이후 로직 변경과 구분된다.
-**Plans**: 3 plans
+**Plans**: 4 plans
 Plans:
-- [ ] 01-01-PLAN.md — Bootstrap the greenfield app/tooling and lock the authoritative Korean assessment contracts
-- [ ] 01-02-PLAN.md — Implement the deterministic scoring engine and server-side scoring endpoint
-- [ ] 01-03-PLAN.md — Define the persistence-ready result snapshot contract and Drizzle schema boundary
+- [ ] 01-01-PLAN.md — Bootstrap the greenfield app/tooling and validation harness
+- [ ] 01-02-PLAN.md — Lock the authoritative Korean assessment contracts, constants, fixtures, and definition tests
+- [ ] 01-03-PLAN.md — Implement the deterministic scoring engine and server-side scoring endpoint
+- [ ] 01-04-PLAN.md — Define the persistence-ready result snapshot contract and Drizzle schema boundary
 
 ### Phase 2: Persistent Result Snapshots
 **Goal**: 사용자가 완료한 결과가 영구 보관 가능한 스냅샷으로 저장되고, 추측 불가능한 공개 링크에서 동일한 결과를 다시 볼 수 있다.
@@ -101,7 +102,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Assessment Contract & Scoring Core | 0/3 | Not started | - |
+| 1. Assessment Contract & Scoring Core | 0/4 | Not started | - |
 | 2. Persistent Result Snapshots | 0/TBD | Not started | - |
 | 3. Mobile Assessment Flow | 0/TBD | Not started | - |
 | 4. Result Interpretation & Share Loop | 0/TBD | Not started | - |
