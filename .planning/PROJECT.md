@@ -12,13 +12,14 @@
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Phase 01 validated: 운영자가 버전이 명시된 한국어 에니어그램 문항 세트와 선택지를 관리하고, 서버 권위 점수 계산으로 버전이 보존된 결과를 산출할 수 있어야 한다.
+- [x] Phase 02 validated: 사용자가 완료한 결과를 영구 스냅샷 링크로 저장하고, 공개 결과 페이지에서 같은 스냅샷을 프라이버시 기본값과 함께 다시 볼 수 있어야 한다.
 
 ### Active
 
 - [ ] 사용자가 모바일 환경에서 익명으로 에니어그램 검사를 진행할 수 있어야 한다.
 - [ ] 사용자가 주 유형, 날개, 점수 분포, 성장/스트레스 방향, 설명 카드를 포함한 상세 결과를 볼 수 있어야 한다.
-- [ ] 사용자가 영구 보관 가능한 결과 링크를 공유할 수 있어야 하며, 공유받은 사람도 결과 페이지에서 다시 검사를 시작할 수 있어야 한다.
+- [ ] 사용자가 영구 보관 가능한 결과 링크를 공유하고, 공유 결과 페이지 상단 CTA로 다시 검사를 시작할 수 있어야 한다.
 - [ ] 운영자가 검사 결과 통계를 확인할 수 있어야 한다.
 
 ### Out of Scope
@@ -53,6 +54,9 @@
 | 결과는 assessment/scoring/copy 버전을 모두 포함해야 함 | 과거 링크와 결과를 당시 기준으로 재현 가능하게 유지하기 위해 | ✓ Good |
 | 주 유형 동점은 낮은 유형 번호 우선으로 판정 | Phase 1에서 결정적이고 재현 가능한 tie-break 규칙이 필요하기 때문에 | ✓ Good |
 | 근접 유형은 상위 3개까지 보존 | 이후 결과 설명 단계에서 애매한 결과를 설명할 여지를 남기기 위해 | ✓ Good |
+| 결과 링크는 저장 시점에 즉시 발급한다 | 공유 시점마다 다시 계산하거나 토큰을 늦게 만들면 스냅샷 계약이 흔들리기 때문에 | ✓ Good |
+| 공개 결과 페이지는 저장된 copyVersion으로 해설을 조회한다 | 이후 콘텐츠 변경이 과거 링크를 드리프트시키지 않도록 하기 위해 | ✓ Good |
+| 공개 결과 페이지는 noindex와 no-referrer를 기본값으로 둔다 | 영구 링크를 유지하되 불필요한 확산과 referrer 누출을 줄이기 위해 | ✓ Good |
 
 ## Evolution
 
@@ -72,4 +76,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-29 after Phase 1 completion*
+*Last updated: 2026-03-29 after Phase 2 completion*
