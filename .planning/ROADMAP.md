@@ -62,8 +62,8 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [ ] 03-01-PLAN.md — Replace the bootstrap home route with the anonymous mobile assessment shell and progress contract
-- [ ] 03-02-PLAN.md — Add version-aware local draft persistence and refresh recovery for the assessment flow
-- [ ] 03-03-PLAN.md — Wire complete-answer submission, draft clearing, and redirect to the persisted public result page
+- [ ] 03-02-PLAN.md — Add HttpOnly cookie + PostgreSQL draft sessions, route-backed recovery, and mobile browser verification
+- [ ] 03-03-PLAN.md — Finalize canonical draft sessions on submit and redirect to the persisted public result page
 **UI hint**: yes
 
 ### Phase 4: Result Interpretation & Share Loop
