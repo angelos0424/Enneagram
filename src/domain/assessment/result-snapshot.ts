@@ -1,11 +1,12 @@
 import type { AssessmentSubmission } from "@/domain/assessment/schema";
+import { createAssessmentResultLink, type AssessmentResultLink } from "@/domain/assessment/result-link";
 import type { AssessmentScoreResult } from "@/domain/assessment/scoring";
 import type {
   EnneagramType,
   NearbyTypeScore,
 } from "@/domain/assessment/types";
 
-export type AssessmentResultSnapshotDraft = {
+export type AssessmentResultSnapshotDraft = AssessmentResultLink & {
   assessmentVersion: string;
   scoringVersion: string;
   copyVersion: string;
@@ -25,7 +26,10 @@ export function buildAssessmentResultSnapshot(
   answers: AssessmentSubmission["answers"],
   createdAt: Date = new Date(),
 ): AssessmentResultSnapshotDraft {
+  const link = createAssessmentResultLink();
+
   return {
+    ...link,
     assessmentVersion: result.assessmentVersion,
     scoringVersion: result.scoringVersion,
     copyVersion: result.copyVersion,
