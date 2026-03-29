@@ -15,12 +15,13 @@
 - [x] Phase 01 validated: 운영자가 버전이 명시된 한국어 에니어그램 문항 세트와 선택지를 관리하고, 서버 권위 점수 계산으로 버전이 보존된 결과를 산출할 수 있어야 한다.
 - [x] Phase 02 validated: 사용자가 완료한 결과를 영구 스냅샷 링크로 저장하고, 공개 결과 페이지에서 같은 스냅샷을 프라이버시 기본값과 함께 다시 볼 수 있어야 한다.
 - [x] Phase 03 validated: 익명 사용자가 모바일에서 검사를 시작하고, 새로고침 뒤에도 응답을 복구하며, 제출 후 저장된 결과 페이지로 이동할 수 있어야 한다.
+- [x] Phase 04 validated: 사용자가 결과 중심 공개 페이지에서 상세 해석을 읽고 결과를 공유하며, 공유받은 사람도 상단 CTA로 새 검사를 시작할 수 있어야 한다.
 
 ### Active
 
-- [ ] 사용자가 주 유형, 날개, 점수 분포, 성장/스트레스 방향, 설명 카드를 포함한 상세 결과를 볼 수 있어야 한다.
-- [ ] 사용자가 영구 보관 가능한 결과 링크를 공유하고, 공유 결과 페이지 상단 CTA로 다시 검사를 시작할 수 있어야 한다.
 - [ ] 운영자가 검사 결과 통계를 확인할 수 있어야 한다.
+- [ ] 운영자가 공유 결과 페이지 유입 이후의 재검사 클릭을 포함한 집계 통계를 확인할 수 있어야 한다.
+- [ ] 운영자가 Coolify 배포와 백업 복구 기준을 갖춘 운영 환경을 준비할 수 있어야 한다.
 
 ### Out of Scope
 
@@ -59,6 +60,8 @@
 | 공개 결과 페이지는 noindex와 no-referrer를 기본값으로 둔다 | 영구 링크를 유지하되 불필요한 확산과 referrer 누출을 줄이기 위해 | ✓ Good |
 | 익명 검사 세션은 쿠키+서버 canonical draft로 복구한다 | 로컬 상태만으로는 모바일 이탈 복구와 제출 후 정리를 권위 있게 보장할 수 없기 때문에 | ✓ Good |
 | 제출 성공 시 서버가 draft를 finalize한 뒤 `publicResult.href`로만 리다이렉트한다 | 클라이언트 추측 URL과 선행 로컬 정리는 결과 일관성과 재시도 안전성을 깨뜨리기 때문에 | ✓ Good |
+| 공유 결과 CTA는 `/`로 바로 보내지 않고 서버 draft 삭제 경계를 먼저 통과한다 | Phase 3의 draft 복구 기본값 때문에 공유받은 사용자가 stale progress로 진입하면 루프가 깨지기 때문에 | ✓ Good |
+| 추천 섹션의 재검사 링크는 실제 CTA 앵커를 가리킨다 | 하단 추천에서 같은 fresh-start 행동을 재사용하면서 bare link drift를 막기 위해 | ✓ Good |
 
 ## Evolution
 
@@ -78,4 +81,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-29 after Phase 3 completion*
+*Last updated: 2026-03-29 after Phase 4 completion*
