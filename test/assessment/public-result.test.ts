@@ -139,8 +139,17 @@ describe("public result page", () => {
     expect(markup).toContain("2");
     expect(markup).toContain("스트레스 방향");
     expect(markup).toContain("5");
+    expect(markup).toContain(typeCopyDefinition.entries[7].title);
+    expect(markup).toContain(typeCopyDefinition.entries[2].title);
+    expect(markup).toContain(typeCopyDefinition.entries[5].title);
     expect(markup).toContain("100");
     expect(markup).toContain(typeCopyDefinition.entries[8].summary);
+    expect(markup).toContain(typeCopyDefinition.entries[8].detailCards[0].title);
+    expect(markup).toContain(typeCopyDefinition.entries[8].detailCards[0].body);
+    expect(markup).toContain(typeCopyDefinition.entries[8].disclaimer.title);
+    expect(markup).toContain(typeCopyDefinition.entries[8].disclaimer.body);
+    expect(markup).toContain(typeCopyDefinition.entries[8].recommendations[0].title);
+    expect(markup).toContain(typeCopyDefinition.entries[8].recommendations[0].description);
   });
 
   it("uses the route not-found behavior when the public id does not exist", async () => {

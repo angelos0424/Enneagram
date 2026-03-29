@@ -1,6 +1,12 @@
 import React from "react";
 
-import type { EnneagramType, TypeCopyEntry } from "@/domain/assessment/types";
+import type {
+  EnneagramType,
+  TypeCopyDetailCard,
+  TypeCopyDisclaimer,
+  TypeCopyEntry,
+  TypeCopyRecommendation,
+} from "@/domain/assessment/types";
 
 type NearbyTypeView = {
   typeId: EnneagramType;
@@ -18,6 +24,12 @@ export type ResultSnapshotViewModel = {
   normalizedScores: Record<EnneagramType, number>;
   nearbyTypes: NearbyTypeView[];
   copy: TypeCopyEntry;
+  wingCopy: TypeCopyEntry;
+  growthCopy: TypeCopyEntry;
+  stressCopy: TypeCopyEntry;
+  detailCards: readonly TypeCopyDetailCard[];
+  disclaimer: TypeCopyDisclaimer;
+  recommendations: readonly TypeCopyRecommendation[];
 };
 
 const enneagramTypes = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const satisfies readonly EnneagramType[];
@@ -45,14 +57,17 @@ export function ResultSnapshotView({
           <div>
             <dt>날개</dt>
             <dd>{snapshot.wingType}</dd>
+            <p>{snapshot.wingCopy.title}</p>
           </div>
           <div>
             <dt>성장 방향</dt>
             <dd>{snapshot.growthType}</dd>
+            <p>{snapshot.growthCopy.title}</p>
           </div>
           <div>
             <dt>스트레스 방향</dt>
             <dd>{snapshot.stressType}</dd>
+            <p>{snapshot.stressCopy.title}</p>
           </div>
         </dl>
       </section>
@@ -77,6 +92,35 @@ export function ResultSnapshotView({
               <span>{type.typeId}</span>
               <span>{type.normalizedScore}</span>
               <span>{type.gapFromPrimary}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="detail-cards-heading">
+        <h2 id="detail-cards-heading">해석 카드</h2>
+        <ul>
+          {snapshot.detailCards.map((card) => (
+            <li key={card.title}>
+              <h3>{card.title}</h3>
+              <p>{card.body}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="disclaimer-heading">
+        <h2 id="disclaimer-heading">{snapshot.disclaimer.title}</h2>
+        <p>{snapshot.disclaimer.body}</p>
+      </section>
+
+      <section aria-labelledby="recommendation-heading">
+        <h2 id="recommendation-heading">다음 행동 제안</h2>
+        <ul>
+          {snapshot.recommendations.map((recommendation) => (
+            <li key={recommendation.title}>
+              <span>{recommendation.title}</span>
+              <p>{recommendation.description}</p>
             </li>
           ))}
         </ul>

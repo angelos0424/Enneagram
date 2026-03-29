@@ -46,6 +46,30 @@ export default async function PublicResultPage({
       record.copyVersion,
       Number(record.primaryType) as EnneagramType,
     ),
+    wingCopy: resolveResultCopy(
+      record.copyVersion,
+      Number(record.wingType) as EnneagramType,
+    ),
+    growthCopy: resolveResultCopy(
+      record.copyVersion,
+      Number(record.growthType) as EnneagramType,
+    ),
+    stressCopy: resolveResultCopy(
+      record.copyVersion,
+      Number(record.stressType) as EnneagramType,
+    ),
+    detailCards: resolveResultCopy(
+      record.copyVersion,
+      Number(record.primaryType) as EnneagramType,
+    ).detailCards,
+    disclaimer: resolveResultCopy(
+      record.copyVersion,
+      Number(record.primaryType) as EnneagramType,
+    ).disclaimer,
+    recommendations: resolveResultCopy(
+      record.copyVersion,
+      Number(record.primaryType) as EnneagramType,
+    ).recommendations,
   };
 
   return <ResultSnapshotView snapshot={snapshot} />;
