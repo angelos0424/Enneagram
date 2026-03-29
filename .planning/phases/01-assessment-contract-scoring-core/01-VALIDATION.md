@@ -31,7 +31,7 @@ updated: 2026-03-29
 
 - **After Plan 01:** Run `npm run typecheck && npm exec vitest run --passWithNoTests`
 - **After Plan 02:** Run `npm exec vitest run test/assessment/definition.test.ts && npm run typecheck`
-- **After Plan 03:** Run `npm exec vitest run test/assessment/scoring.test.ts && npm run typecheck`
+- **After Plan 03:** Run `npm exec vitest run test/assessment/scoring.test.ts test/assessment/score-route.test.ts && npm run typecheck`
 - **After Plan 04:** Run `npm exec vitest run test/assessment/result-contract.test.ts && npm run typecheck`
 - **Before `$gsd-verify-work`:** Run `npm exec vitest run && npm run typecheck`
 - **Max feedback latency:** 30 seconds
@@ -44,7 +44,7 @@ updated: 2026-03-29
 |------|------|------------|-------|-----------------------------|
 | `01-01` | 1 | none | Next.js/Vitest bootstrap | `npm run typecheck`, `npm exec vitest run --passWithNoTests` |
 | `01-02` | 2 | `01-01` | assessment contracts, constants, fixtures, definition tests | `npm exec vitest run test/assessment/definition.test.ts`, `npm run typecheck` |
-| `01-03` | 3 | `01-02` | scoring engine, mappings, score route | `npm exec vitest run test/assessment/scoring.test.ts`, `npm run typecheck` |
+| `01-03` | 3 | `01-02` | scoring engine, mappings, score route, route tests | `npm exec vitest run test/assessment/scoring.test.ts test/assessment/score-route.test.ts`, `npm run typecheck` |
 | `01-04` | 4 | `01-03` | snapshot contract, Drizzle schema, repository boundary | `npm exec vitest run test/assessment/result-contract.test.ts`, `npm run typecheck` |
 
 Execution order is strictly sequential because each plan produces contracts or fixtures consumed by the next plan.
@@ -55,12 +55,13 @@ Execution order is strictly sequential because each plan produces contracts or f
 
 | Task ID | Plan | Wave | Requirement | Automated Command | Status |
 |---------|------|------|-------------|-------------------|--------|
-| 01-01-01 | 01-01 | 1 | ASMT-01 | `npm run typecheck && npm exec vitest run --passWithNoTests` | ⬜ pending |
+| 01-01-01 | 01-01 | 1 | ASMT-01 | `npm run typecheck` | ⬜ pending |
+| 01-01-02 | 01-01 | 1 | ASMT-01 | `npm run typecheck && npm exec vitest run --passWithNoTests` | ⬜ pending |
 | 01-02-01 | 01-02 | 2 | ASMT-01 | `npm run typecheck` | ⬜ pending |
 | 01-02-02 | 01-02 | 2 | ASMT-01 | `npm exec vitest run test/assessment/definition.test.ts` | ⬜ pending |
 | 01-03-01 | 01-03 | 3 | ASMT-02, ASMT-03, ASMT-04, ASMT-05 | `npm exec vitest run test/assessment/scoring.test.ts` | ⬜ pending |
 | 01-03-02 | 01-03 | 3 | ASMT-02, ASMT-03, ASMT-04, ASMT-05 | `npm exec vitest run test/assessment/scoring.test.ts` | ⬜ pending |
-| 01-03-03 | 01-03 | 3 | ASMT-02, ASMT-03, ASMT-04, ASMT-05 | `npm exec vitest run test/assessment/scoring.test.ts && npm run typecheck` | ⬜ pending |
+| 01-03-03 | 01-03 | 3 | ASMT-02, ASMT-03, ASMT-04, ASMT-05 | `npm exec vitest run test/assessment/scoring.test.ts test/assessment/score-route.test.ts && npm run typecheck` | ⬜ pending |
 | 01-04-01 | 01-04 | 4 | ASMT-06 | `npm run typecheck` | ⬜ pending |
 | 01-04-02 | 01-04 | 4 | ASMT-06 | `npm run typecheck` | ⬜ pending |
 | 01-04-03 | 01-04 | 4 | ASMT-06 | `npm exec vitest run test/assessment/result-contract.test.ts && npm run typecheck` | ⬜ pending |
@@ -75,6 +76,7 @@ Execution order is strictly sequential because each plan produces contracts or f
 - [x] `vitest.config.ts` is planned in `01-01`
 - [x] `test/assessment/definition.test.ts` is planned in `01-02`
 - [x] `test/assessment/scoring.test.ts` is planned in `01-03`
+- [x] `test/assessment/score-route.test.ts` is planned in `01-03`
 - [x] `test/assessment/result-contract.test.ts` is planned in `01-04`
 - [x] `test/assessment/fixtures.ts` is planned before scoring tests consume it
 
