@@ -1,5 +1,6 @@
 import React from "react";
 
+import { ResultShareActions } from "@/features/result-sharing/result-share-actions";
 import type {
   EnneagramType,
   TypeCopyDetailCard,
@@ -303,6 +304,12 @@ export function ResultSnapshotView({
             ))}
           </ul>
         </section>
+
+        <ResultShareActions
+          publicPath={`/results/${snapshot.publicId}`}
+          title={snapshot.copy.title}
+          summary={snapshot.copy.summary}
+        />
 
         <footer className="pb-2 text-center text-xs tracking-[0.18em] text-stone-500">
           <p>{snapshot.publicId}</p>
