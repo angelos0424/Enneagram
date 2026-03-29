@@ -95,7 +95,12 @@ Plans:
   3. 관리자가 주 유형 분포와 날개 분포를 집계로 확인할 수 있다.
   4. 관리자가 공유 결과 페이지 유입 뒤 `검사해보기` 클릭 수를 확인할 수 있다.
   5. 시스템이 재식별 위험이 있는 소표본 통계를 그대로 노출하지 않는다.
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 05-01-PLAN.md — Add the protected admin auth boundary and dedicated login/session guard
+- [ ] 05-02-PLAN.md — Persist append-only start and shared-result restart events at server mutation boundaries
+- [ ] 05-03-PLAN.md — Build the centralized suppression layer and protected aggregate stats API
+- [ ] 05-04-PLAN.md — Ship the protected admin dashboard with browser/server verification
 **UI hint**: yes
 
 ### Phase 6: Coolify Launch Hardening
