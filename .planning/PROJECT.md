@@ -1,0 +1,70 @@
+# 에니어그램 모바일 테스트 사이트
+
+## What This Is
+
+일반 사용자가 모바일에서 에니어그램 검사를 진행하고, 결과를 상세하게 확인한 뒤 공유 가능한 링크로 결과 페이지를 전달할 수 있는 한국어 웹 서비스다. 결과 페이지 상단에는 항상 검사 진입 버튼을 두어, 공유받은 사람이 바로 다시 검사를 시도할 수 있어야 한다. 초기 범위는 익명 사용 흐름에 집중하며, Coolify로 배포 가능한 구조를 전제로 한다.
+
+## Core Value
+
+사용자가 로그인 없이도 모바일에서 빠르게 에니어그램 검사를 완료하고, 이해하기 쉬운 상세 결과를 공유할 수 있어야 한다.
+
+## Requirements
+
+### Validated
+
+(None yet — ship to validate)
+
+### Active
+
+- [ ] 사용자가 모바일 환경에서 익명으로 에니어그램 검사를 진행할 수 있어야 한다.
+- [ ] 사용자가 주 유형, 날개, 점수 분포, 성장/스트레스 방향, 설명 카드를 포함한 상세 결과를 볼 수 있어야 한다.
+- [ ] 사용자가 영구 보관 가능한 결과 링크를 공유할 수 있어야 하며, 공유받은 사람도 결과 페이지에서 다시 검사를 시작할 수 있어야 한다.
+- [ ] 운영자가 검사 결과 통계를 확인할 수 있어야 한다.
+
+### Out of Scope
+
+- 회원가입 및 로그인 기능 — 초기 버전은 익명 검사와 결과 공유에 집중한다.
+- 다국어 지원 — 질문과 결과는 한국어만 우선 제공한다.
+- 결과 자동 만료 정책 — 사용자가 직접 나중에 전체 서비스를 정리할 계획이므로 초기에는 영구 보관으로 단순화한다.
+
+## Context
+
+에니어그램 이론 기반 점수 계산을 사용하는 모바일 우선 테스트 사이트를 만들고자 한다. 사용자는 일반 대중이며, 검사는 별도의 회원 식별 없이 익명으로 진행된다. 결과 페이지에는 주 유형, 날개, 점수 분포, 성장/스트레스 방향, 설명 카드가 포함되어야 하고, 이 결과를 링크로 공유할 수 있어야 한다. 공유 결과 페이지 상단에는 항상 "검사해보기" 진입 버튼이 있어, 링크를 받은 사용자가 즉시 검사를 다시 수행할 수 있어야 한다. 공유 가능한 결과를 영구 보관하려면 결과 저장용 데이터베이스가 필요하다. 배포 환경은 Coolify를 전제로 한다.
+
+## Constraints
+
+- **Platform**: 모바일 우선 웹 경험 — 주요 사용 흐름이 휴대폰에서 자연스럽게 동작해야 한다.
+- **Language**: 한국어 전용 — 초기 릴리스에서 질문과 결과 콘텐츠를 한국어만 지원한다.
+- **User Model**: 익명 사용자 — 로그인 없이 검사, 저장, 공유 흐름을 설계해야 한다.
+- **Persistence**: 결과 영구 저장 — 공유 링크가 지속적으로 동작하도록 결과 저장소가 필요하다.
+- **Deployment**: Coolify 배포 — 컨테이너/서비스 구성이 Coolify 운영 방식과 잘 맞아야 한다.
+
+## Key Decisions
+
+| Decision | Rationale | Outcome |
+|----------|-----------|---------|
+| 익명 사용자 흐름으로 시작 | 초기 진입 장벽을 낮추고 검사 완료율을 높이기 위해 | — Pending |
+| 결과 페이지를 공유 단위로 사용 | 추천과 바이럴 흐름을 가장 단순하게 만들 수 있어 | — Pending |
+| 결과 링크는 영구 보관 | 초기에는 만료 정책보다 단순한 공유 경험이 더 중요해 | — Pending |
+| 관리자 기능은 통계 중심으로 제한 | 운영 복잡도를 낮추고 핵심 사용자 경험에 집중하기 위해 | — Pending |
+| Coolify 배포를 전제로 설계 | 실제 운영 환경과 배포 제약을 초기에 반영하기 위해 | — Pending |
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `$gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `$gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
+---
+*Last updated: 2026-03-29 after initialization*
