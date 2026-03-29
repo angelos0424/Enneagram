@@ -9,10 +9,19 @@ import {
   ResultSnapshotView,
   type ResultSnapshotViewModel,
 } from "./result-snapshot-view";
+import { buildSnapshotMetadata } from "./snapshot-metadata";
 
 type PublicResultPageProps = {
   params: Promise<{ publicId: string }>;
 };
+
+export async function generateMetadata({
+  params,
+}: PublicResultPageProps) {
+  const { publicId } = await params;
+
+  return buildSnapshotMetadata(publicId);
+}
 
 export default async function PublicResultPage({
   params,

@@ -153,4 +153,47 @@ describe("public result page", () => {
     ).rejects.toBe(notFoundError);
     expect(repositoryState.findByPublicIdCalls).toEqual(["MissingPublicResultId"]);
   });
+
+  it("declares noindex metadata defaults for public result pages", async () => {
+    const { buildSnapshotMetadata } = await import(
+      "@/app/results/[publicId]/snapshot-metadata"
+    );
+    const { generateMetadata } = await import("@/app/results/[publicId]/page");
+
+    expect(buildSnapshotMetadata("PrivacyFirstPublicResult").robots).toEqual({
+      index: false,
+      follow: false,
+    });
+    await expect(
+      generateMetadata({
+        params: Promise.resolve({ publicId: "PrivacyFirstPublicResult" }),
+      }),
+    ).resolves.toMatchObject({
+      robots: {
+        index: false,
+        follow: false,
+      },
+    });
+  });
+
+  it("applies strict referrer protection only to public snapshot routes", async () => {
+    const nextConfig = (await import("../../next.config")).default;
+
+    expect(nextConfig.headers).toBeTypeOf("function");
+    const headers = await nextConfig.headers?.();
+    const publicResultRule = headers?.find(
+      (entry) => entry.source === "/results/:publicId*",
+    );
+
+    expect(publicResultRule).toBeDefined();
+    expect(publicResultRule?.headers).toEqual(
+      expect.arrayContaining([
+        {
+          key: "Referrer-Policy",
+          value: "no-referrer",
+        },
+      ]),
+    );
+    expect(headers?.some((entry) => entry.source === "/")).toBe(false);
+  });
 });
