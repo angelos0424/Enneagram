@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 
 import { getTableColumns } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { assessmentDefinition } from "@/content/assessments/ko/v1";
 import {
@@ -25,6 +25,26 @@ import {
   readAssessmentDraftSessionToken,
 } from "@/domain/assessment/draft-session";
 import type { AssessmentDraftSessionSnapshot } from "@/features/assessment/types";
+
+const { cookiesMock, repositoryConstructorMock } = vi.hoisted(() => ({
+  cookiesMock: vi.fn(),
+  repositoryConstructorMock: vi.fn(),
+}));
+
+vi.mock("next/headers", () => ({
+  cookies: cookiesMock,
+}));
+
+vi.mock("@/db/repositories/assessment-draft-session-repository", async () => {
+  const actual = await vi.importActual<
+    typeof import("@/db/repositories/assessment-draft-session-repository")
+  >("@/db/repositories/assessment-draft-session-repository");
+
+  return {
+    ...actual,
+    DrizzleAssessmentDraftSessionRepository: repositoryConstructorMock,
+  };
+});
 
 class FakeAssessmentDraftSessionDb {
   insertedValues: AssessmentDraftSessionInsert[] = [];
@@ -110,6 +130,89 @@ class FakeAssessmentDraftSessionDb {
   }
 }
 
+class FakeCookiesStore {
+  private readonly values = new Map<string, string>();
+  readonly setCalls: Array<{ name: string; value: string; options: object }> = [];
+
+  constructor(seed?: Record<string, string>) {
+    Object.entries(seed ?? {}).forEach(([name, value]) => {
+      this.values.set(name, value);
+    });
+  }
+
+  get(name: string) {
+    const value = this.values.get(name);
+    return value ? { name, value } : undefined;
+  }
+
+  set(name: string, value: string, options: object) {
+    this.values.set(name, value);
+    this.setCalls.push({ name, value, options });
+  }
+}
+
+class FakeDraftSessionRepository implements AssessmentDraftSessionRepository {
+  constructor(
+    private readonly entries = new Map<string, AssessmentDraftSessionRecord>(),
+  ) {}
+
+  async createDraftSession(
+    session: AssessmentDraftSessionSnapshot & {
+      sessionToken: string;
+      createdAt: Date;
+      updatedAt: Date;
+    },
+  ) {
+    const record: AssessmentDraftSessionRecord = {
+      id: `draft-${session.sessionToken}`,
+      sessionToken: session.sessionToken,
+      assessmentVersion: session.assessmentVersion,
+      draftAnswers: session.answers,
+      draftProgress: session.progress,
+      createdAt: session.createdAt,
+      updatedAt: session.updatedAt,
+    };
+
+    this.entries.set(session.sessionToken, record);
+
+    return record;
+  }
+
+  async findBySessionToken(sessionToken: string) {
+    return this.entries.get(sessionToken) ?? null;
+  }
+
+  async updateDraftSession(
+    sessionToken: string,
+    session: {
+      answers: AssessmentDraftSessionSnapshot["answers"];
+      progress: AssessmentDraftSessionSnapshot["progress"];
+      updatedAt: Date;
+    },
+  ) {
+    const current = this.entries.get(sessionToken);
+
+    if (!current) {
+      return null;
+    }
+
+    const updated: AssessmentDraftSessionRecord = {
+      ...current,
+      draftAnswers: session.answers,
+      draftProgress: session.progress,
+      updatedAt: session.updatedAt,
+    };
+
+    this.entries.set(sessionToken, updated);
+
+    return updated;
+  }
+
+  async deleteDraftSession(sessionToken: string) {
+    this.entries.delete(sessionToken);
+  }
+}
+
 function buildDraftSnapshot(): AssessmentDraftSessionSnapshot {
   return {
     assessmentVersion: assessmentDefinition.version,
@@ -178,8 +281,11 @@ describe("assessment draft session contract", () => {
 
   it("persists draft sessions by opaque session token through the repository boundary", async () => {
     const db = new FakeAssessmentDraftSessionDb();
+    const actualModule = await vi.importActual<
+      typeof import("@/db/repositories/assessment-draft-session-repository")
+    >("@/db/repositories/assessment-draft-session-repository");
     const repository: AssessmentDraftSessionRepository =
-      new DrizzleAssessmentDraftSessionRepository(db as never);
+      new actualModule.DrizzleAssessmentDraftSessionRepository(db as never);
     const sessionToken = createAssessmentDraftSessionToken();
     const createdAt = new Date("2026-03-29T12:00:00.000Z");
     const snapshot = buildDraftSnapshot();
@@ -231,5 +337,227 @@ describe("assessment draft session contract", () => {
         'CREATE TABLE "assessment_draft_sessions"',
       );
     }
+  });
+});
+
+describe("assessment session routes", () => {
+  beforeEach(() => {
+    cookiesMock.mockReset();
+    repositoryConstructorMock.mockReset();
+  });
+
+  it("bootstraps a canonical draft session and sets the anonymous cookie", async () => {
+    const cookieStore = new FakeCookiesStore();
+    const repository = new FakeDraftSessionRepository();
+
+    cookiesMock.mockResolvedValue(cookieStore);
+    repositoryConstructorMock.mockImplementation(() => repository);
+
+    const { POST } = await import("@/app/api/assessment-session/route");
+    const response = await POST(
+      new Request("http://localhost/api/assessment-session", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          assessmentVersion: assessmentDefinition.version,
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      session: {
+        assessmentVersion: assessmentDefinition.version,
+        answers: {},
+        progress: {
+          answeredCount: 0,
+          totalQuestions: assessmentDefinition.questions.length,
+          currentQuestionId: assessmentDefinition.questions[0]!.id,
+          isComplete: false,
+        },
+      },
+    });
+    expect(cookieStore.setCalls).toHaveLength(1);
+    expect(cookieStore.setCalls[0]).toEqual({
+      name: ASSESSMENT_DRAFT_SESSION_COOKIE.name,
+      value: expect.any(String),
+      options: ASSESSMENT_DRAFT_SESSION_COOKIE.options,
+    });
+  });
+
+  it("reuses the cookie-backed draft session on bootstrap and load", async () => {
+    const snapshot = buildDraftSnapshot();
+    const cookieStore = new FakeCookiesStore({
+      [ASSESSMENT_DRAFT_SESSION_COOKIE.name]: "existing-token",
+    });
+    const repository = new FakeDraftSessionRepository(
+      new Map([
+        [
+          "existing-token",
+          {
+            id: "draft-existing-token",
+            sessionToken: "existing-token",
+            assessmentVersion: snapshot.assessmentVersion,
+            draftAnswers: snapshot.answers,
+            draftProgress: snapshot.progress,
+            createdAt: new Date("2026-03-29T12:00:00.000Z"),
+            updatedAt: new Date("2026-03-29T12:00:00.000Z"),
+          },
+        ],
+      ]),
+    );
+
+    cookiesMock.mockResolvedValue(cookieStore);
+    repositoryConstructorMock.mockImplementation(() => repository);
+
+    const routeModule = await import("@/app/api/assessment-session/route");
+    const postResponse = await routeModule.POST(
+      new Request("http://localhost/api/assessment-session", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          assessmentVersion: assessmentDefinition.version,
+        }),
+      }),
+    );
+    const getResponse = await routeModule.GET(
+      new Request("http://localhost/api/assessment-session"),
+    );
+
+    await expect(postResponse.json()).resolves.toEqual({
+      session: snapshot,
+    });
+    await expect(getResponse.json()).resolves.toEqual({
+      session: snapshot,
+    });
+    expect(cookieStore.setCalls).toHaveLength(0);
+  });
+
+  it("updates the canonical draft through the draft route", async () => {
+    const snapshot = buildDraftSnapshot();
+    const nextSnapshot: AssessmentDraftSessionSnapshot = {
+      assessmentVersion: snapshot.assessmentVersion,
+      answers: {
+        ...snapshot.answers,
+        [assessmentDefinition.questions[1]!.id]: 3,
+      },
+      progress: {
+        answeredCount: 2,
+        totalQuestions: assessmentDefinition.questions.length,
+        currentQuestionId: assessmentDefinition.questions[2]!.id,
+        isComplete: false,
+      },
+    };
+    const cookieStore = new FakeCookiesStore({
+      [ASSESSMENT_DRAFT_SESSION_COOKIE.name]: "existing-token",
+    });
+    const repository = new FakeDraftSessionRepository(
+      new Map([
+        [
+          "existing-token",
+          {
+            id: "draft-existing-token",
+            sessionToken: "existing-token",
+            assessmentVersion: snapshot.assessmentVersion,
+            draftAnswers: snapshot.answers,
+            draftProgress: snapshot.progress,
+            createdAt: new Date("2026-03-29T12:00:00.000Z"),
+            updatedAt: new Date("2026-03-29T12:00:00.000Z"),
+          },
+        ],
+      ]),
+    );
+
+    cookiesMock.mockResolvedValue(cookieStore);
+    repositoryConstructorMock.mockImplementation(() => repository);
+
+    const { PATCH } = await import("@/app/api/assessment-session/draft/route");
+    const response = await PATCH(
+      new Request("http://localhost/api/assessment-session/draft", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(nextSnapshot),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      session: nextSnapshot,
+    });
+  });
+
+  it("rejects draft updates with stale assessment versions", async () => {
+    const cookieStore = new FakeCookiesStore({
+      [ASSESSMENT_DRAFT_SESSION_COOKIE.name]: "existing-token",
+    });
+    const repository = new FakeDraftSessionRepository(
+      new Map([
+        [
+          "existing-token",
+          {
+            id: "draft-existing-token",
+            sessionToken: "existing-token",
+            assessmentVersion: assessmentDefinition.version,
+            draftAnswers: {},
+            draftProgress: {
+              answeredCount: 0,
+              totalQuestions: assessmentDefinition.questions.length,
+              currentQuestionId: assessmentDefinition.questions[0]!.id,
+              isComplete: false,
+            },
+            createdAt: new Date("2026-03-29T12:00:00.000Z"),
+            updatedAt: new Date("2026-03-29T12:00:00.000Z"),
+          },
+        ],
+      ]),
+    );
+
+    cookiesMock.mockResolvedValue(cookieStore);
+    repositoryConstructorMock.mockImplementation(() => repository);
+
+    const { PATCH } = await import("@/app/api/assessment-session/draft/route");
+    const response = await PATCH(
+      new Request("http://localhost/api/assessment-session/draft", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          assessmentVersion: "legacy-version",
+          answers: {},
+          progress: {
+            answeredCount: 0,
+            totalQuestions: assessmentDefinition.questions.length,
+            currentQuestionId: assessmentDefinition.questions[0]!.id,
+            isComplete: false,
+          },
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toEqual({
+      error: {
+        code: "ASSESSMENT_VERSION_MISMATCH",
+        message: "Draft payload assessment version does not match the canonical session.",
+      },
+    });
+  });
+
+  it("returns an anonymous-session error when no cookie-backed draft exists", async () => {
+    const cookieStore = new FakeCookiesStore();
+    const repository = new FakeDraftSessionRepository();
+
+    cookiesMock.mockResolvedValue(cookieStore);
+    repositoryConstructorMock.mockImplementation(() => repository);
+
+    const { GET } = await import("@/app/api/assessment-session/route");
+    const response = await GET(new Request("http://localhost/api/assessment-session"));
+
+    expect(response.status).toBe(404);
+    await expect(response.json()).resolves.toEqual({
+      error: {
+        code: "ASSESSMENT_SESSION_NOT_FOUND",
+        message: "No anonymous assessment draft session was found.",
+      },
+    });
   });
 });
