@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { assessmentDefinition } from "@/content/assessments/ko/v1";
 import {
   buildAssessmentDraft,
+  buildAssessmentDraftSessionSnapshot,
   createEmptyAnswerMap,
   getAssessmentFlowSnapshot,
   toSubmissionAnswers,
@@ -70,6 +71,55 @@ describe("mobile assessment flow contract", () => {
     expect(completeSnapshot.isComplete).toBe(true);
     expect(completeSnapshot.canSubmit).toBe(true);
     expect(completeSnapshot.currentQuestion?.id).toBe(
+      assessmentDefinition.questions.at(-1)?.id,
+    );
+  });
+
+  it("derives the canonical resume target from the first unanswered question", () => {
+    const answers = createEmptyAnswerMap();
+    answers[assessmentDefinition.questions[0]!.id] = 5;
+    answers[assessmentDefinition.questions[1]!.id] = 4;
+    answers[assessmentDefinition.questions[3]!.id] = 2;
+
+    const session = buildAssessmentDraftSessionSnapshot({
+      assessmentVersion: assessmentDefinition.version,
+      answers,
+    });
+    const resumedSnapshot = getAssessmentFlowSnapshot({
+      assessmentVersion: session.assessmentVersion,
+      answers: session.answers,
+    });
+
+    expect(session.progress.answeredCount).toBe(3);
+    expect(session.progress.currentQuestionId).toBe(
+      assessmentDefinition.questions[2]!.id,
+    );
+    expect(resumedSnapshot.currentQuestion?.id).toBe(
+      assessmentDefinition.questions[2]!.id,
+    );
+  });
+
+  it("resumes on the final question when a hydrated server draft is complete", () => {
+    const answers = createEmptyAnswerMap();
+
+    for (const question of assessmentDefinition.questions) {
+      answers[question.id] = 3;
+    }
+
+    const session = buildAssessmentDraftSessionSnapshot({
+      assessmentVersion: assessmentDefinition.version,
+      answers,
+    });
+    const resumedSnapshot = getAssessmentFlowSnapshot({
+      assessmentVersion: session.assessmentVersion,
+      answers: session.answers,
+    });
+
+    expect(session.progress.isComplete).toBe(true);
+    expect(session.progress.currentQuestionId).toBe(
+      assessmentDefinition.questions.at(-1)?.id,
+    );
+    expect(resumedSnapshot.currentQuestion?.id).toBe(
       assessmentDefinition.questions.at(-1)?.id,
     );
   });

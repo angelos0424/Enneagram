@@ -4,6 +4,8 @@ import type {
   AssessmentAnswer,
   AssessmentAnswerMap,
   AssessmentDraft,
+  AssessmentDraftProgress,
+  AssessmentDraftSessionSnapshot,
   AssessmentProgress,
 } from "./types";
 
@@ -34,12 +36,62 @@ export function getOrderedQuestions() {
   return orderedQuestions;
 }
 
+export function resolveAssessmentDraftCurrentIndex(
+  answers: AssessmentAnswerMap,
+  currentQuestionId: string | null,
+): number {
+  const currentQuestionIndex =
+    currentQuestionId === null
+      ? -1
+      : orderedQuestions.findIndex((question) => question.id === currentQuestionId);
+
+  if (currentQuestionIndex >= 0) {
+    return currentQuestionIndex;
+  }
+
+  const fallbackDraft: AssessmentDraft = {
+    assessmentVersion: assessmentDefinition.version,
+    answers,
+  };
+
+  return getAssessmentFlowSnapshot(fallbackDraft).currentIndex;
+}
+
 export function toSubmissionAnswers(answers: AssessmentAnswerMap): AssessmentAnswer[] {
   return orderedQuestions.flatMap((question) => {
     const value = answers[question.id];
 
     return value === undefined ? [] : [{ questionId: question.id, value }];
   });
+}
+
+export function buildAssessmentDraftProgress(
+  draft: AssessmentDraft,
+  currentQuestionId: string | null = null,
+): AssessmentDraftProgress {
+  const snapshot = getAssessmentFlowSnapshot(draft);
+  const currentIndex = resolveAssessmentDraftCurrentIndex(
+    draft.answers,
+    currentQuestionId,
+  );
+
+  return {
+    answeredCount: snapshot.answeredCount,
+    totalQuestions: snapshot.totalQuestions,
+    currentQuestionId: orderedQuestions[currentIndex]?.id ?? null,
+    isComplete: snapshot.isComplete,
+  };
+}
+
+export function buildAssessmentDraftSessionSnapshot(
+  draft: AssessmentDraft,
+  currentQuestionId: string | null = null,
+): AssessmentDraftSessionSnapshot {
+  return {
+    assessmentVersion: draft.assessmentVersion,
+    answers: draft.answers,
+    progress: buildAssessmentDraftProgress(draft, currentQuestionId),
+  };
 }
 
 export function getAssessmentFlowSnapshot(

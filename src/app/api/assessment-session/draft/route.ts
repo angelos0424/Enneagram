@@ -7,56 +7,28 @@ import {
   ASSESSMENT_DRAFT_SESSION_COOKIE,
   readAssessmentDraftSessionToken,
 } from "@/domain/assessment/draft-session";
-import type { AssessmentDraftSessionSnapshot } from "@/features/assessment/types";
-
-function toSnapshot(session: {
-  assessmentVersion: string;
-  draftAnswers: AssessmentDraftSessionSnapshot["answers"];
-  draftProgress: AssessmentDraftSessionSnapshot["progress"];
-}): AssessmentDraftSessionSnapshot {
-  return {
-    assessmentVersion: session.assessmentVersion,
-    answers: session.draftAnswers,
-    progress: session.draftProgress,
-  };
-}
 
 export async function PATCH(request: Request) {
   try {
-    const payload = assessmentDraftSessionUpdateSchema.parse(await request.json());
+    const payload = await request.json();
+    const sessionUpdate = assessmentDraftSessionUpdateSchema.parse(payload);
     const cookieStore = await cookies();
     const sessionToken = readAssessmentDraftSessionToken(
       cookieStore.get(ASSESSMENT_DRAFT_SESSION_COOKIE.name)?.value,
     );
 
     if (!sessionToken) {
-      return Response.json(
-        {
-          error: {
-            code: "ASSESSMENT_SESSION_NOT_FOUND",
-            message: "No anonymous assessment draft session was found.",
-          },
-        },
-        { status: 404 },
-      );
+      return buildMissingSessionResponse();
     }
 
     const repository = new DrizzleAssessmentDraftSessionRepository();
     const existingSession = await repository.findBySessionToken(sessionToken);
 
     if (!existingSession) {
-      return Response.json(
-        {
-          error: {
-            code: "ASSESSMENT_SESSION_NOT_FOUND",
-            message: "No anonymous assessment draft session was found.",
-          },
-        },
-        { status: 404 },
-      );
+      return buildMissingSessionResponse();
     }
 
-    if (payload.assessmentVersion !== existingSession.assessmentVersion) {
+    if (existingSession.assessmentVersion !== sessionUpdate.assessmentVersion) {
       return Response.json(
         {
           error: {
@@ -70,26 +42,18 @@ export async function PATCH(request: Request) {
     }
 
     const updatedSession = await repository.updateDraftSession(sessionToken, {
-      answers: payload.answers,
-      progress: payload.progress,
+      answers: sessionUpdate.answers,
+      progress: sessionUpdate.progress,
       updatedAt: new Date(),
     });
 
     if (!updatedSession) {
-      return Response.json(
-        {
-          error: {
-            code: "ASSESSMENT_SESSION_NOT_FOUND",
-            message: "No anonymous assessment draft session was found.",
-          },
-        },
-        { status: 404 },
-      );
+      return buildMissingSessionResponse();
     }
 
     return Response.json(
       {
-        session: toSnapshot(updatedSession),
+        session: sessionUpdate,
       },
       { status: 200 },
     );
@@ -99,7 +63,7 @@ export async function PATCH(request: Request) {
         {
           error: {
             code: "INVALID_PAYLOAD_SHAPE",
-            message: "Request body must match the assessment draft update schema.",
+            message: "Assessment draft update payload is invalid.",
           },
         },
         { status: 400 },
@@ -108,4 +72,16 @@ export async function PATCH(request: Request) {
 
     throw error;
   }
+}
+
+function buildMissingSessionResponse() {
+  return Response.json(
+    {
+      error: {
+        code: "ASSESSMENT_SESSION_NOT_FOUND",
+        message: "No anonymous assessment draft session was found.",
+      },
+    },
+    { status: 404 },
+  );
 }

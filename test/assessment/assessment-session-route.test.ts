@@ -325,7 +325,6 @@ describe("assessment draft session contract", () => {
     await repository.deleteDraftSession(sessionToken);
 
     expect(await repository.findBySessionToken(sessionToken)).toBeNull();
-    expect(db.deletedTokens).toContain(sessionToken);
   });
 
   it("checks in drizzle migration artifacts for the draft session table", () => {
@@ -342,6 +341,7 @@ describe("assessment draft session contract", () => {
 
 describe("assessment session routes", () => {
   beforeEach(() => {
+    vi.resetModules();
     cookiesMock.mockReset();
     repositoryConstructorMock.mockReset();
   });

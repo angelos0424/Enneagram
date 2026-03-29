@@ -1,56 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { likertOptions } from "@/content/assessments/ko/v1";
 
-import { assessmentDefinition, likertOptions } from "@/content/assessments/ko/v1";
-
-import {
-  buildAssessmentDraft,
-  getAssessmentFlowSnapshot,
-  getOrderedQuestions,
-} from "./assessment-flow";
-import type { AssessmentAnswerValue } from "./types";
+import { getAssessmentFlowSnapshot, getOrderedQuestions } from "./assessment-flow";
+import { useAssessmentDraft } from "./use-assessment-draft";
 
 const orderedQuestions = getOrderedQuestions();
 
 export function AssessmentExperience() {
-  const [draft, setDraft] = useState(() => buildAssessmentDraft());
-  const [currentIndex, setCurrentIndex] = useState(0);
-
+  const {
+    currentIndex,
+    draft,
+    errorMessage,
+    isHydrating,
+    isSaving,
+    moveToNextQuestion,
+    moveToPreviousQuestion,
+    selectAnswer,
+  } = useAssessmentDraft();
   const snapshot = getAssessmentFlowSnapshot(draft);
+
   const activeIndex = Math.min(currentIndex, orderedQuestions.length - 1);
   const question = orderedQuestions[activeIndex] ?? null;
   const selectedValue = question ? draft.answers[question.id] : undefined;
-
-  function handleAnswerSelect(value: AssessmentAnswerValue) {
-    if (!question) {
-      return;
-    }
-
-    setDraft((currentDraft) => ({
-      ...currentDraft,
-      answers: {
-        ...currentDraft.answers,
-        [question.id]: value,
-      },
-    }));
-
-    if (activeIndex < orderedQuestions.length - 1) {
-      setCurrentIndex(activeIndex + 1);
-    }
-  }
-
-  function moveToPreviousQuestion() {
-    setCurrentIndex((index) => Math.max(0, index - 1));
-  }
-
-  function moveToNextQuestion() {
-    if (!question || selectedValue === undefined) {
-      return;
-    }
-
-    setCurrentIndex((index) => Math.min(orderedQuestions.length - 1, index + 1));
-  }
+  const statusMessage = isHydrating
+    ? "이전 응답을 불러오는 중..."
+    : isSaving
+      ? "응답을 서버에 저장하는 중..."
+      : "응답이 서버에 임시 저장되고 있어요.";
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_42%),linear-gradient(180deg,_#fcfbf7_0%,_#f4efe2_100%)] px-4 py-6 text-stone-950">
@@ -94,6 +71,18 @@ export function AssessmentExperience() {
           >
             {snapshot.progressLabel}
           </progress>
+          <p
+            className="mt-3 text-xs text-stone-300"
+            role="status"
+            aria-live="polite"
+          >
+            {statusMessage}
+          </p>
+          {errorMessage ? (
+            <p className="mt-2 text-xs text-rose-300" role="alert">
+              {errorMessage}
+            </p>
+          ) : null}
         </section>
 
         <section className="flex flex-1 flex-col rounded-[2rem] border border-stone-950/10 bg-white p-5 shadow-[0_18px_50px_rgba(120,53,15,0.1)]">
@@ -119,12 +108,13 @@ export function AssessmentExperience() {
                 <button
                   key={option.value}
                   type="button"
-                  onClick={() => handleAnswerSelect(option.value)}
+                  onClick={() => selectAnswer(option.value)}
+                  disabled={isHydrating || isSaving}
                   className={`flex w-full items-center gap-4 rounded-[1.6rem] border px-4 py-4 text-left transition ${
                     isSelected
                       ? "border-amber-500 bg-amber-50 text-stone-950 shadow-[0_10px_30px_rgba(245,158,11,0.18)]"
                       : "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-white"
-                  }`}
+                  } disabled:cursor-wait disabled:opacity-60`}
                   aria-pressed={isSelected}
                 >
                   <span
@@ -146,7 +136,7 @@ export function AssessmentExperience() {
             <button
               type="button"
               onClick={moveToPreviousQuestion}
-              disabled={activeIndex === 0}
+              disabled={activeIndex === 0 || isHydrating || isSaving}
               className="rounded-full border border-stone-300 px-4 py-3 text-sm font-medium text-stone-700 transition disabled:cursor-not-allowed disabled:border-stone-200 disabled:text-stone-400"
             >
               이전 문항
@@ -154,7 +144,12 @@ export function AssessmentExperience() {
             <button
               type="button"
               onClick={moveToNextQuestion}
-              disabled={activeIndex === orderedQuestions.length - 1 || selectedValue === undefined}
+              disabled={
+                activeIndex === orderedQuestions.length - 1 ||
+                selectedValue === undefined ||
+                isHydrating ||
+                isSaving
+              }
               className="rounded-full bg-stone-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-300"
             >
               다음 문항
@@ -169,7 +164,7 @@ export function AssessmentExperience() {
             </div>
             <button
               type="button"
-              disabled={!snapshot.canSubmit}
+              disabled={!snapshot.canSubmit || isHydrating || isSaving}
               className="mt-4 flex w-full items-center justify-center rounded-full bg-amber-500 px-5 py-4 text-base font-semibold text-stone-950 shadow-[0_16px_40px_rgba(245,158,11,0.28)] transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-500 disabled:shadow-none"
             >
               결과 만들기
