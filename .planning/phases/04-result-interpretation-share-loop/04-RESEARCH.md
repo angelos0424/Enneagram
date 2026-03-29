@@ -1,135 +1,155 @@
 # Phase 4: Result Interpretation & Share Loop - Research
 
 **Researched:** 2026-03-29
-**Domain:** Immutable public result presentation, mobile-first interpretation UX, and sharing/re-entry flows
+**Domain:** Immutable public-result rendering, mobile-first interpretation UI, and share-loop actions
 **Confidence:** HIGH
 
 ## User Constraints
 
-No phase-specific `CONTEXT.md` exists for Phase 4. Planning should treat the roadmap, requirements, completed Phase 2/3 verification artifacts, and the current public-result implementation as the locked inputs.
+No phase-specific `CONTEXT.md` exists for Phase 4. Planning should treat the roadmap, requirements, completed Phase 2/3 artifacts, and current codebase as the active constraints.
 
 ### Locked Inputs
-- Goal: 사용자가 결과를 이해하기 쉬운 결과 중심 레이아웃으로 확인하고, 공유받은 사용자도 상단 CTA를 통해 새 검사를 즉시 시작할 수 있어야 한다.
+- Goal: 사용자가 결과를 이해하기 쉬운 결과 중심 레이아웃으로 확인하고, 공유받은 사용자도 상단 CTA를 통해 새 검사를 즉시 시작할 수 있다.
 - Depends on: Phase 3
 - Requirements: `RSLT-01`, `RSLT-02`, `RSLT-03`, `RSLT-04`, `RSLT-05`, `RSLT-06`, `SHAR-02`, `SHAR-04`, `SHAR-05`, `SHAR-07`
 - Success criteria:
-  - 결과 페이지 상단에서 주 유형을 먼저 보여줘야 한다.
-  - 같은 화면에서 날개, 점수 분포, 성장/스트레스 방향, 해설 카드, 비진단적 유의사항을 읽을 수 있어야 한다.
-  - 결과 페이지에서 공유 링크 복사 또는 모바일 공유가 가능해야 한다.
-  - 공유 결과 페이지 상단에는 항상 `검사해보기` CTA가 보여야 하며, 새 익명 검사 흐름으로 이어져야 한다.
-  - 공유받은 사용자에게 다음 행동을 제안하는 추천 섹션이 있어야 한다.
+  - 결과 페이지 상단에서 주 유형을 먼저 확인할 수 있어야 한다.
+  - 같은 화면에서 날개, 점수 분포, 성장/스트레스 방향, 해설 카드를 읽을 수 있어야 한다.
+  - 해석 유의사항과 비진단적 성격이 분명해야 한다.
+  - 결과 페이지에서 공유 동작이 가능해야 한다.
+  - 공유 결과 페이지 상단 CTA로 새 익명 검사 흐름에 진입할 수 있어야 한다.
 
 ### Project Constraints
-- 결과 페이지는 Phase 2의 immutable snapshot rendering 원칙을 깨면 안 된다.
-- 해설은 저장된 `copyVersion`을 기준으로 읽어야 한다.
-- 모바일 우선이어야 하며, Phase 3의 익명 검사 진입 흐름(`/`)과 자연스럽게 연결되어야 한다.
-- 공유 페이지는 여전히 로그인 없이 접근 가능하고 privacy defaults(`noindex`, `no-referrer`)를 유지해야 한다.
+- 결과는 Phase 2처럼 저장된 스냅샷으로만 렌더링되어야 한다. Phase 4에서도 재채점은 금지다.
+- 결과 페이지는 모바일 우선이어야 한다.
+- 공개 결과 페이지의 `noindex` / `no-referrer` 기본값을 유지해야 한다.
+- 익명 검사 진입점은 Phase 3의 `/` 흐름을 재사용해야 한다.
+- 새 인프라를 도입하지 않고 현재 `Next.js App Router + React + TypeScript + Tailwind + Drizzle` 구조 안에서 해결해야 한다.
 
 ### Out of Scope
-- OG metadata / channel-specific preview optimization (`OPER-04`, `SHAR-08`, `SHAR-09`)
-- 관리자 통계 수집 (`STAT-*`)
-- 계정/히스토리
+- 계정 기반 결과 저장/히스토리
+- OG 이미지나 채널별 미리보기 최적화
+- 관리자 통계
+- 새로운 점수 계산 로직
 
-## Current State
+## What Exists Today
 
-### What Exists
-- `src/app/results/[publicId]/page.tsx`
-  - persisted snapshot을 `publicId`로 조회하고 `copyVersion`으로 interpretation copy를 resolve한다.
-- `src/app/results/[publicId]/result-snapshot-view.tsx`
-  - 최소한의 텍스트 렌더링만 제공한다.
-- `src/content/type-copy/ko/v1.ts`
-  - 각 유형별 `title`, `summary`, `disclaimerTone`만 가진 얇은 copy contract다.
-- Phase 3 submit flow
-  - 모바일 검사 제출이 `/results/{publicId}`로 redirect되므로, Phase 4는 실제 유저가 처음 보는 페이지를 다듬는 작업이 된다.
+### Implemented
+- [src/app/results/[publicId]/page.tsx](/home/ubuntu/Project/Enneagram/src/app/results/%5BpublicId%5D/page.tsx) loads immutable snapshots by `publicId`.
+- [src/app/results/[publicId]/result-snapshot-view.tsx](/home/ubuntu/Project/Enneagram/src/app/results/%5BpublicId%5D/result-snapshot-view.tsx) renders a minimal public result page with title, summary, score list, and nearby types.
+- [src/domain/assessment/result-copy.ts](/home/ubuntu/Project/Enneagram/src/domain/assessment/result-copy.ts) resolves copy by stored `copyVersion`.
+- [src/content/type-copy/ko/v1.ts](/home/ubuntu/Project/Enneagram/src/content/type-copy/ko/v1.ts) has only `title`, `summary`, and `disclaimerTone`.
+- Phase 3 already guarantees submit redirects and fresh restart through `/`.
 
-### Gaps
-- 현재 결과 페이지는 result-first hierarchy가 없고, 모바일 레이아웃/시각 위계가 거의 없다.
-- `TypeCopyEntry`가 너무 얇아서 설명 카드, 비진단적 안내, 추천 섹션 문구를 지원하지 못한다.
-- 상단 `검사해보기` CTA, share actions, recommendation section이 전혀 없다.
-- 브라우저 레벨에서 “공유 링크로 들어와서 CTA로 새 검사를 시작하는 루프”가 검증되지 않았다.
+### Missing For Phase 4
+- Result-first mobile layout hierarchy. Current page is raw semantic output, not an intentional product UI.
+- Rich interpretation content contract. Current copy entries are too thin for cards, disclaimers, or recommendations.
+- A top-level `검사해보기` CTA on public result pages.
+- Share actions (`copy link`, native share fallback).
+- Recommendation section for next actions after reading a shared result.
+- Browser verification for share-loop and CTA restart behavior.
 
-## Key Risks
+## Missing Surface By Requirement
 
-### 1. Immutable snapshot boundary drift
-Result page를 풍부하게 만들면서 score를 다시 계산하거나 현재 콘텐츠에서 파생 계산을 새로 하면 Phase 2 계약을 깨기 쉽다. Plan은 “저장된 snapshot + 저장된 copyVersion”에서 표현만 확장하는 방향이어야 한다.
-
-### 2. Share UI needs a client island
-현재 결과 페이지는 서버 렌더링만으로 충분했지만, `navigator.share`와 clipboard fallback은 클라이언트 컴포넌트가 필요하다. Plan은 share controls만 분리된 client island로 두고, 나머지 결과 본문은 server-driven view model을 유지하는 편이 안전하다.
-
-### 3. Result copy contract is underspecified
-`title`/`summary`만으로는 해설 카드, 주의사항, recommendation copy를 표현하기 어렵다. Phase 4 초반에 versioned copy shape를 확장하지 않으면 뒤 계획이 UI 텍스트를 하드코딩하게 된다.
-
-### 4. Browser verification can become flaky if it depends on remote APIs
-Web Share API는 데스크톱 브라우저/automation에서 일관되지 않을 수 있다. Clipboard fallback and CTA navigation should be the hard requirements for automation, while native share sheet appearance stays manual-only.
+| Requirement | Gap in current code | Likely files |
+|-------------|---------------------|--------------|
+| `RSLT-01` | No strong hero/top section for primary type | `src/app/results/[publicId]/result-snapshot-view.tsx`, `src/app/globals.css` |
+| `RSLT-02` | Wing is shown as a raw number only, not interpreted in-layout | `src/app/results/[publicId]/page.tsx`, `src/app/results/[publicId]/result-snapshot-view.tsx` |
+| `RSLT-03` | Score distribution is an unstyled list, not a readable visual | `src/app/results/[publicId]/result-snapshot-view.tsx`, tests |
+| `RSLT-04` | Growth/stress are shown as raw numbers only | `src/app/results/[publicId]/page.tsx`, `src/content/type-copy/ko/v1.ts` |
+| `RSLT-05` | No explanation cards beyond a title and summary | `src/content/type-copy/ko/v1.ts`, `src/domain/assessment/types.ts`, `src/app/results/[publicId]/result-snapshot-view.tsx` |
+| `RSLT-06` | No visible interpretation disclaimer block | `src/content/type-copy/ko/v1.ts`, `src/app/results/[publicId]/result-snapshot-view.tsx` |
+| `SHAR-02` | No share button, clipboard flow, or native share hook | new `src/features/result-sharing/*` or route-local client component |
+| `SHAR-04` | No top CTA on shared/public result page | `src/app/results/[publicId]/result-snapshot-view.tsx` |
+| `SHAR-05` | No explicit flow from CTA to fresh assessment start | `src/app/results/[publicId]/result-snapshot-view.tsx`, browser coverage |
+| `SHAR-07` | No recommendation section | `src/content/type-copy/ko/v1.ts`, `src/app/results/[publicId]/result-snapshot-view.tsx` |
 
 ## Recommended Decomposition
 
-### Plan 04-01: Expand immutable result copy + view-model contract
-Purpose:
-- versioned copy contract를 해설/유의사항/label metadata까지 확장한다.
-- public result page view model을 Phase 4 UI에 필요한 이름 있는 필드로 정리한다.
+### Plan 04-01: Expand the immutable result-copy and view-model contract
+- Add richer type-copy fields for cards, disclaimer text, direction labels, and recommendation items.
+- Keep everything versioned under `copyVersion` so old links remain stable.
+- Extend the public result page mapping and regression tests before visual redesign.
 
-Why first:
-- Later UI and share/recommendation sections need stable content primitives.
-- This keeps Phase 4 from scattering text literals across TSX.
+### Plan 04-02: Build the mobile-first result-first public page
+- Redesign `result-snapshot-view.tsx` into a deliberate, mobile-safe hierarchy.
+- Put the primary type hero first, then key stats, chart/distribution, interpretation cards, and disclaimer.
+- Keep the page server-rendered from stored snapshot data only.
 
-### Plan 04-02: Implement result-first mobile layout + top CTA restart loop
-Purpose:
-- primary type hero를 상단에 배치하고, 같은 화면에서 wing/growth/stress/score distribution을 읽게 한다.
-- 항상 보이는 `검사해보기` CTA로 `/`로 돌아가 새 익명 검사 진입을 가능하게 한다.
+### Plan 04-03: Add share actions without breaking the immutable public route
+- Introduce a small client boundary for `copy link` and `navigator.share` where available.
+- Prefer graceful fallback to clipboard when native share is unavailable.
+- Keep this boundary isolated so the page remains mostly server-rendered.
 
-Why second:
-- Core Phase 4 value is the result-reading experience itself.
-- CTA loop is required before share polish because shared visitors need a clean next step immediately.
+### Plan 04-04: Complete the public CTA loop and recommendation finish
+- Add a top `검사해보기` CTA with an explicit fresh-start boundary before returning visitors to `/`.
+- Add a recommendation/next-action section tuned for shared-result visitors.
+- Prove the CTA loop and share/result page behavior in Playwright.
 
-### Plan 04-03: Add share actions + recommendation section + browser verification
-Purpose:
-- clipboard copy + Web Share fallback을 제공한다.
-- nearby types and restart/share prompts를 활용한 recommendation section을 추가한다.
-- 브라우저에서 shared-result page behavior를 검증한다.
+## Architecture Guidance
 
-Why third:
-- Depends on the richer layout and stable copy/view model.
-- Lets the final plan focus on user loop closure and coverage.
+### Pattern 1: Server page + small client islands
+- Keep [src/app/results/[publicId]/page.tsx](/home/ubuntu/Project/Enneagram/src/app/results/%5BpublicId%5D/page.tsx) as the server entry.
+- Add client-only islands only for share buttons or browser-only APIs.
+- Do not convert the whole result page to a client component.
 
-## Verification Strategy
+### Pattern 2: Rich copy stays versioned content, not inline JSX
+- Expand [src/domain/assessment/types.ts](/home/ubuntu/Project/Enneagram/src/domain/assessment/types.ts) and [src/content/type-copy/ko/v1.ts](/home/ubuntu/Project/Enneagram/src/content/type-copy/ko/v1.ts).
+- Avoid hardcoding interpretation prose in the page component. Phase 2 already established `copyVersion` as the drift boundary.
+
+### Pattern 3: UI uses derived labels, not rescoring
+- The public page should derive human labels for wing/growth/stress from stored type ids and copy content.
+- Do not import scoring logic into the result route or result components.
+
+### Pattern 4: Share behavior is additive, not canonical
+- Sharing should read from the current public URL and page metadata.
+- It should not mint tokens, mutate results, or change persistence behavior.
+
+## Risks And Mitigations
+
+### Risk: Expanding copy contract breaks old snapshot rendering
+- Mitigation: add optional-safe fields with a single versioned source of truth, then update page tests against stored records.
+
+### Risk: A fully client-side result page weakens immutable SSR behavior
+- Mitigation: isolate browser-only share interactions into a small client component and keep page data loading server-side.
+
+### Risk: Recommendation content drifts away from type copy
+- Mitigation: store recommendation items in the same versioned copy module as the rest of the interpretation text.
+
+### Risk: Mobile UI becomes visually rich but hard to scan
+- Mitigation: plan layout and share actions separately from copy contract so the layout plan can focus on hierarchy, spacing, and tap targets.
+
+## Validation Architecture
+
+Phase 4 needs both server-render regression tests and browser coverage.
 
 ### Automated
-- Vitest:
-  - extend `test/assessment/public-result.test.ts` for richer view-model/copy contract assertions
-  - add share-control tests if a dedicated client utility/component appears
-- Type/build:
-  - `npm run typecheck`
-  - `npm run build`
-- Playwright:
-  - keep `test/e2e/mobile-assessment.spec.ts` for submit-to-result landing assertions
-  - add `test/e2e/public-result.spec.ts` for direct public-result page behavior, top CTA loop, and copy/share fallback feedback
+- `test/assessment/public-result.test.ts`
+  - extend for richer view model, disclaimer content, CTA presence, and recommendation content
+- `test/assessment/result-contract.test.ts`
+  - extend for richer copy/type contract invariants if type shapes change
+- `test/e2e/mobile-result-page.spec.ts` or expand `test/e2e/mobile-assessment.spec.ts`
+  - verify public result hero, CTA to `/`, and share/copy affordance behavior on a mobile viewport
+- `npm run typecheck`
+- `npm run build`
 
-### Manual-only
-- Real mobile share sheet invocation with `navigator.share`
-- Perceived content hierarchy/readability on a phone screen
+### Manual
+- confirm result page readability and scrolling rhythm on a narrow viewport
+- confirm native share fallback behavior in environments without `navigator.share`
 
-## Recommended File Targets
+## Recommended Files To Change
 
-### Likely modified
 - `src/domain/assessment/types.ts`
 - `src/content/type-copy/ko/v1.ts`
 - `src/domain/assessment/result-copy.ts`
 - `src/app/results/[publicId]/page.tsx`
 - `src/app/results/[publicId]/result-snapshot-view.tsx`
+- `src/app/results/[publicId]/snapshot-metadata.ts` if share text/title needs refinement
+- `src/app/globals.css`
 - `test/assessment/public-result.test.ts`
-- `test/e2e/mobile-assessment.spec.ts`
+- `test/assessment/result-contract.test.ts`
+- `test/e2e/mobile-assessment.spec.ts` or a new result-page-specific e2e spec
 
-### Likely new
-- `src/app/results/[publicId]/public-result-share-controls.tsx`
-- `src/app/results/[publicId]/result-recommendations.tsx`
-- `test/e2e/public-result.spec.ts`
+## Primary Recommendation
 
-## Recommendation
-
-Plan Phase 4 as 3 executable plans across 3 waves:
-1. copy/view-model foundation
-2. result-first layout + top CTA
-3. share/recommendation loop + browser verification
-
-This keeps immutable snapshot rendering intact while delivering the user-facing value in the order users actually experience it.
+Plan Phase 4 as four executable steps: first stabilize the versioned interpretation content contract, then redesign the public result page into a result-first mobile layout, then layer in share actions, and finally finish the CTA loop and recommendation section with explicit fresh-start semantics plus mobile browser verification. That sequencing preserves the immutable snapshot boundary from Phase 2 while avoiding a misleading bare `/` link in a product that now restores anonymous drafts by default.
