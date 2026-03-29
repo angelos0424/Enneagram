@@ -112,7 +112,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Assessment Contract & Scoring Core | 2/4 | In Progress | 01-01, 01-02 |
 | 2. Persistent Result Snapshots | 2/2 | Complete | 2026-03-29 |
-| 3. Mobile Assessment Flow | 1/4 | In Progress | 03-01 |
+| 3. Mobile Assessment Flow | 3/4 | In Progress | 03-01, 03-02, 03-03 |
 | 4. Result Interpretation & Share Loop | 0/TBD | Not started | - |
 | 5. Aggregate Admin Stats | 0/TBD | Not started | - |
 | 6. Coolify Launch Hardening | 0/TBD | Not started | - |
