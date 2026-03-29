@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
+import { assessmentDefinition } from "@/content/assessments/ko/v1";
+
 async function gotoAssessment(page: Page) {
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
@@ -73,7 +75,40 @@ test.describe("mobile assessment flow", () => {
     await expect(page.getByText("5점 선택")).toBeVisible();
   });
 
-  test("redirects to the saved public result page after submit", async () => {
-    test.fixme();
+  test("redirects to the saved public result page after submit", async ({ page }) => {
+    await gotoAssessment(page);
+
+    for (let index = 0; index < assessmentDefinition.questions.length; index += 1) {
+      const saveDraftResponse = page.waitForResponse(
+        (response) =>
+          response.url().includes("/api/assessment-session/draft") &&
+          response.request().method() === "PATCH" &&
+          response.ok(),
+      );
+      const strongestAgreeButton = page.getByRole("button", {
+        name: /5\s*매우 잘 맞는다/,
+      });
+
+      await expect(strongestAgreeButton).toBeEnabled();
+      await strongestAgreeButton.click();
+      await saveDraftResponse;
+    }
+
+    const submitResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/assessments/score") &&
+        response.request().method() === "POST" &&
+        response.ok(),
+    );
+
+    await expect(page.getByRole("button", { name: "결과 만들기" })).toBeEnabled();
+    await page.getByRole("button", { name: "결과 만들기" }).click();
+    await submitResponse;
+    await page.waitForURL(/\/results\/[A-Za-z]+$/);
+    await expect(page).toHaveURL(/\/results\/[A-Za-z]+$/);
+
+    await gotoAssessment(page);
+    await expect(page.getByText("0 / 18", { exact: true }).last()).toBeVisible();
+    await expect(page.getByRole("button", { name: "결과 만들기" })).toBeDisabled();
   });
 });

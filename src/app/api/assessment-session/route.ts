@@ -57,7 +57,7 @@ async function readCanonicalDraft() {
   };
 }
 
-export async function GET(_request: Request) {
+export async function GET() {
   const draft = await readCanonicalDraft();
 
   if (!draft) {

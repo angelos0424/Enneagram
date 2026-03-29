@@ -3,6 +3,7 @@
 import { likertOptions } from "@/content/assessments/ko/v1";
 
 import { getAssessmentFlowSnapshot, getOrderedQuestions } from "./assessment-flow";
+import { getSubmitAssessmentRedirectHref } from "./submit-assessment";
 import { useAssessmentDraft } from "./use-assessment-draft";
 
 const orderedQuestions = getOrderedQuestions();
@@ -14,9 +15,12 @@ export function AssessmentExperience() {
     errorMessage,
     isHydrating,
     isSaving,
+    isSubmitting,
     moveToNextQuestion,
     moveToPreviousQuestion,
     selectAnswer,
+    submitCurrentDraft,
+    submitErrorMessage,
   } = useAssessmentDraft();
   const snapshot = getAssessmentFlowSnapshot(draft);
 
@@ -27,7 +31,19 @@ export function AssessmentExperience() {
     ? "이전 응답을 불러오는 중..."
     : isSaving
       ? "응답을 서버에 저장하는 중..."
+      : isSubmitting
+        ? "결과를 만드는 중..."
       : "응답이 서버에 임시 저장되고 있어요.";
+
+  async function handleSubmit() {
+    const payload = await submitCurrentDraft();
+
+    if (!payload) {
+      return;
+    }
+
+    window.location.assign(getSubmitAssessmentRedirectHref(payload));
+  }
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_42%),linear-gradient(180deg,_#fcfbf7_0%,_#f4efe2_100%)] px-4 py-6 text-stone-950">
@@ -83,6 +99,11 @@ export function AssessmentExperience() {
               {errorMessage}
             </p>
           ) : null}
+          {submitErrorMessage ? (
+            <p className="mt-2 text-xs text-rose-300" role="alert">
+              {submitErrorMessage}
+            </p>
+          ) : null}
         </section>
 
         <section className="flex flex-1 flex-col rounded-[2rem] border border-stone-950/10 bg-white p-5 shadow-[0_18px_50px_rgba(120,53,15,0.1)]">
@@ -109,7 +130,7 @@ export function AssessmentExperience() {
                   key={option.value}
                   type="button"
                   onClick={() => selectAnswer(option.value)}
-                  disabled={isHydrating || isSaving}
+                  disabled={isHydrating || isSaving || isSubmitting}
                   className={`flex w-full items-center gap-4 rounded-[1.6rem] border px-4 py-4 text-left transition ${
                     isSelected
                       ? "border-amber-500 bg-amber-50 text-stone-950 shadow-[0_10px_30px_rgba(245,158,11,0.18)]"
@@ -136,7 +157,7 @@ export function AssessmentExperience() {
             <button
               type="button"
               onClick={moveToPreviousQuestion}
-              disabled={activeIndex === 0 || isHydrating || isSaving}
+              disabled={activeIndex === 0 || isHydrating || isSaving || isSubmitting}
               className="rounded-full border border-stone-300 px-4 py-3 text-sm font-medium text-stone-700 transition disabled:cursor-not-allowed disabled:border-stone-200 disabled:text-stone-400"
             >
               이전 문항
@@ -148,7 +169,8 @@ export function AssessmentExperience() {
                 activeIndex === orderedQuestions.length - 1 ||
                 selectedValue === undefined ||
                 isHydrating ||
-                isSaving
+                isSaving ||
+                isSubmitting
               }
               className="rounded-full bg-stone-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-300"
             >
@@ -159,15 +181,18 @@ export function AssessmentExperience() {
           <div className="mt-auto pt-6">
             <div className="rounded-[1.6rem] bg-stone-100 p-4 text-sm leading-6 text-stone-700">
               {snapshot.canSubmit
-                ? "모든 문항에 답했어요. 다음 단계에서 결과 생성을 연결합니다."
+                ? "모든 문항에 답했어요. 지금 바로 결과를 만들 수 있어요."
                 : "모든 문항에 답해야 결과 만들기 버튼이 활성화됩니다."}
             </div>
             <button
               type="button"
-              disabled={!snapshot.canSubmit || isHydrating || isSaving}
+              onClick={() => {
+                void handleSubmit();
+              }}
+              disabled={!snapshot.canSubmit || isHydrating || isSaving || isSubmitting}
               className="mt-4 flex w-full items-center justify-center rounded-full bg-amber-500 px-5 py-4 text-base font-semibold text-stone-950 shadow-[0_16px_40px_rgba(245,158,11,0.28)] transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-500 disabled:shadow-none"
             >
-              결과 만들기
+              {isSubmitting ? "결과 만드는 중..." : "결과 만들기"}
             </button>
           </div>
         </section>

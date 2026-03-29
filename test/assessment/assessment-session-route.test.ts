@@ -424,9 +424,7 @@ describe("assessment session routes", () => {
         }),
       }),
     );
-    const getResponse = await routeModule.GET(
-      new Request("http://localhost/api/assessment-session"),
-    );
+    const getResponse = await routeModule.GET();
 
     await expect(postResponse.json()).resolves.toEqual({
       session: snapshot,
@@ -554,7 +552,7 @@ describe("assessment session routes", () => {
     repositoryConstructorMock.mockImplementation(() => repository);
 
     const { GET } = await import("@/app/api/assessment-session/route");
-    const response = await GET(new Request("http://localhost/api/assessment-session"));
+    const response = await GET();
 
     expect(response.status).toBe(404);
     await expect(response.json()).resolves.toEqual({

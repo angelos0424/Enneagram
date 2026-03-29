@@ -9,6 +9,7 @@ import {
   buildAssessmentDraftSessionSnapshot,
   resolveAssessmentDraftCurrentIndex,
 } from "./assessment-flow";
+import { submitAssessment, type SubmitAssessmentResponse } from "./submit-assessment";
 import type {
   AssessmentAnswerValue,
   AssessmentDraft,
@@ -24,7 +25,9 @@ export function useAssessmentDraft() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHydrating, setIsHydrating] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(null);
 
   const latestSaveRequestRef = useRef(0);
 
@@ -87,6 +90,7 @@ export function useAssessmentDraft() {
     setCurrentIndex(nextIndex);
     setIsSaving(true);
     setErrorMessage(null);
+    setSubmitErrorMessage(null);
 
     try {
       const response = await fetch("/api/assessment-session/draft", {
@@ -121,6 +125,27 @@ export function useAssessmentDraft() {
       if (requestId === latestSaveRequestRef.current) {
         setIsSaving(false);
       }
+    }
+  }
+
+  async function submitCurrentDraft(): Promise<SubmitAssessmentResponse | null> {
+    setIsSubmitting(true);
+    setSubmitErrorMessage(null);
+
+    try {
+      const payload = await submitAssessment(draft);
+
+      return payload;
+    } catch (error) {
+      setSubmitErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "결과를 만들지 못했어요. 잠시 후 다시 시도해 주세요.",
+      );
+
+      return null;
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -181,10 +206,13 @@ export function useAssessmentDraft() {
     draft,
     isHydrating,
     isSaving,
+    isSubmitting,
     errorMessage,
+    submitErrorMessage,
     moveToNextQuestion,
     moveToPreviousQuestion,
     selectAnswer,
+    submitCurrentDraft,
   };
 }
 
