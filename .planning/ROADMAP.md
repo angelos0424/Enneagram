@@ -12,7 +12,7 @@
 
 - [ ] **Phase 1: Assessment Contract & Scoring Core** - 버전된 문항과 서버 점수 계산 규칙을 고정한다.
 - [x] **Phase 2: Persistent Result Snapshots** - 저장된 결과 스냅샷과 영구 공유 링크를 제공한다. (completed 2026-03-29)
-- [ ] **Phase 3: Mobile Assessment Flow** - 익명 사용자가 모바일에서 검사를 끝까지 진행하고 제출할 수 있게 한다.
+- [x] **Phase 3: Mobile Assessment Flow** - 익명 사용자가 모바일에서 검사를 끝까지 진행하고 제출할 수 있게 한다. (completed 2026-03-29)
 - [ ] **Phase 4: Result Interpretation & Share Loop** - 결과 이해와 공유받은 사용자의 재검사 유입 루프를 완성한다.
 - [ ] **Phase 5: Aggregate Admin Stats** - 재식별 위험을 억제한 보호된 운영 통계를 제공한다.
 - [ ] **Phase 6: Coolify Launch Hardening** - 배포, 백업, 메타데이터, 운영 복구 기준을 갖춘다.
@@ -64,7 +64,7 @@ Plans:
 - [x] 03-01-PLAN.md — Replace the bootstrap home route with the anonymous mobile assessment shell and progress contract
 - [x] 03-02-PLAN.md — Add mobile browser harness plus canonical cookie and PostgreSQL draft-session boundaries
 - [x] 03-03-PLAN.md — Wire route-backed session bootstrap, draft autosave, and refresh recovery into the assessment flow
-- [ ] 03-04-PLAN.md — Finalize canonical draft sessions on submit and redirect to the persisted public result page
+- [x] 03-04-PLAN.md — Finalize canonical draft sessions on submit and redirect to the persisted public result page
 **UI hint**: yes
 
 ### Phase 4: Result Interpretation & Share Loop
@@ -112,7 +112,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Assessment Contract & Scoring Core | 2/4 | In Progress | 01-01, 01-02 |
 | 2. Persistent Result Snapshots | 2/2 | Complete | 2026-03-29 |
-| 3. Mobile Assessment Flow | 3/4 | In Progress | 03-01, 03-02, 03-03 |
+| 3. Mobile Assessment Flow | 4/4 | Complete | 2026-03-29 |
 | 4. Result Interpretation & Share Loop | 0/TBD | Not started | - |
 | 5. Aggregate Admin Stats | 0/TBD | Not started | - |
 | 6. Coolify Launch Hardening | 0/TBD | Not started | - |
