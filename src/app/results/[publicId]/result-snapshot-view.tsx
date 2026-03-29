@@ -1,5 +1,7 @@
 import React from "react";
 
+import { PublicResultRestartCta } from "./public-result-restart-cta";
+import { ResultRecommendations } from "./result-recommendations";
 import { ResultShareActions } from "@/features/result-sharing/result-share-actions";
 import type {
   EnneagramType,
@@ -68,9 +70,12 @@ export function ResultSnapshotView({
       <div className="mx-auto flex w-full max-w-md flex-col gap-5">
         <header className="overflow-hidden rounded-[2rem] border border-amber-950/10 bg-white shadow-[0_20px_50px_rgba(120,53,15,0.12)]">
           <div className="border-b border-amber-950/10 bg-[linear-gradient(135deg,_rgba(245,158,11,0.16),_rgba(120,53,15,0.04))] px-5 py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-800">
-              공개 결과
-            </p>
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-800">
+                공개 결과
+              </p>
+              <PublicResultRestartCta href="/" />
+            </div>
           </div>
           <div className="flex flex-col gap-5 px-5 py-6">
             <div className="flex items-start justify-between gap-4">
@@ -273,37 +278,7 @@ export function ResultSnapshotView({
           </p>
         </section>
 
-        <section
-          aria-labelledby="recommendation-heading"
-          className="rounded-[2rem] border border-stone-950/10 bg-white px-5 py-5 shadow-[0_18px_45px_rgba(120,53,15,0.08)]"
-        >
-          <div className="mb-4">
-            <h2
-              id="recommendation-heading"
-              className="text-lg font-semibold text-stone-950"
-            >
-              다음 행동 제안
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-stone-600">
-              지금 결과를 읽은 뒤 이어서 살펴보면 좋은 흐름을 정리했어요.
-            </p>
-          </div>
-          <ul className="space-y-3">
-            {snapshot.recommendations.map((recommendation) => (
-              <li
-                key={recommendation.title}
-                className="rounded-[1.4rem] border border-stone-200 bg-stone-50 px-4 py-4"
-              >
-                <p className="text-base font-semibold text-stone-950">
-                  {recommendation.title}
-                </p>
-                <p className="mt-2 text-sm leading-7 text-stone-700">
-                  {recommendation.description}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <ResultRecommendations recommendations={snapshot.recommendations} />
 
         <ResultShareActions
           publicPath={`/results/${snapshot.publicId}`}

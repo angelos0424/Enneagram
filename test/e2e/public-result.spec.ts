@@ -89,4 +89,12 @@ test.describe("public result page", () => {
       )
       .toBe(resultUrl);
   });
+
+  test("returns shared-result visitors to a fresh assessment", async ({ page }) => {
+    await completeAssessmentAndOpenResult(page);
+    await page.getByRole("button", { name: "검사해보기" }).click();
+    await page.waitForURL("/");
+    await expect(page.getByText("0 / 18", { exact: true }).last()).toBeVisible();
+    await expect(page.getByRole("button", { name: "결과 만들기" })).toBeDisabled();
+  });
 });

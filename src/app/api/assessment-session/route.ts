@@ -148,3 +148,17 @@ export async function POST(request: Request) {
     throw error;
   }
 }
+
+export async function DELETE() {
+  const cookieStore = await cookies();
+  const sessionToken = readAssessmentDraftSessionTokenFromCookieStore(cookieStore);
+
+  if (sessionToken) {
+    const repository = new DrizzleAssessmentDraftSessionRepository();
+    await repository.deleteDraftSession(sessionToken);
+  }
+
+  cookieStore.delete(ASSESSMENT_DRAFT_SESSION_COOKIE.name);
+
+  return new Response(null, { status: 204 });
+}

@@ -133,6 +133,7 @@ class FakeAssessmentDraftSessionDb {
 class FakeCookiesStore {
   private readonly values = new Map<string, string>();
   readonly setCalls: Array<{ name: string; value: string; options: object }> = [];
+  readonly deleteCalls: string[] = [];
 
   constructor(seed?: Record<string, string>) {
     Object.entries(seed ?? {}).forEach(([name, value]) => {
@@ -148,6 +149,11 @@ class FakeCookiesStore {
   set(name: string, value: string, options: object) {
     this.values.set(name, value);
     this.setCalls.push({ name, value, options });
+  }
+
+  delete(name: string) {
+    this.values.delete(name);
+    this.deleteCalls.push(name);
   }
 }
 
@@ -433,6 +439,44 @@ describe("assessment session routes", () => {
       session: snapshot,
     });
     expect(cookieStore.setCalls).toHaveLength(0);
+  });
+
+  it("clears the canonical draft session through an explicit delete boundary", async () => {
+    const snapshot = buildDraftSnapshot();
+    const cookieStore = new FakeCookiesStore({
+      [ASSESSMENT_DRAFT_SESSION_COOKIE.name]: "existing-token",
+    });
+    const repository = new FakeDraftSessionRepository(
+      new Map([
+        [
+          "existing-token",
+          {
+            id: "draft-existing-token",
+            sessionToken: "existing-token",
+            assessmentVersion: snapshot.assessmentVersion,
+            draftAnswers: snapshot.answers,
+            draftProgress: snapshot.progress,
+            createdAt: new Date("2026-03-29T12:00:00.000Z"),
+            updatedAt: new Date("2026-03-29T12:00:00.000Z"),
+          },
+        ],
+      ]),
+    );
+
+    cookiesMock.mockResolvedValue(cookieStore);
+    repositoryConstructorMock.mockImplementation(() => repository);
+
+    const { DELETE, GET } = await import("@/app/api/assessment-session/route");
+    const response = await DELETE();
+
+    expect(response.status).toBe(204);
+    expect(cookieStore.deleteCalls).toEqual([ASSESSMENT_DRAFT_SESSION_COOKIE.name]);
+    await expect(GET().then((getResponse) => getResponse.json())).resolves.toEqual({
+      error: {
+        code: "ASSESSMENT_SESSION_NOT_FOUND",
+        message: "No anonymous assessment draft session was found.",
+      },
+    });
   });
 
   it("updates the canonical draft through the draft route", async () => {

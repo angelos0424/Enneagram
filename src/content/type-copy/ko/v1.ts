@@ -43,7 +43,7 @@ function buildTypeCopyEntry(
       {
         title: "다시 검사해보기",
         description: "컨디션이나 맥락이 달라졌다고 느껴진다면 새 응답으로 다시 비교해 볼 수 있다.",
-        href: "/",
+        href: "#restart-cta",
       },
     ],
   };
