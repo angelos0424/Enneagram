@@ -32,9 +32,28 @@ export type NearbyTypeScore = {
   readonly gapFromPrimary: number;
 };
 
+export type TypeCopyDetailCard = {
+  readonly title: string;
+  readonly body: string;
+};
+
+export type TypeCopyDisclaimer = {
+  readonly title: string;
+  readonly body: string;
+};
+
+export type TypeCopyRecommendation = {
+  readonly title: string;
+  readonly description: string;
+  readonly href: string;
+};
+
 export type TypeCopyEntry = {
   readonly typeId: EnneagramType;
   readonly title: string;
   readonly summary: string;
   readonly disclaimerTone: "interpretive";
+  readonly detailCards: readonly TypeCopyDetailCard[];
+  readonly disclaimer: TypeCopyDisclaimer;
+  readonly recommendations: readonly TypeCopyRecommendation[];
 };

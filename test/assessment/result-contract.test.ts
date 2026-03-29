@@ -2,6 +2,7 @@ import { getTableColumns } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 
 import { assessmentDefinition } from "@/content/assessments/ko/v1";
+import { typeCopyDefinition } from "@/content/type-copy/ko/v1";
 import { assessmentResults, type AssessmentResultRecord } from "@/db/schema";
 import type { AssessmentResultRepository } from "@/db/repositories/assessment-result-repository";
 import {
@@ -143,5 +144,26 @@ describe("assessment result persistence contract", () => {
         "nearbyTypes",
       ]),
     );
+  });
+
+  it("every versioned type copy entry includes phase 4 interpretation, disclaimer, and recommendation fields", () => {
+    for (const typeId of Object.keys(typeCopyDefinition.entries)) {
+      const entry =
+        typeCopyDefinition.entries[Number(typeId) as keyof typeof typeCopyDefinition.entries];
+
+      expect(entry.detailCards).toHaveLength(3);
+      expect(entry.detailCards.every((card) => card.title.length > 0 && card.body.length > 0)).toBe(true);
+      expect(entry.disclaimer.title.length).toBeGreaterThan(0);
+      expect(entry.disclaimer.body.length).toBeGreaterThan(0);
+      expect(entry.recommendations.length).toBeGreaterThanOrEqual(2);
+      expect(
+        entry.recommendations.every(
+          (recommendation) =>
+            recommendation.title.length > 0 &&
+            recommendation.description.length > 0 &&
+            recommendation.href.length > 0,
+        ),
+      ).toBe(true);
+    }
   });
 });
