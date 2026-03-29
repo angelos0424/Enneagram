@@ -44,7 +44,10 @@ Plans:
   2. 공유 링크를 연 사용자는 로그인 없이 공개 결과 페이지를 볼 수 있다.
   3. 공개 결과 페이지는 저장된 스냅샷으로 렌더링되어 이후 계산 로직이나 콘텐츠가 바뀌어도 기존 링크 내용이 유지된다.
   4. 공유 결과 페이지에는 검색엔진 비노출과 기본 프라이버시 보호 설정이 적용된다.
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 02-01-PLAN.md — Extend the snapshot persistence contract with opaque public/admin tokens and repository lookup boundaries
+- [ ] 02-02-PLAN.md — Persist snapshots on submit and add immutable public result retrieval with privacy defaults
 **UI hint**: yes
 
 ### Phase 3: Mobile Assessment Flow
