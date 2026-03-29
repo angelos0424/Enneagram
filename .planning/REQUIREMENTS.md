@@ -24,23 +24,23 @@
 
 ### Results
 
-- [ ] **RSLT-01**: 사용자는 검사 완료 직후 자신의 주 유형을 결과 페이지 상단에서 확인할 수 있다.
-- [ ] **RSLT-02**: 사용자는 결과 페이지에서 자신의 날개를 확인할 수 있다.
-- [ ] **RSLT-03**: 사용자는 결과 페이지에서 유형별 점수 분포를 시각적으로 확인할 수 있다.
-- [ ] **RSLT-04**: 사용자는 결과 페이지에서 성장 방향과 스트레스 방향을 확인할 수 있다.
-- [ ] **RSLT-05**: 사용자는 결과 페이지에서 주 유형 해설 카드를 읽을 수 있다.
-- [ ] **RSLT-06**: 사용자는 결과 페이지에서 해석 유의사항과 결과의 비진단적 성격을 확인할 수 있다.
+- [x] **RSLT-01**: 사용자는 검사 완료 직후 자신의 주 유형을 결과 페이지 상단에서 확인할 수 있다.
+- [x] **RSLT-02**: 사용자는 결과 페이지에서 자신의 날개를 확인할 수 있다.
+- [x] **RSLT-03**: 사용자는 결과 페이지에서 유형별 점수 분포를 시각적으로 확인할 수 있다.
+- [x] **RSLT-04**: 사용자는 결과 페이지에서 성장 방향과 스트레스 방향을 확인할 수 있다.
+- [x] **RSLT-05**: 사용자는 결과 페이지에서 주 유형 해설 카드를 읽을 수 있다.
+- [x] **RSLT-06**: 사용자는 결과 페이지에서 해석 유의사항과 결과의 비진단적 성격을 확인할 수 있다.
 - [x] **RSLT-07**: 시스템은 공유 결과 페이지를 저장된 스냅샷으로 렌더링하여 이후 로직 변경에도 동일 결과를 유지할 수 있다.
 
 ### Sharing And Recommendation
 
 - [x] **SHAR-01**: 시스템은 각 완료 결과에 대해 추측 불가능한 영구 공유 링크를 생성할 수 있다.
-- [ ] **SHAR-02**: 사용자는 결과 페이지에서 공유 링크를 복사하거나 모바일 공유 기능으로 전달할 수 있다.
+- [x] **SHAR-02**: 사용자는 결과 페이지에서 공유 링크를 복사하거나 모바일 공유 기능으로 전달할 수 있다.
 - [x] **SHAR-03**: 공유 링크를 연 사용자는 공개 결과 페이지를 로그인 없이 확인할 수 있다.
-- [ ] **SHAR-04**: 공유 결과 페이지 상단에는 항상 `검사해보기` 버튼이 표시된다.
-- [ ] **SHAR-05**: 공유 결과 페이지에서 `검사해보기`를 누른 사용자는 새 검사 흐름으로 진입할 수 있다.
+- [x] **SHAR-04**: 공유 결과 페이지 상단에는 항상 `검사해보기` 버튼이 표시된다.
+- [x] **SHAR-05**: 공유 결과 페이지에서 `검사해보기`를 누른 사용자는 새 검사 흐름으로 진입할 수 있다.
 - [x] **SHAR-06**: 시스템은 공유 결과 페이지에 검색엔진 비노출 및 기본 프라이버시 보호 설정을 적용할 수 있다.
-- [ ] **SHAR-07**: 결과 페이지는 공유받은 사용자에게 다음 행동을 제안하는 추천 섹션을 보여줄 수 있다.
+- [x] **SHAR-07**: 결과 페이지는 공유받은 사용자에게 다음 행동을 제안하는 추천 섹션을 보여줄 수 있다.
 
 ### Admin Stats
 
@@ -104,20 +104,20 @@
 | FLOW-03 | Phase 3 | Complete |
 | FLOW-04 | Phase 3 | Complete |
 | FLOW-05 | Phase 3 | Complete |
-| RSLT-01 | Phase 4 | Pending |
-| RSLT-02 | Phase 4 | Pending |
-| RSLT-03 | Phase 4 | Pending |
-| RSLT-04 | Phase 4 | Pending |
-| RSLT-05 | Phase 4 | Pending |
-| RSLT-06 | Phase 4 | Pending |
+| RSLT-01 | Phase 4 | Complete |
+| RSLT-02 | Phase 4 | Complete |
+| RSLT-03 | Phase 4 | Complete |
+| RSLT-04 | Phase 4 | Complete |
+| RSLT-05 | Phase 4 | Complete |
+| RSLT-06 | Phase 4 | Complete |
 | RSLT-07 | Phase 2 | Complete |
 | SHAR-01 | Phase 2 | Complete |
-| SHAR-02 | Phase 4 | Pending |
+| SHAR-02 | Phase 4 | Complete |
 | SHAR-03 | Phase 2 | Complete |
-| SHAR-04 | Phase 4 | Pending |
-| SHAR-05 | Phase 4 | Pending |
+| SHAR-04 | Phase 4 | Complete |
+| SHAR-05 | Phase 4 | Complete |
 | SHAR-06 | Phase 2 | Complete |
-| SHAR-07 | Phase 4 | Pending |
+| SHAR-07 | Phase 4 | Complete |
 | STAT-01 | Phase 5 | Pending |
 | STAT-02 | Phase 5 | Pending |
 | STAT-03 | Phase 5 | Pending |
@@ -136,4 +136,4 @@
 
 ---
 *Requirements defined: 2026-03-29*
-*Last updated: 2026-03-29 after Phase 3 completion*
+*Last updated: 2026-03-29 after Phase 4 completion*
