@@ -1,1 +1,27 @@
 @import "tailwindcss";
+
+:root {
+  --background: #f7f1e4;
+  --foreground: #1c1917;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(251, 191, 36, 0.2), transparent 36%),
+    linear-gradient(180deg, #fcfbf7 0%, var(--background) 100%);
+  color: var(--foreground);
+}
+
+button,
+progress {
+  -webkit-tap-highlight-color: transparent;
+}
+
+progress {
+  appearance: none;
+}

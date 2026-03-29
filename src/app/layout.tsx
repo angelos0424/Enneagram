@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Assessment engine bootstrap",
-  description: "Bootstrap shell for the Enneagram assessment workspace.",
+  title: "에니어그램 모바일 검사",
+  description: "로그인 없이 바로 시작하는 모바일 우선 에니어그램 검사 경험.",
 };
 
 type RootLayoutProps = {
@@ -15,7 +15,7 @@ type RootLayoutProps = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body className="min-h-screen antialiased">{children}</body>
     </html>
   );
 }

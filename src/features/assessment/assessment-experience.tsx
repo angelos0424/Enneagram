@@ -1,0 +1,182 @@
+"use client";
+
+import { useState } from "react";
+
+import { assessmentDefinition, likertOptions } from "@/content/assessments/ko/v1";
+
+import {
+  buildAssessmentDraft,
+  getAssessmentFlowSnapshot,
+  getOrderedQuestions,
+} from "./assessment-flow";
+import type { AssessmentAnswerValue } from "./types";
+
+const orderedQuestions = getOrderedQuestions();
+
+export function AssessmentExperience() {
+  const [draft, setDraft] = useState(() => buildAssessmentDraft());
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const snapshot = getAssessmentFlowSnapshot(draft);
+  const activeIndex = Math.min(currentIndex, orderedQuestions.length - 1);
+  const question = orderedQuestions[activeIndex] ?? null;
+  const selectedValue = question ? draft.answers[question.id] : undefined;
+
+  function handleAnswerSelect(value: AssessmentAnswerValue) {
+    if (!question) {
+      return;
+    }
+
+    setDraft((currentDraft) => ({
+      ...currentDraft,
+      answers: {
+        ...currentDraft.answers,
+        [question.id]: value,
+      },
+    }));
+
+    if (activeIndex < orderedQuestions.length - 1) {
+      setCurrentIndex(activeIndex + 1);
+    }
+  }
+
+  function moveToPreviousQuestion() {
+    setCurrentIndex((index) => Math.max(0, index - 1));
+  }
+
+  function moveToNextQuestion() {
+    if (!question || selectedValue === undefined) {
+      return;
+    }
+
+    setCurrentIndex((index) => Math.min(orderedQuestions.length - 1, index + 1));
+  }
+
+  return (
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_42%),linear-gradient(180deg,_#fcfbf7_0%,_#f4efe2_100%)] px-4 py-6 text-stone-950">
+      <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-md flex-col gap-5">
+        <section className="rounded-[2rem] border border-stone-950/10 bg-white/88 p-5 shadow-[0_20px_60px_rgba(68,50,24,0.12)] backdrop-blur">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-700">
+            Anonymous Enneagram
+          </p>
+          <h1 className="mt-3 text-[clamp(2rem,8vw,2.8rem)] font-semibold leading-none tracking-[-0.04em] text-stone-950">
+            지금 바로
+            <br />
+            에니어그램 검사를 시작해보세요.
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-stone-700">
+            로그인 없이 바로 진행할 수 있어요. 한 번에 한 문항씩 집중해서 답하고,
+            현재 진행 상태를 계속 확인할 수 있습니다.
+          </p>
+        </section>
+
+        <section className="rounded-[2rem] border border-stone-950/10 bg-stone-950 px-5 py-4 text-stone-50 shadow-[0_24px_60px_rgba(28,25,23,0.26)]">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.22em] text-amber-300/90">
+                Progress
+              </p>
+              <p className="mt-1 text-lg font-medium">
+                {snapshot.progressLabel}
+                <span className="ml-2 text-sm text-stone-300">
+                  {snapshot.progressPercent}%
+                </span>
+              </p>
+            </div>
+            <p className="text-sm text-stone-300">
+              문항 {activeIndex + 1} / {snapshot.totalQuestions}
+            </p>
+          </div>
+          <progress
+            className="mt-4 h-2 w-full overflow-hidden rounded-full [&::-moz-progress-bar]:bg-amber-400 [&::-webkit-progress-bar]:bg-stone-800/70 [&::-webkit-progress-value]:bg-amber-400"
+            max={snapshot.totalQuestions}
+            value={snapshot.answeredCount}
+          >
+            {snapshot.progressLabel}
+          </progress>
+        </section>
+
+        <section className="flex flex-1 flex-col rounded-[2rem] border border-stone-950/10 bg-white p-5 shadow-[0_18px_50px_rgba(120,53,15,0.1)]">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium text-amber-700">
+                질문 {String(activeIndex + 1).padStart(2, "0")}
+              </p>
+              <h2 className="mt-3 text-2xl font-semibold leading-tight tracking-[-0.03em] text-stone-950">
+                {question?.prompt}
+              </h2>
+            </div>
+            <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-900">
+              {selectedValue ? `${selectedValue}점 선택` : "미응답"}
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-3">
+            {likertOptions.map((option) => {
+              const isSelected = option.value === selectedValue;
+
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => handleAnswerSelect(option.value)}
+                  className={`flex w-full items-center gap-4 rounded-[1.6rem] border px-4 py-4 text-left transition ${
+                    isSelected
+                      ? "border-amber-500 bg-amber-50 text-stone-950 shadow-[0_10px_30px_rgba(245,158,11,0.18)]"
+                      : "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-white"
+                  }`}
+                  aria-pressed={isSelected}
+                >
+                  <span
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${
+                      isSelected
+                        ? "bg-amber-500 text-white"
+                        : "bg-white text-stone-500 ring-1 ring-stone-200"
+                    }`}
+                  >
+                    {option.value}
+                  </span>
+                  <span className="text-sm leading-6">{option.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={moveToPreviousQuestion}
+              disabled={activeIndex === 0}
+              className="rounded-full border border-stone-300 px-4 py-3 text-sm font-medium text-stone-700 transition disabled:cursor-not-allowed disabled:border-stone-200 disabled:text-stone-400"
+            >
+              이전 문항
+            </button>
+            <button
+              type="button"
+              onClick={moveToNextQuestion}
+              disabled={activeIndex === orderedQuestions.length - 1 || selectedValue === undefined}
+              className="rounded-full bg-stone-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-300"
+            >
+              다음 문항
+            </button>
+          </div>
+
+          <div className="mt-auto pt-6">
+            <div className="rounded-[1.6rem] bg-stone-100 p-4 text-sm leading-6 text-stone-700">
+              {snapshot.canSubmit
+                ? "모든 문항에 답했어요. 다음 단계에서 결과 생성을 연결합니다."
+                : "모든 문항에 답해야 결과 만들기 버튼이 활성화됩니다."}
+            </div>
+            <button
+              type="button"
+              disabled={!snapshot.canSubmit}
+              className="mt-4 flex w-full items-center justify-center rounded-full bg-amber-500 px-5 py-4 text-base font-semibold text-stone-950 shadow-[0_16px_40px_rgba(245,158,11,0.28)] transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-500 disabled:shadow-none"
+            >
+              결과 만들기
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}

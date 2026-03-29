@@ -1,3 +1,5 @@
+import { AssessmentExperience } from "@/features/assessment/assessment-experience";
+
 export default function HomePage() {
-  return <main>Assessment engine bootstrap</main>;
+  return <AssessmentExperience />;
 }
