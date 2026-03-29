@@ -9,9 +9,9 @@ import type {
   NearbyTypeScore,
 } from "@/domain/assessment/types";
 
-const supportedAssessments = {
+const supportedAssessments: Record<string, AssessmentDefinition> = {
   [assessmentDefinition.version]: assessmentDefinition,
-} as const satisfies Record<string, AssessmentDefinition>;
+};
 
 const enneagramTypes = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const satisfies readonly EnneagramType[];
 
