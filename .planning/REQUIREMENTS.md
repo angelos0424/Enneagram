@@ -19,7 +19,7 @@
 - [x] **FLOW-01**: 사용자는 로그인 없이 모바일에서 즉시 검사를 시작할 수 있다.
 - [x] **FLOW-02**: 사용자는 모바일 화면에 최적화된 방식으로 문항에 응답할 수 있다.
 - [x] **FLOW-03**: 사용자는 검사 진행 중 현재 진행 상태를 확인할 수 있다.
-- [ ] **FLOW-04**: 사용자는 세션 중 새로고침 또는 일시 중단 후에도 진행 중인 응답을 복구할 수 있다.
+- [x] **FLOW-04**: 사용자는 세션 중 새로고침 또는 일시 중단 후에도 진행 중인 응답을 복구할 수 있다.
 - [ ] **FLOW-05**: 사용자는 모든 필수 문항 응답 후 검사를 제출할 수 있다.
 
 ### Results
@@ -102,7 +102,7 @@
 | FLOW-01 | Phase 3 | Complete |
 | FLOW-02 | Phase 3 | Complete |
 | FLOW-03 | Phase 3 | Complete |
-| FLOW-04 | Phase 3 | Pending |
+| FLOW-04 | Phase 3 | Complete |
 | FLOW-05 | Phase 3 | Pending |
 | RSLT-01 | Phase 4 | Pending |
 | RSLT-02 | Phase 4 | Pending |

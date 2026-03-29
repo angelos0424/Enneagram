@@ -62,7 +62,7 @@ Plans:
 **Plans**: 4 plans
 Plans:
 - [x] 03-01-PLAN.md — Replace the bootstrap home route with the anonymous mobile assessment shell and progress contract
-- [ ] 03-02-PLAN.md — Add mobile browser harness plus canonical cookie and PostgreSQL draft-session boundaries
+- [x] 03-02-PLAN.md — Add mobile browser harness plus canonical cookie and PostgreSQL draft-session boundaries
 - [ ] 03-03-PLAN.md — Wire route-backed session bootstrap, draft autosave, and refresh recovery into the assessment flow
 - [ ] 03-04-PLAN.md — Finalize canonical draft sessions on submit and redirect to the persisted public result page
 **UI hint**: yes
