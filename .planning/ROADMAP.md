@@ -30,7 +30,7 @@
   4. 저장 대상 결과에는 문항 버전과 계산 버전이 함께 남아 이후 로직 변경과 구분된다.
 **Plans**: 4 plans
 Plans:
-- [ ] 01-01-PLAN.md — Bootstrap the greenfield app/tooling and validation harness
+- [x] 01-01-PLAN.md — Bootstrap the greenfield app/tooling and validation harness
 - [ ] 01-02-PLAN.md — Lock the authoritative Korean assessment contracts, constants, fixtures, and definition tests
 - [ ] 01-03-PLAN.md — Implement the deterministic scoring engine and server-side scoring endpoint
 - [ ] 01-04-PLAN.md — Define the persistence-ready result snapshot contract and Drizzle schema boundary
@@ -102,7 +102,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Assessment Contract & Scoring Core | 0/4 | Not started | - |
+| 1. Assessment Contract & Scoring Core | 1/4 | In Progress | 01-01 |
 | 2. Persistent Result Snapshots | 0/TBD | Not started | - |
 | 3. Mobile Assessment Flow | 0/TBD | Not started | - |
 | 4. Result Interpretation & Share Loop | 0/TBD | Not started | - |
