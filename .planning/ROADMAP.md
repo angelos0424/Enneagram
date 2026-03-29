@@ -47,7 +47,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 02-01-PLAN.md — Extend the snapshot persistence contract with opaque public/admin tokens and repository lookup boundaries
-- [ ] 02-02-PLAN.md — Persist snapshots on submit and add immutable public result retrieval with privacy defaults
+- [x] 02-02-PLAN.md — Persist snapshots on submit and add immutable public result retrieval with privacy defaults
 **UI hint**: yes
 
 ### Phase 3: Mobile Assessment Flow

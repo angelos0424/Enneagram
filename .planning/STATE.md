@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 02-persistent-result-snapshots-01-PLAN.md
-last_updated: "2026-03-29T10:09:27.389Z"
+status: verifying
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-03-29T10:18:31.077Z"
 last_activity: 2026-03-29
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
   percent: 50
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 Phase: 02 (persistent-result-snapshots) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-03-29
 
 Progress: [█████░░░░░] 50%
@@ -55,6 +55,7 @@ Progress: [█████░░░░░] 50%
 | Phase 01-assessment-contract-scoring-core P03 | 12 | 3 tasks | 7 files |
 | Phase 01-assessment-contract-scoring-core P04 | 7 | 3 tasks | 10 files |
 | Phase 02-persistent-result-snapshots P01 | 7 | 2 tasks | 9 files |
+| Phase 02-persistent-result-snapshots P02 | 5 | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,9 @@ Recent decisions affecting current work:
 - [Phase 02-persistent-result-snapshots]: Snapshot drafts now generate opaque public/admin identifiers when the persistence payload is built, so later submit/share routes inherit permanent link tokens instead of minting them lazily.
 - [Phase 02-persistent-result-snapshots]: Public retrieval reads by publicId through the repository boundary, keeping database UUIDs out of downstream share-page routing.
 - [Phase 02-persistent-result-snapshots]: The schema stores publicId and adminToken as unique text columns and ships with checked-in Drizzle artifacts so PostgreSQL remains the canonical permanent snapshot store.
+- [Phase 02]: The score route persists snapshots and returns /results/{publicId} in the same server response instead of deferring link creation.
+- [Phase 02]: Public result rendering resolves interpretation copy by stored copyVersion so future copy changes cannot drift existing links.
+- [Phase 02]: Phase 2 privacy defaults stay narrow: page metadata sets noindex and route headers apply Referrer-Policy no-referrer only on /results/:publicId*.
 
 ### Pending Todos
 
@@ -91,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-29T10:09:27.383Z
-Stopped at: Completed 02-persistent-result-snapshots-01-PLAN.md
+Last session: 2026-03-29T10:18:31.071Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None

@@ -30,16 +30,16 @@
 - [ ] **RSLT-04**: 사용자는 결과 페이지에서 성장 방향과 스트레스 방향을 확인할 수 있다.
 - [ ] **RSLT-05**: 사용자는 결과 페이지에서 주 유형 해설 카드를 읽을 수 있다.
 - [ ] **RSLT-06**: 사용자는 결과 페이지에서 해석 유의사항과 결과의 비진단적 성격을 확인할 수 있다.
-- [ ] **RSLT-07**: 시스템은 공유 결과 페이지를 저장된 스냅샷으로 렌더링하여 이후 로직 변경에도 동일 결과를 유지할 수 있다.
+- [x] **RSLT-07**: 시스템은 공유 결과 페이지를 저장된 스냅샷으로 렌더링하여 이후 로직 변경에도 동일 결과를 유지할 수 있다.
 
 ### Sharing And Recommendation
 
-- [ ] **SHAR-01**: 시스템은 각 완료 결과에 대해 추측 불가능한 영구 공유 링크를 생성할 수 있다.
+- [x] **SHAR-01**: 시스템은 각 완료 결과에 대해 추측 불가능한 영구 공유 링크를 생성할 수 있다.
 - [ ] **SHAR-02**: 사용자는 결과 페이지에서 공유 링크를 복사하거나 모바일 공유 기능으로 전달할 수 있다.
-- [ ] **SHAR-03**: 공유 링크를 연 사용자는 공개 결과 페이지를 로그인 없이 확인할 수 있다.
+- [x] **SHAR-03**: 공유 링크를 연 사용자는 공개 결과 페이지를 로그인 없이 확인할 수 있다.
 - [ ] **SHAR-04**: 공유 결과 페이지 상단에는 항상 `검사해보기` 버튼이 표시된다.
 - [ ] **SHAR-05**: 공유 결과 페이지에서 `검사해보기`를 누른 사용자는 새 검사 흐름으로 진입할 수 있다.
-- [ ] **SHAR-06**: 시스템은 공유 결과 페이지에 검색엔진 비노출 및 기본 프라이버시 보호 설정을 적용할 수 있다.
+- [x] **SHAR-06**: 시스템은 공유 결과 페이지에 검색엔진 비노출 및 기본 프라이버시 보호 설정을 적용할 수 있다.
 - [ ] **SHAR-07**: 결과 페이지는 공유받은 사용자에게 다음 행동을 제안하는 추천 섹션을 보여줄 수 있다.
 
 ### Admin Stats
@@ -54,7 +54,7 @@
 ### Operations And Deployment
 
 - [ ] **OPER-01**: 시스템은 Coolify에서 웹 앱과 PostgreSQL을 분리된 서비스로 배포할 수 있다.
-- [ ] **OPER-02**: 시스템은 결과 영구 보관을 위해 PostgreSQL 영속 스토리지를 사용한다.
+- [x] **OPER-02**: 시스템은 결과 영구 보관을 위해 PostgreSQL 영속 스토리지를 사용한다.
 - [ ] **OPER-03**: 운영자는 데이터베이스 백업 구성을 통해 결과 데이터를 복구할 수 있다.
 - [ ] **OPER-04**: 시스템은 결과 페이지 공유 미리보기를 위한 메타데이터를 서버에서 생성할 수 있다.
 
@@ -110,13 +110,13 @@
 | RSLT-04 | Phase 4 | Pending |
 | RSLT-05 | Phase 4 | Pending |
 | RSLT-06 | Phase 4 | Pending |
-| RSLT-07 | Phase 2 | Pending |
-| SHAR-01 | Phase 2 | Pending |
+| RSLT-07 | Phase 2 | Complete |
+| SHAR-01 | Phase 2 | Complete |
 | SHAR-02 | Phase 4 | Pending |
-| SHAR-03 | Phase 2 | Pending |
+| SHAR-03 | Phase 2 | Complete |
 | SHAR-04 | Phase 4 | Pending |
 | SHAR-05 | Phase 4 | Pending |
-| SHAR-06 | Phase 2 | Pending |
+| SHAR-06 | Phase 2 | Complete |
 | SHAR-07 | Phase 4 | Pending |
 | STAT-01 | Phase 5 | Pending |
 | STAT-02 | Phase 5 | Pending |
@@ -125,7 +125,7 @@
 | STAT-05 | Phase 5 | Pending |
 | STAT-06 | Phase 5 | Pending |
 | OPER-01 | Phase 6 | Pending |
-| OPER-02 | Phase 2 | Pending |
+| OPER-02 | Phase 2 | Complete |
 | OPER-03 | Phase 6 | Pending |
 | OPER-04 | Phase 6 | Pending |
 
