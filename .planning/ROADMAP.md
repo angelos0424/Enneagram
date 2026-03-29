@@ -77,7 +77,11 @@ Plans:
   3. 사용자가 결과 페이지에서 링크 복사 또는 모바일 공유 기능으로 결과를 전달할 수 있다.
   4. 공유 결과 페이지는 결과-first 위계를 유지하면서도 상단에 항상 `검사해보기` CTA를 노출한다.
   5. 공유받은 사용자가 상단 `검사해보기`를 눌러 새 익명 검사 흐름으로 진입하고, 추천 섹션을 통해 다음 행동을 제안받을 수 있다.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 04-01-PLAN.md — Expand the immutable result copy contract and public-result view model for detailed interpretation content
+- [ ] 04-02-PLAN.md — Implement the result-first mobile layout and top `검사해보기` restart loop on public result pages
+- [ ] 04-03-PLAN.md — Add share actions, recommendation content, and direct public-result browser coverage
 **UI hint**: yes
 
 ### Phase 5: Aggregate Admin Stats
@@ -113,6 +117,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 1. Assessment Contract & Scoring Core | 4/4 | Complete | 2026-03-29 |
 | 2. Persistent Result Snapshots | 2/2 | Complete | 2026-03-29 |
 | 3. Mobile Assessment Flow | 4/4 | Complete | 2026-03-29 |
-| 4. Result Interpretation & Share Loop | 0/TBD | Not started | - |
+| 4. Result Interpretation & Share Loop | 0/3 | Planned | - |
 | 5. Aggregate Admin Stats | 0/TBD | Not started | - |
 | 6. Coolify Launch Hardening | 0/TBD | Not started | - |
