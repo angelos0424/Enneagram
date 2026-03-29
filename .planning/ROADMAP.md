@@ -111,7 +111,12 @@ Plans:
   1. 시스템이 Coolify에서 웹 앱과 PostgreSQL을 분리된 서비스로 배포할 수 있다.
   2. 운영자가 백업 구성을 통해 결과 데이터를 복구할 수 있다.
   3. 시스템이 공유 결과 페이지용 메타데이터를 서버에서 생성해 링크 미리보기에 필요한 정보를 제공한다.
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 06-01-PLAN.md — Lock the deterministic Dockerfile and standalone Next.js deployment artifact for Coolify
+- [ ] 06-02-PLAN.md — Add the runtime env, health boundary, and Coolify deployment runbook for the separated app/database topology
+- [ ] 06-03-PLAN.md — Ship privacy-safe server-generated result metadata and a route-scoped OG image for public share previews
+- [ ] 06-04-PLAN.md — Make PostgreSQL backup/restore explicit with a rehearsal helper, operator checklist, and restore-drill gate
 
 ## Progress
 
@@ -125,4 +130,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 3. Mobile Assessment Flow | 4/4 | Complete | 2026-03-29 |
 | 4. Result Interpretation & Share Loop | 4/4 | Complete | 2026-03-29 |
 | 5. Aggregate Admin Stats | 4/4 | Complete | 2026-03-29 |
-| 6. Coolify Launch Hardening | 0/TBD | Not started | - |
+| 6. Coolify Launch Hardening | 0/4 | Not started | - |
