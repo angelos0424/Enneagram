@@ -93,47 +93,47 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ASMT-01 | Phase TBD | Pending |
-| ASMT-02 | Phase TBD | Pending |
-| ASMT-03 | Phase TBD | Pending |
-| ASMT-04 | Phase TBD | Pending |
-| ASMT-05 | Phase TBD | Pending |
-| ASMT-06 | Phase TBD | Pending |
-| FLOW-01 | Phase TBD | Pending |
-| FLOW-02 | Phase TBD | Pending |
-| FLOW-03 | Phase TBD | Pending |
-| FLOW-04 | Phase TBD | Pending |
-| FLOW-05 | Phase TBD | Pending |
-| RSLT-01 | Phase TBD | Pending |
-| RSLT-02 | Phase TBD | Pending |
-| RSLT-03 | Phase TBD | Pending |
-| RSLT-04 | Phase TBD | Pending |
-| RSLT-05 | Phase TBD | Pending |
-| RSLT-06 | Phase TBD | Pending |
-| RSLT-07 | Phase TBD | Pending |
-| SHAR-01 | Phase TBD | Pending |
-| SHAR-02 | Phase TBD | Pending |
-| SHAR-03 | Phase TBD | Pending |
-| SHAR-04 | Phase TBD | Pending |
-| SHAR-05 | Phase TBD | Pending |
-| SHAR-06 | Phase TBD | Pending |
-| SHAR-07 | Phase TBD | Pending |
-| STAT-01 | Phase TBD | Pending |
-| STAT-02 | Phase TBD | Pending |
-| STAT-03 | Phase TBD | Pending |
-| STAT-04 | Phase TBD | Pending |
-| STAT-05 | Phase TBD | Pending |
-| STAT-06 | Phase TBD | Pending |
-| OPER-01 | Phase TBD | Pending |
-| OPER-02 | Phase TBD | Pending |
-| OPER-03 | Phase TBD | Pending |
-| OPER-04 | Phase TBD | Pending |
+| ASMT-01 | Phase 1 | Pending |
+| ASMT-02 | Phase 1 | Pending |
+| ASMT-03 | Phase 1 | Pending |
+| ASMT-04 | Phase 1 | Pending |
+| ASMT-05 | Phase 1 | Pending |
+| ASMT-06 | Phase 1 | Pending |
+| FLOW-01 | Phase 3 | Pending |
+| FLOW-02 | Phase 3 | Pending |
+| FLOW-03 | Phase 3 | Pending |
+| FLOW-04 | Phase 3 | Pending |
+| FLOW-05 | Phase 3 | Pending |
+| RSLT-01 | Phase 4 | Pending |
+| RSLT-02 | Phase 4 | Pending |
+| RSLT-03 | Phase 4 | Pending |
+| RSLT-04 | Phase 4 | Pending |
+| RSLT-05 | Phase 4 | Pending |
+| RSLT-06 | Phase 4 | Pending |
+| RSLT-07 | Phase 2 | Pending |
+| SHAR-01 | Phase 2 | Pending |
+| SHAR-02 | Phase 4 | Pending |
+| SHAR-03 | Phase 2 | Pending |
+| SHAR-04 | Phase 4 | Pending |
+| SHAR-05 | Phase 4 | Pending |
+| SHAR-06 | Phase 2 | Pending |
+| SHAR-07 | Phase 4 | Pending |
+| STAT-01 | Phase 5 | Pending |
+| STAT-02 | Phase 5 | Pending |
+| STAT-03 | Phase 5 | Pending |
+| STAT-04 | Phase 5 | Pending |
+| STAT-05 | Phase 5 | Pending |
+| STAT-06 | Phase 5 | Pending |
+| OPER-01 | Phase 6 | Pending |
+| OPER-02 | Phase 2 | Pending |
+| OPER-03 | Phase 6 | Pending |
+| OPER-04 | Phase 6 | Pending |
 
 **Coverage:**
 - v1 requirements: 35 total
-- Mapped to phases: 0
-- Unmapped: 35 ⚠️
+- Mapped to phases: 35
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-29*
-*Last updated: 2026-03-29 after initial definition*
+*Last updated: 2026-03-29 after roadmap creation*
