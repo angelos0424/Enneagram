@@ -10,7 +10,7 @@ updated: 2026-03-29
 
 # Phase 05 — Validation Strategy
 
-> Per-phase validation contract for feedback sampling during execution.
+> Per-phase validation contract for protected aggregate admin stats.
 
 ---
 
@@ -18,33 +18,20 @@ updated: 2026-03-29
 
 | Property | Value |
 |----------|-------|
-| **Framework** | Vitest + Playwright admin/public E2E + Next.js build/typecheck |
+| **Framework** | Vitest + Playwright + Next.js build/typecheck |
 | **Config file** | `vitest.config.ts`, `playwright.config.ts` |
 | **Quick run command** | `npm exec vitest run test/admin/admin-auth.test.ts` |
-| **Full suite command** | `npm exec vitest run test/admin/admin-auth.test.ts test/admin/admin-stats-repository.test.ts test/admin/admin-stats-route.test.ts test/assessment/assessment-session-route.test.ts test/assessment/score-route.test.ts test/assessment/public-result.test.ts && npm run typecheck && npm run build && npx playwright test test/e2e/admin-stats.spec.ts test/e2e/public-result.spec.ts` |
-| **Estimated runtime** | ~45-90 seconds |
+| **Full suite command** | `npm exec vitest run test/admin/admin-auth.test.ts test/admin/admin-stats-events.test.ts test/admin/admin-stats-repository.test.ts test/admin/admin-dashboard.test.ts && npm run typecheck && npm run build && npx playwright test test/e2e/admin-stats.spec.ts` |
+| **Estimated runtime** | ~35-90 seconds |
 
 ---
 
 ## Sampling Rate
 
-- **After every task commit:** run the task-local Vitest suite and `npm run typecheck` when route, schema, or shared domain files change.
-- **After every wave:** run all Vitest coverage touched in that wave, then the relevant browser scenario for the public-result restart loop or protected admin flow.
-- **Before `$gsd-verify-work`:** `npm exec vitest run test/admin/admin-auth.test.ts test/admin/admin-stats-repository.test.ts test/admin/admin-stats-route.test.ts test/assessment/assessment-session-route.test.ts test/assessment/score-route.test.ts test/assessment/public-result.test.ts && npm run typecheck && npm run build && npx playwright test test/e2e/admin-stats.spec.ts test/e2e/public-result.spec.ts`
-- **Max feedback latency:** 45-90 seconds.
-
----
-
-## Plan And Wave Graph
-
-| Plan | Wave | Depends On | Scope | Primary Automated Commands |
-|------|------|------------|-------|-----------------------------|
-| `05-01` | 1 | none | admin auth contract, login route, protected boundary | `npm exec vitest run test/admin/admin-auth.test.ts && npm run typecheck` |
-| `05-02` | 1 | none | append-only stats events, start/restart persistence | `npm exec vitest run test/assessment/assessment-session-route.test.ts test/assessment/score-route.test.ts test/assessment/public-result.test.ts && npm run typecheck` |
-| `05-03` | 2 | `05-01`, `05-02` | suppressed aggregate read model and protected stats API | `npm exec vitest run test/admin/admin-stats-repository.test.ts test/admin/admin-stats-route.test.ts && npm run typecheck` |
-| `05-04` | 3 | `05-03` | protected admin dashboard and full browser proof | `npm exec vitest run test/admin/admin-auth.test.ts test/admin/admin-stats-route.test.ts && npm run typecheck && npm run build && npx playwright test test/e2e/admin-stats.spec.ts test/e2e/public-result.spec.ts` |
-
-Wave 1 is intentionally parallel: auth and event capture do not need to share files. The aggregate read layer waits until both boundaries are fixed, and the admin UI waits until the protected API returns already-suppressed DTOs.
+- **After every task commit:** run the task-local Vitest suite and `npm run typecheck` when shared types, env, or route files change.
+- **After every plan wave:** run the touched-file Vitest coverage, then the relevant Playwright admin scenario once UI or auth navigation exists.
+- **Before `$gsd-verify-work`:** `npm exec vitest run test/admin/admin-auth.test.ts test/admin/admin-stats-events.test.ts test/admin/admin-stats-repository.test.ts test/admin/admin-dashboard.test.ts && npm run typecheck && npm run build && npx playwright test test/e2e/admin-stats.spec.ts`
+- **Max feedback latency:** 35-90 seconds.
 
 ---
 
@@ -52,14 +39,14 @@ Wave 1 is intentionally parallel: auth and event capture do not need to share fi
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | Status |
 |---------|------|------|-------------|-----------|-------------------|--------|
-| 05-01-01 | 01 | 1 | STAT-01 | auth/session | `npm exec vitest run test/admin/admin-auth.test.ts` | ⬜ pending |
-| 05-01-02 | 01 | 1 | STAT-01 | page/route guard | `npm exec vitest run test/admin/admin-auth.test.ts && npm run typecheck` | ⬜ pending |
-| 05-02-01 | 02 | 1 | STAT-02, STAT-05 | schema/event writes | `npm exec vitest run test/assessment/assessment-session-route.test.ts test/assessment/score-route.test.ts && npm run typecheck` | ⬜ pending |
-| 05-02-02 | 02 | 1 | STAT-02, STAT-05 | restart persistence | `npm exec vitest run test/assessment/assessment-session-route.test.ts test/assessment/public-result.test.ts test/assessment/score-route.test.ts && npm run typecheck` | ⬜ pending |
-| 05-03-01 | 03 | 2 | STAT-02, STAT-03, STAT-04, STAT-05, STAT-06 | suppression/repository | `npm exec vitest run test/admin/admin-stats-repository.test.ts && npm run typecheck` | ⬜ pending |
-| 05-03-02 | 03 | 2 | STAT-01, STAT-02, STAT-03, STAT-04, STAT-05, STAT-06 | protected API | `npm exec vitest run test/admin/admin-stats-repository.test.ts test/admin/admin-stats-route.test.ts && npm run typecheck` | ⬜ pending |
-| 05-04-01 | 04 | 3 | STAT-01, STAT-02, STAT-03, STAT-04, STAT-05, STAT-06 | admin render | `npm exec vitest run test/admin/admin-auth.test.ts test/admin/admin-stats-route.test.ts && npm run typecheck` | ⬜ pending |
-| 05-04-02 | 04 | 3 | STAT-01, STAT-02, STAT-03, STAT-04, STAT-05, STAT-06 | browser/full-story | `npm exec vitest run test/admin/admin-auth.test.ts test/admin/admin-stats-repository.test.ts test/admin/admin-stats-route.test.ts test/assessment/assessment-session-route.test.ts test/assessment/score-route.test.ts test/assessment/public-result.test.ts && npm run typecheck && npm run build && npx playwright test test/e2e/admin-stats.spec.ts test/e2e/public-result.spec.ts` | ⬜ pending |
+| 05-01-01 | 01 | 1 | STAT-01 | auth/env | `npm exec vitest run test/admin/admin-auth.test.ts` | ⬜ pending |
+| 05-01-02 | 01 | 1 | STAT-01 | protected-route | `npm exec vitest run test/admin/admin-auth.test.ts && npm run typecheck` | ⬜ pending |
+| 05-02-01 | 02 | 2 | STAT-02, STAT-05 | schema/event-write | `npm exec vitest run test/admin/admin-stats-events.test.ts` | ⬜ pending |
+| 05-02-02 | 02 | 2 | STAT-02, STAT-05 | route/integration | `npm exec vitest run test/admin/admin-stats-events.test.ts test/assessment/assessment-session-route.test.ts` | ⬜ pending |
+| 05-03-01 | 03 | 3 | STAT-02, STAT-03, STAT-04, STAT-06 | repository/domain | `npm exec vitest run test/admin/admin-stats-repository.test.ts && npm run typecheck` | ⬜ pending |
+| 05-03-02 | 03 | 3 | STAT-06 | suppression | `npm exec vitest run test/admin/admin-stats-repository.test.ts test/admin/admin-dashboard.test.ts` | ⬜ pending |
+| 05-04-01 | 04 | 4 | STAT-01..06 | page/render | `npm exec vitest run test/admin/admin-dashboard.test.ts && npm run typecheck` | ⬜ pending |
+| 05-04-02 | 04 | 4 | STAT-01..06 | browser/e2e | `npm run build && npx playwright test test/e2e/admin-stats.spec.ts` | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -67,9 +54,10 @@ Wave 1 is intentionally parallel: auth and event capture do not need to share fi
 
 ## Wave Validation Notes
 
-- No extra Wave 0 is required. Existing Vitest and Playwright infrastructure from Phases 3 and 4 already covers route and mobile browser verification.
-- The admin stats API must only return already-suppressed DTOs; tests should fail if raw low-count buckets can reach the UI boundary.
-- Public-result restart verification should prove the event is written from the server mutation boundary, not from a client-only click handler.
+- No separate Wave 0 is needed; Vitest, Playwright, and production-build verification already exist in the repo.
+- Keep admin verification app-owned and testable in-repo; do not assume reverse-proxy auth that the codebase cannot validate.
+- All privacy suppression must be verified in repository/domain tests before dashboard rendering tests.
+- Restart-click instrumentation should be validated through the dedicated shared-result restart boundary, not generic session delete behavior.
 
 ---
 
@@ -77,17 +65,18 @@ Wave 1 is intentionally parallel: auth and event capture do not need to share fi
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
-| Admin page reads clearly on a narrow laptop or tablet viewport | STAT-02..05 | Automation proves presence and auth flow, not operator readability | Log in at `/admin/login`, open the dashboard, and confirm daily cards/distribution sections remain understandable without exposing hidden-cell counts |
-| Suppressed cells communicate privacy intent clearly | STAT-06 | The wording and visual treatment are product-facing decisions | Confirm hidden rows/days are labeled as suppressed or hidden rather than shown as blank or `0` |
+| Admin dashboard remains readable on a narrow viewport | STAT-01..06 | Browser automation catches presence more than information density | Open `/admin` on a phone-sized viewport and confirm KPI cards, trend rows, and suppression messaging remain legible |
+| Hidden cells do not become trivially derivable from visible totals | STAT-06 | Privacy reasoning spans multiple widgets, not one assertion | Review the dashboard with low-volume fixture data and confirm totals are omitted or masked when suppression is active |
+| Login/logout flow feels operator-safe | STAT-01 | UX edge cases matter for protected screens | Verify wrong-password feedback, successful login redirect, and logout/session expiry behavior manually once implemented |
 
 ---
 
 ## Validation Sign-Off
 
 - [x] All planned tasks have an automated verification path
-- [x] Sampling continuity is maintained across all four plans
-- [x] Browser verification covers both the protected admin path and the share-loop event source
+- [x] Sampling continuity is maintained across all plans
+- [x] Existing browser infrastructure is sufficient for Phase 05
 - [x] No watch-mode commands are specified
 - [x] `nyquist_compliant: true` is set in frontmatter
 
-**Approval:** ready for planning and checker review
+**Approval:** ready for execution planning and checker review
