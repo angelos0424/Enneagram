@@ -3,6 +3,8 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import { getEnv } from "../../src/env";
+
 const projectRoot = path.resolve(__dirname, "../..");
 const dockerfilePath = path.join(projectRoot, "Dockerfile");
 const dockerignorePath = path.join(projectRoot, ".dockerignore");
@@ -49,5 +51,31 @@ describe("deployment artifact contract", () => {
     expect(dockerignore).toContain(".next");
     expect(dockerignore).toContain("node_modules");
     expect(dockerignore).not.toMatch(/postgres|pgdata/i);
+  });
+
+  it("requires APP_ORIGIN when parsing the production runtime contract", () => {
+    expect(() =>
+      getEnv({
+        DATABASE_URL: "postgres://postgres:postgres@db:5432/enneagram",
+        NODE_ENV: "production",
+        ADMIN_PASSWORD: "super-secret-password",
+        ADMIN_SESSION_SECRET:
+          "0123456789abcdef0123456789abcdef0123456789abcdef",
+      }),
+    ).toThrow(/APP_ORIGIN/i);
+
+    expect(
+      getEnv({
+        APP_ORIGIN: "https://enneagram.example.com",
+        DATABASE_URL: "postgres://postgres:postgres@db:5432/enneagram",
+        NODE_ENV: "production",
+        ADMIN_PASSWORD: "super-secret-password",
+        ADMIN_SESSION_SECRET:
+          "0123456789abcdef0123456789abcdef0123456789abcdef",
+      }),
+    ).toMatchObject({
+      APP_ORIGIN: "https://enneagram.example.com",
+      NODE_ENV: "production",
+    });
   });
 });
