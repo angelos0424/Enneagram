@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { assessmentDefinition } from "@/content/assessments/ko/v1";
+import { assessmentDefinition } from "@/content/assessments";
 import {
   buildAssessmentDraft,
   buildAssessmentDraftSessionSnapshot,

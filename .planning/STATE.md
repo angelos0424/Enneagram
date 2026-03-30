@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: 에니어그램 검사 정확도 개선
-status: roadmap_created
+status: milestone_completed
 stopped_at: null
-last_updated: "2026-03-30T03:00:00.000Z"
+last_updated: "2026-03-30T04:20:00.000Z"
 last_activity: 2026-03-30
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 5
   total_plans: 0
   completed_plans: 0
-  percent: 0
+  percent: 100
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-30)
 
 ## Current Position
 
-Phase: 7 — Scoring Engine v2 (not started)
+Phase: 11 — Result UI Overhaul (completed)
 Plan: --
-Status: Roadmap created, awaiting phase planning
-Last activity: 2026-03-30 — v2.0 roadmap created
+Status: v2 scoring/content/compatibility work completed; Phase 06-04 operator restore drill remains manual
+Last activity: 2026-03-30 — Completed scoring v2, confidence classification, v2 content, compatibility migration, and result UI overhaul
 
-Progress: [..........] 0%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
@@ -119,19 +119,22 @@ Recent decisions affecting current work:
 - [Phase 06-coolify-launch-hardening]: Coolify should use /api/health as a process-level liveness check that never queries PostgreSQL.
 - [Phase 06]: Public result preview metadata now derives only from immutable snapshot copy and never from raw answers or admin-only fields.
 - [Phase 06]: Public preview URLs prefer APP_ORIGIN and fall back to localhost outside production so crawler metadata stays absolute during local verification.
+- [Phase 07]: `ko-enneagram-v2` now uses keyed centered scoring and independent normalization while keeping `ko-enneagram-v1` available for stored-result compatibility.
+- [Phase 08]: v2 결과는 `clear | mixed | insufficient_variance` 상태를 저장하고, 날개는 확실할 때만 선택적으로 노출한다.
+- [Phase 10]: `assessment_results`는 `result_status`, `confidence_score`, nullable `wing_type`를 저장하며, `0004` migration으로 기존 결과를 호환시킨다.
+- [Phase 11]: 공개 결과 페이지는 v1 저장 결과에는 기존 위계를 유지하고, v2 저장 결과에는 후보/선명도/이론적 연결선 중심 UI를 렌더링한다.
 
 ### Pending Todos
 
-None yet.
+- Coolify 또는 동일한 운영 환경에서 비프로덕션 PostgreSQL restore drill을 1회 수행하고 `docs/operations/postgres-restore-checklist.md`에 결과를 기록해야 한다.
 
 ### Blockers/Concerns
 
-- 한국어 문항 세트와 점수 규칙의 품질 검증이 부족하면 이후 모든 결과 신뢰도에 영향을 준다.
-- v2 문항 작성은 에니어그램 도메인 지식이 필요하므로 문항 품질 검토가 병목이 될 수 있다.
-- v1/v2 렌더링 경로 분기가 복잡해지면 공개 결과 페이지의 유지보수 비용이 증가할 수 있다.
+- 운영자 restore drill은 실제 Coolify/PostgreSQL 접근 권한이 있어야 마무리된다.
+- 한국어 v2 문항 세트는 구조 개선은 끝났지만, 도메인 전문가 검토가 추가되면 해석 품질을 더 끌어올릴 수 있다.
 
 ## Session Continuity
 
-Last session: 2026-03-30T03:00:00.000Z
-Stopped at: v2.0 roadmap created
+Last session: 2026-03-30T04:20:00.000Z
+Stopped at: Milestone v2.0 implementation complete; optional operator restore drill pending
 Resume file: None

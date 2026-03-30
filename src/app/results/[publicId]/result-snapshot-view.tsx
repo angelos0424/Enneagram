@@ -4,6 +4,7 @@ import { PublicResultRestartCta } from "./public-result-restart-cta";
 import { ResultRecommendations } from "./result-recommendations";
 import { ResultShareActions } from "@/features/result-sharing/result-share-actions";
 import type {
+  AssessmentResultStatus,
   EnneagramType,
   TypeCopyDetailCard,
   TypeCopyDisclaimer,
@@ -20,14 +21,18 @@ type NearbyTypeView = {
 
 export type ResultSnapshotViewModel = {
   publicId: string;
+  assessmentVersion: string;
+  resultStatus: AssessmentResultStatus;
+  confidenceScore: number;
+  isV2: boolean;
   primaryType: EnneagramType;
-  wingType: EnneagramType;
+  wingType: EnneagramType | null;
   growthType: EnneagramType;
   stressType: EnneagramType;
   normalizedScores: Record<EnneagramType, number>;
   nearbyTypes: NearbyTypeView[];
   copy: TypeCopyEntry;
-  wingCopy: TypeCopyEntry;
+  wingCopy: TypeCopyEntry | null;
   growthCopy: TypeCopyEntry;
   stressCopy: TypeCopyEntry;
   detailCards: readonly TypeCopyDetailCard[];
@@ -42,7 +47,14 @@ export function ResultSnapshotView({
 }: {
   snapshot: ResultSnapshotViewModel;
 }) {
-  const summaryItems = [
+  const nearbySummary =
+    snapshot.nearbyTypes.length > 0
+      ? snapshot.nearbyTypes
+          .slice(0, 2)
+          .map((type) => type.typeId)
+          .join(", ")
+      : "-";
+  const legacySummaryItems = [
     {
       label: "주 유형",
       value: `${snapshot.primaryType}`,
@@ -50,8 +62,8 @@ export function ResultSnapshotView({
     },
     {
       label: "날개",
-      value: `${snapshot.wingType}`,
-      detail: snapshot.wingCopy.title,
+      value: snapshot.wingType === null ? "-" : `${snapshot.wingType}`,
+      detail: snapshot.wingCopy?.title ?? "저장된 날개 정보 없음",
     },
     {
       label: "성장 방향",
@@ -64,6 +76,77 @@ export function ResultSnapshotView({
       detail: snapshot.stressCopy.title,
     },
   ] as const;
+  const clarityValue =
+    snapshot.resultStatus === "clear"
+      ? `${snapshot.confidenceScore}`
+      : snapshot.resultStatus === "mixed"
+        ? "혼합형"
+        : "재응답 권장";
+  const clarityDetail =
+    snapshot.resultStatus === "clear"
+      ? `상위 2개 유형 차이 ${snapshot.confidenceScore}`
+      : snapshot.resultStatus === "mixed"
+        ? "상위 유형 간 차이가 크지 않아 함께 해석하는 편이 적절해요."
+        : "응답이 너무 고르게 분포되어 유형 확정보다 다시 비교하는 편이 좋아요.";
+  const v2SummaryItems = [
+    {
+      label: snapshot.isV2 ? "유형 후보" : "주 유형",
+      value: `${snapshot.primaryType}`,
+      detail: snapshot.copy.title,
+    },
+    {
+      label: "근접 유형",
+      value: nearbySummary,
+      detail: "가까운 다른 후보도 함께 보면 결과를 더 입체적으로 읽을 수 있어요.",
+    },
+    {
+      label: "결과 선명도",
+      value: clarityValue,
+      detail: clarityDetail,
+    },
+    {
+      label: "날개 후보",
+      value: snapshot.wingType === null ? "없음" : `${snapshot.wingType}`,
+      detail:
+        snapshot.wingType === null
+          ? "날개는 뚜렷하지 않음"
+          : snapshot.wingCopy?.title ?? "날개 후보",
+    },
+  ] as const;
+  const summaryItems = snapshot.isV2 ? v2SummaryItems : legacySummaryItems;
+  const distributionHeading = snapshot.isV2 ? "상대 강도 지표" : "정규화 점수 분포";
+  const distributionDescription = snapshot.isV2
+    ? "각 유형이 독립적으로 0-100으로 정리된 지표예요. 합계가 100을 만들도록 강제하지 않습니다."
+    : "가장 높게 나온 유형을 중심으로 전체 분포를 비교해 보세요.";
+  const heroLabel = snapshot.isV2 ? "가장 가까운 유형 후보" : "핵심 결과";
+  const heroTone = snapshot.isV2
+    ? snapshot.resultStatus === "clear"
+      ? "이번 응답에서 가장 가까운 후보를 먼저 보여드려요."
+      : snapshot.resultStatus === "mixed"
+        ? "한 가지로 단정하기보다 근접 유형을 함께 읽는 편이 적절해요."
+        : "응답이 고르게 분포되어 이번 결과는 재응답과 비교가 특히 중요해요."
+    : snapshot.copy.summary;
+  const theoryItems = [
+    {
+      label: "성장 방향",
+      value: `${snapshot.growthType}`,
+      detail: snapshot.growthCopy.title,
+    },
+    {
+      label: "스트레스 방향",
+      value: `${snapshot.stressType}`,
+      detail: snapshot.stressCopy.title,
+    },
+  ] as const;
+  const supportSectionTitle = snapshot.isV2 ? "결과 안내" : "상세 결과 요약";
+  const supportSectionDescription = snapshot.isV2
+    ? snapshot.resultStatus === "clear"
+      ? "이번 응답은 유형 간 차이가 비교적 선명한 편이에요."
+      : snapshot.resultStatus === "mixed"
+        ? "상위 유형 간 차이가 크지 않아 한 가지로 단정하기보다 함께 해석하는 편이 적절해요."
+        : "응답이 고르게 분포되어 이번 결과는 재응답이나 근접 유형 비교가 특히 중요해요."
+    : "저장된 스냅샷 기준으로 주 유형과 연결된 방향성을 한 번에 읽을 수 있어요.";
+  const supportItems = snapshot.isV2 ? theoryItems : legacySummaryItems;
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.16),_transparent_34%),linear-gradient(180deg,_#fcfbf7_0%,_#f2ead9_100%)] px-4 py-6 text-stone-950">
@@ -80,17 +163,17 @@ export function ResultSnapshotView({
           <div className="flex flex-col gap-5 px-5 py-6">
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-3">
-                <p className="text-sm font-medium text-amber-900/80">핵심 결과</p>
+                <p className="text-sm font-medium text-amber-900/80">{heroLabel}</p>
                 <h1 className="text-3xl font-semibold leading-tight text-stone-950">
                   {snapshot.copy.title}
                 </h1>
                 <p className="text-base leading-7 text-stone-700">
-                  {snapshot.copy.summary}
+                  {heroTone}
                 </p>
               </div>
               <div className="rounded-[1.6rem] border border-amber-500/30 bg-amber-50 px-4 py-3 text-center shadow-[0_10px_25px_rgba(245,158,11,0.16)]">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-700">
-                  TYPE
+                  {snapshot.isV2 ? "CANDIDATE" : "TYPE"}
                 </p>
                 <p className="mt-1 text-4xl font-semibold text-amber-950">
                   {snapshot.primaryType}
@@ -129,15 +212,15 @@ export function ResultSnapshotView({
                 id="result-summary-heading"
                 className="text-lg font-semibold text-stone-950"
               >
-                상세 결과 요약
+                {supportSectionTitle}
               </h2>
               <p className="mt-1 text-sm leading-6 text-stone-600">
-                저장된 스냅샷 기준으로 주 유형과 연결된 방향성을 한 번에 읽을 수 있어요.
+                {supportSectionDescription}
               </p>
             </div>
           </div>
           <dl className="space-y-3">
-            {summaryItems.map((item) => (
+            {supportItems.map((item) => (
               <div
                 key={item.label}
                 className="rounded-[1.4rem] border border-stone-200 bg-stone-50 px-4 py-4"
@@ -152,6 +235,12 @@ export function ResultSnapshotView({
               </div>
             ))}
           </dl>
+          {snapshot.isV2 ? (
+            <p className="mt-4 text-xs leading-6 text-stone-500">
+              성장 방향과 스트레스 방향은 현재 응답에서 별도로 측정한 점수가 아니라,
+              주유형 해석을 돕는 이론적 연결선입니다.
+            </p>
+          ) : null}
         </section>
 
         <section
@@ -160,10 +249,10 @@ export function ResultSnapshotView({
         >
           <div className="mb-4">
             <h2 id="distribution-heading" className="text-lg font-semibold text-stone-950">
-              정규화 점수 분포
+              {distributionHeading}
             </h2>
             <p className="mt-1 text-sm leading-6 text-stone-600">
-              가장 높게 나온 유형을 중심으로 전체 분포를 비교해 보세요.
+              {distributionDescription}
             </p>
           </div>
           <ul className="space-y-3">

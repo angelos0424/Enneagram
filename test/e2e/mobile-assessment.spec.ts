@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
-import { assessmentDefinition } from "@/content/assessments/ko/v1";
+import { assessmentDefinition } from "@/content/assessments";
 
 async function gotoAssessment(page: Page) {
   for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -50,26 +50,30 @@ test.describe("mobile assessment flow", () => {
     await expect(strongestAgreeButton).toBeEnabled();
     await strongestAgreeButton.click();
     await saveDraftResponse;
-    await expect(page.getByText("1 / 18", { exact: true }).last()).toBeVisible();
+    await expect(
+      page.getByText(`1 / ${assessmentDefinition.questions.length}`, { exact: true }).last(),
+    ).toBeVisible();
     await expect(
       page.getByRole("heading", {
-        name: "나는 해야 할 일을 제대로 해내는지 자주 스스로 점검한다.",
+        name: assessmentDefinition.questions[1]!.prompt,
       }),
     ).toBeVisible();
 
     await page.reload();
 
-    await expect(page.getByText("1 / 18", { exact: true }).last()).toBeVisible();
+    await expect(
+      page.getByText(`1 / ${assessmentDefinition.questions.length}`, { exact: true }).last(),
+    ).toBeVisible();
     await expect(
       page.getByRole("heading", {
-        name: "나는 해야 할 일을 제대로 해내는지 자주 스스로 점검한다.",
+        name: assessmentDefinition.questions[1]!.prompt,
       }),
     ).toBeVisible();
 
     await page.getByRole("button", { name: "이전 문항" }).click();
     await expect(
       page.getByRole("heading", {
-        name: "나는 기준에 맞지 않는 상황을 보면 그냥 넘기기 어렵다.",
+        name: assessmentDefinition.questions[0]!.prompt,
       }),
     ).toBeVisible();
     await expect(page.getByText("5점 선택")).toBeVisible();
@@ -108,7 +112,9 @@ test.describe("mobile assessment flow", () => {
     await expect(page).toHaveURL(/\/results\/[A-Za-z]+$/);
 
     await gotoAssessment(page);
-    await expect(page.getByText("0 / 18", { exact: true }).last()).toBeVisible();
+    await expect(
+      page.getByText(`0 / ${assessmentDefinition.questions.length}`, { exact: true }).last(),
+    ).toBeVisible();
     await expect(page.getByRole("button", { name: "결과 만들기" })).toBeDisabled();
   });
 });

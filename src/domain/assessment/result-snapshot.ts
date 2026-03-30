@@ -4,6 +4,7 @@ import type { AssessmentScoreResult } from "@/domain/assessment/scoring";
 import type {
   EnneagramType,
   NearbyTypeScore,
+  AssessmentResultStatus,
 } from "@/domain/assessment/types";
 
 export type AssessmentResultSnapshotDraft = AssessmentResultLink & {
@@ -11,9 +12,11 @@ export type AssessmentResultSnapshotDraft = AssessmentResultLink & {
   scoringVersion: string;
   copyVersion: string;
   primaryType: EnneagramType;
-  wingType: EnneagramType;
+  wingType: EnneagramType | null;
   growthType: EnneagramType;
   stressType: EnneagramType;
+  resultStatus: AssessmentResultStatus;
+  confidenceScore: number;
   rawScores: AssessmentScoreResult["rawScores"];
   normalizedScores: AssessmentScoreResult["normalizedScores"];
   nearbyTypes: NearbyTypeScore[];
@@ -37,6 +40,8 @@ export function buildAssessmentResultSnapshot(
     wingType: result.wingType,
     growthType: result.growthType,
     stressType: result.stressType,
+    resultStatus: result.resultStatus,
+    confidenceScore: result.confidenceScore,
     rawScores: result.rawScores,
     normalizedScores: result.normalizedScores,
     nearbyTypes: [...result.nearbyTypes],

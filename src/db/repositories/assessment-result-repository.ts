@@ -106,12 +106,12 @@ function toAssessmentResultInsert(
   snapshot: AssessmentResultSnapshotDraft,
 ): AssessmentResultInsert {
   return {
-      ...snapshot,
-      primaryType: String(snapshot.primaryType),
-      wingType: String(snapshot.wingType),
-      growthType: String(snapshot.growthType),
-      stressType: String(snapshot.stressType),
-    };
+    ...snapshot,
+    primaryType: String(snapshot.primaryType),
+    wingType: snapshot.wingType === null ? null : String(snapshot.wingType),
+    growthType: String(snapshot.growthType),
+    stressType: String(snapshot.stressType),
+  };
 }
 
 function toAssessmentResultRecord(
@@ -125,9 +125,11 @@ function toAssessmentResultRecord(
     scoringVersion: snapshot.scoringVersion,
     copyVersion: snapshot.copyVersion,
     primaryType: snapshot.primaryType,
-    wingType: snapshot.wingType,
+    wingType: snapshot.wingType ?? null,
     growthType: snapshot.growthType,
     stressType: snapshot.stressType,
+    resultStatus: snapshot.resultStatus,
+    confidenceScore: snapshot.confidenceScore,
     rawScores: snapshot.rawScores,
     normalizedScores: snapshot.normalizedScores,
     nearbyTypes: snapshot.nearbyTypes,

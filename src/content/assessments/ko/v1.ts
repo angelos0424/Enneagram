@@ -5,9 +5,9 @@ import {
 } from "@/domain/assessment/constants";
 import type {
   AssessmentDefinition,
-  AssessmentQuestion,
   EnneagramType,
   LikertOption,
+  WeightedAssessmentQuestion,
 } from "@/domain/assessment/types";
 
 const enneagramTypes = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const satisfies readonly EnneagramType[];
@@ -55,9 +55,9 @@ export const likertOptions = [
 
 function buildTypeWeights(
   primaryType: EnneagramType,
-): AssessmentQuestion["typeWeights"] {
+): WeightedAssessmentQuestion["typeWeights"] {
   const neighboringTypes = new Set(typeNeighbors[primaryType]);
-  const typeWeights = {} as AssessmentQuestion["typeWeights"];
+  const typeWeights = {} as WeightedAssessmentQuestion["typeWeights"];
 
   for (const typeId of enneagramTypes) {
     const base =
@@ -98,7 +98,7 @@ export const assessmentQuestions = questionPrompts.map(([id, prompt]) => ({
   id,
   prompt,
   typeWeights: buildTypeWeights(questionFocusById[id]),
-})) as readonly AssessmentQuestion[];
+})) satisfies readonly WeightedAssessmentQuestion[];
 
 export const assessmentDefinition = {
   version: ASSESSMENT_VERSION,
@@ -107,4 +107,4 @@ export const assessmentDefinition = {
   copyVersion: COPY_VERSION,
   likertOptions,
   questions: assessmentQuestions,
-} as const satisfies AssessmentDefinition;
+} as const satisfies AssessmentDefinition<WeightedAssessmentQuestion>;

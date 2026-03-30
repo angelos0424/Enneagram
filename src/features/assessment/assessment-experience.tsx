@@ -1,6 +1,6 @@
 "use client";
 
-import { likertOptions } from "@/content/assessments/ko/v1";
+import { likertOptions } from "@/content/assessments";
 
 import { getAssessmentFlowSnapshot, getOrderedQuestions } from "./assessment-flow";
 import { getSubmitAssessmentRedirectHref } from "./submit-assessment";

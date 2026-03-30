@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
-import { assessmentDefinition } from "@/content/assessments/ko/v1";
+import { assessmentDefinition } from "@/content/assessments";
 
 async function gotoAssessment(page: Page) {
   for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -139,7 +139,9 @@ test.describe("public result page", () => {
     await page.getByRole("button", { name: "검사해보기" }).click();
     await restartResponse;
     await page.waitForURL("/");
-    await expect(page.getByText("0 / 18", { exact: true }).last()).toBeVisible();
+    await expect(
+      page.getByText(`0 / ${assessmentDefinition.questions.length}`, { exact: true }).last(),
+    ).toBeVisible();
     await expect(page.getByRole("button", { name: "결과 만들기" })).toBeDisabled();
   });
 });

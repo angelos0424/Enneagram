@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
-import { assessmentDefinition } from "@/content/assessments/ko/v1";
+import { assessmentDefinition } from "@/content/assessments";
 
 async function gotoAssessment(page: Page) {
   for (let attempt = 0; attempt < 2; attempt += 1) {

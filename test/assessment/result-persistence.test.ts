@@ -38,9 +38,11 @@ class SpyAssessmentResultRepository implements AssessmentResultRepository {
       scoringVersion: snapshot.scoringVersion,
       copyVersion: snapshot.copyVersion,
       primaryType: String(snapshot.primaryType),
-      wingType: String(snapshot.wingType),
+      wingType: snapshot.wingType === null ? null : String(snapshot.wingType),
       growthType: String(snapshot.growthType),
       stressType: String(snapshot.stressType),
+      resultStatus: snapshot.resultStatus,
+      confidenceScore: snapshot.confidenceScore,
       rawScores: snapshot.rawScores,
       normalizedScores: snapshot.normalizedScores,
       nearbyTypes: snapshot.nearbyTypes,
@@ -69,9 +71,11 @@ class SpyAssessmentResultRepository implements AssessmentResultRepository {
           scoringVersion: snapshot.scoringVersion,
           copyVersion: snapshot.copyVersion,
           primaryType: String(snapshot.primaryType),
-          wingType: String(snapshot.wingType),
+          wingType: snapshot.wingType === null ? null : String(snapshot.wingType),
           growthType: String(snapshot.growthType),
           stressType: String(snapshot.stressType),
+          resultStatus: snapshot.resultStatus,
+          confidenceScore: snapshot.confidenceScore,
           rawScores: snapshot.rawScores,
           normalizedScores: snapshot.normalizedScores,
           nearbyTypes: snapshot.nearbyTypes,
@@ -93,9 +97,11 @@ class SpyAssessmentResultRepository implements AssessmentResultRepository {
           scoringVersion: snapshot.scoringVersion,
           copyVersion: snapshot.copyVersion,
           primaryType: String(snapshot.primaryType),
-          wingType: String(snapshot.wingType),
+          wingType: snapshot.wingType === null ? null : String(snapshot.wingType),
           growthType: String(snapshot.growthType),
           stressType: String(snapshot.stressType),
+          resultStatus: snapshot.resultStatus,
+          confidenceScore: snapshot.confidenceScore,
           rawScores: snapshot.rawScores,
           normalizedScores: snapshot.normalizedScores,
           nearbyTypes: snapshot.nearbyTypes,
@@ -122,9 +128,11 @@ class FakeAssessmentDb {
             scoringVersion: values.scoringVersion,
             copyVersion: values.copyVersion,
             primaryType: String(values.primaryType),
-            wingType: String(values.wingType),
+            wingType: values.wingType ?? null,
             growthType: String(values.growthType),
             stressType: String(values.stressType),
+            resultStatus: values.resultStatus,
+            confidenceScore: values.confidenceScore,
             rawScores: values.rawScores,
             normalizedScores: values.normalizedScores,
             nearbyTypes: values.nearbyTypes,
@@ -163,9 +171,11 @@ class FakeAssessmentDb {
                   scoringVersion: saved.scoringVersion,
                   copyVersion: saved.copyVersion,
                   primaryType: String(saved.primaryType),
-                  wingType: String(saved.wingType),
+                  wingType: saved.wingType ?? null,
                   growthType: String(saved.growthType),
                   stressType: String(saved.stressType),
+                  resultStatus: saved.resultStatus,
+                  confidenceScore: saved.confidenceScore,
                   rawScores: saved.rawScores,
                   normalizedScores: saved.normalizedScores,
                   nearbyTypes: saved.nearbyTypes,
@@ -228,6 +238,8 @@ describe("assessment result persistence", () => {
     expect(snapshot.wingType).toBe(scoredResult.wingType);
     expect(snapshot.growthType).toBe(scoredResult.growthType);
     expect(snapshot.stressType).toBe(scoredResult.stressType);
+    expect(snapshot.resultStatus).toBe(scoredResult.resultStatus);
+    expect(snapshot.confidenceScore).toBe(scoredResult.confidenceScore);
     expect(snapshot.rawScores).toEqual(scoredResult.rawScores);
     expect(snapshot.normalizedScores).toEqual(scoredResult.normalizedScores);
     expect(snapshot.nearbyTypes).toEqual(scoredResult.nearbyTypes);
@@ -244,6 +256,8 @@ describe("assessment result persistence", () => {
         "copyVersion",
         "publicId",
         "adminToken",
+        "resultStatus",
+        "confidenceScore",
       ]),
     );
   });
@@ -307,5 +321,21 @@ describe("assessment result persistence", () => {
     expect(readFileSync(migrationFile, "utf8")).toContain("public_id");
     expect(readFileSync(migrationFile, "utf8")).toContain("admin_token");
     expect(readFileSync(journalFile, "utf8")).toContain("0001_phase2_snapshot_tokens");
+  });
+
+  it("checks in the Drizzle migration artifacts for v2 result status and optional wing compatibility", () => {
+    const migrationFile = "drizzle/0004_phase8_result_status_optional_wing.sql";
+    const snapshotFile = "drizzle/meta/0004_snapshot.json";
+    const journalFile = "drizzle/meta/_journal.json";
+
+    expect(existsSync(migrationFile)).toBe(true);
+    expect(existsSync(snapshotFile)).toBe(true);
+    expect(existsSync(journalFile)).toBe(true);
+    expect(readFileSync(migrationFile, "utf8")).toContain("result_status");
+    expect(readFileSync(migrationFile, "utf8")).toContain("confidence_score");
+    expect(readFileSync(migrationFile, "utf8")).toContain("wing_type");
+    expect(readFileSync(journalFile, "utf8")).toContain(
+      "0004_phase8_result_status_optional_wing",
+    );
   });
 });
