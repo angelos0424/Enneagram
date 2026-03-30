@@ -1,34 +1,34 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: executing
-stopped_at: Completed 06-03-PLAN.md
-last_updated: "2026-03-30T00:18:23.285Z"
+milestone: v2.0
+milestone_name: 에니어그램 검사 정확도 개선
+status: defining_requirements
+stopped_at: null
+last_updated: "2026-03-30T02:00:00.000Z"
 last_activity: 2026-03-30
 progress:
-  total_phases: 6
-  completed_phases: 5
-  total_plans: 22
-  completed_plans: 21
-  percent: 95
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-29)
+See: .planning/PROJECT.md (updated 2026-03-30)
 
 **Core value:** 사용자가 로그인 없이도 모바일에서 빠르게 에니어그램 검사를 완료하고, 이해하기 쉬운 상세 결과를 공유할 수 있어야 한다.
-**Current focus:** Phase 06 — coolify-launch-hardening
+**Current focus:** Milestone v2.0 — 에니어그램 검사 정확도 개선
 
 ## Current Position
 
-Phase: 06 (coolify-launch-hardening) — EXECUTING
-Plan: 4 of 4
-Status: Ready to execute
-Last activity: 2026-03-30
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-30 — Milestone v2.0 started
 
 Progress: [██████████] 95%
 
