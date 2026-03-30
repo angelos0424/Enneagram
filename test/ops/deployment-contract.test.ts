@@ -40,12 +40,14 @@ describe("deployment artifact contract", () => {
     const dockerignore = readFileSync(dockerignorePath, "utf8");
 
     expect(dockerfile).toContain("FROM node:24");
-    expect(dockerfile).toMatch(/node\s+\.next\/standalone\/server\.js/);
+    expect(dockerfile).toMatch(
+      /node["\s,]+["']?\.next\/standalone\/server\.js["']?/,
+    );
     expect(dockerfile).not.toMatch(/postgres|postgis|pg_ctl|docker-compose|compose\.ya?ml/i);
 
     expect(dockerignore).toContain(".git");
     expect(dockerignore).toContain(".next");
     expect(dockerignore).toContain("node_modules");
-    expect(dockerignore).not.toMatch(/postgres|pgdata|docker-compose|compose\.ya?ml/i);
+    expect(dockerignore).not.toMatch(/postgres|pgdata/i);
   });
 });

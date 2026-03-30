@@ -1,0 +1,15 @@
+.git
+.next
+.planning
+.codex
+node_modules
+npm-debug.log*
+Dockerfile*
+docker-compose.yml
+docker-compose.yaml
+compose.yml
+compose.yaml
+README.md
+tsconfig.tsbuildinfo
+coverage
+.env*
