@@ -72,4 +72,39 @@
 
 ## Traceability
 
-(Filled by roadmap)
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| SCORE-01 | Phase 7 | Pending |
+| SCORE-02 | Phase 7 | Pending |
+| SCORE-03 | Phase 7 | Pending |
+| SCORE-04 | Phase 7 | Pending |
+| SCORE-05 | Phase 7 | Pending |
+| CONF-01 | Phase 8 | Pending |
+| CONF-02 | Phase 8 | Pending |
+| CONF-03 | Phase 8 | Pending |
+| CONF-04 | Phase 8 | Pending |
+| CONT-01 | Phase 9 | Pending |
+| CONT-02 | Phase 9 | Pending |
+| CONT-03 | Phase 9 | Pending |
+| CONT-04 | Phase 9 | Pending |
+| CONT-05 | Phase 9 | Pending |
+| CONT-06 | Phase 9 | Pending |
+| RUI-01 | Phase 11 | Pending |
+| RUI-02 | Phase 11 | Pending |
+| RUI-03 | Phase 11 | Pending |
+| RUI-04 | Phase 11 | Pending |
+| RUI-05 | Phase 11 | Pending |
+| RUI-06 | Phase 11 | Pending |
+| DBCO-01 | Phase 7 | Pending |
+| DBCO-02 | Phase 8 | Pending |
+| DBCO-03 | Phase 8 | Pending |
+| DBCO-04 | Phase 10 | Pending |
+| DBCO-05 | Phase 10 | Pending |
+| TEST-01 | Phase 7 | Pending |
+| TEST-02 | Phase 8 | Pending |
+| TEST-03 | Phase 8 | Pending |
+| TEST-04 | Phase 8 | Pending |
+| TEST-05 | Phase 7 | Pending |
+| TEST-06 | Phase 7 | Pending |
+| TEST-07 | Phase 9 | Pending |
+| TEST-08 | Phase 11 | Pending |

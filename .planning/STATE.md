@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: 에니어그램 검사 정확도 개선
-status: defining_requirements
+status: roadmap_created
 stopped_at: null
-last_updated: "2026-03-30T02:00:00.000Z"
+last_updated: "2026-03-30T03:00:00.000Z"
 last_activity: 2026-03-30
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-30)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-03-30 — Milestone v2.0 started
+Phase: 7 — Scoring Engine v2 (not started)
+Plan: --
+Status: Roadmap created, awaiting phase planning
+Last activity: 2026-03-30 — v2.0 roadmap created
 
-Progress: [██████████] 95%
+Progress: [..........] 0%
 
 ## Performance Metrics
 
@@ -127,10 +127,11 @@ None yet.
 ### Blockers/Concerns
 
 - 한국어 문항 세트와 점수 규칙의 품질 검증이 부족하면 이후 모든 결과 신뢰도에 영향을 준다.
-- 공유 미리보기의 실제 채널 동작과 Coolify 배포 복구 절차는 Phase 06에서 검증이 필요하다.
+- v2 문항 작성은 에니어그램 도메인 지식이 필요하므로 문항 품질 검토가 병목이 될 수 있다.
+- v1/v2 렌더링 경로 분기가 복잡해지면 공개 결과 페이지의 유지보수 비용이 증가할 수 있다.
 
 ## Session Continuity
 
-Last session: 2026-03-30T00:18:02.439Z
-Stopped at: Completed 06-03-PLAN.md
+Last session: 2026-03-30T03:00:00.000Z
+Stopped at: v2.0 roadmap created
 Resume file: None
