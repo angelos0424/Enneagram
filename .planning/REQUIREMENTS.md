@@ -53,7 +53,7 @@
 
 ### Operations And Deployment
 
-- [ ] **OPER-01**: 시스템은 Coolify에서 웹 앱과 PostgreSQL을 분리된 서비스로 배포할 수 있다.
+- [x] **OPER-01**: 시스템은 Coolify에서 웹 앱과 PostgreSQL을 분리된 서비스로 배포할 수 있다.
 - [x] **OPER-02**: 시스템은 결과 영구 보관을 위해 PostgreSQL 영속 스토리지를 사용한다.
 - [ ] **OPER-03**: 운영자는 데이터베이스 백업 구성을 통해 결과 데이터를 복구할 수 있다.
 - [ ] **OPER-04**: 시스템은 결과 페이지 공유 미리보기를 위한 메타데이터를 서버에서 생성할 수 있다.
@@ -124,7 +124,7 @@
 | STAT-04 | Phase 5 | Complete |
 | STAT-05 | Phase 5 | Complete |
 | STAT-06 | Phase 5 | Complete |
-| OPER-01 | Phase 6 | Pending |
+| OPER-01 | Phase 6 | Complete |
 | OPER-02 | Phase 2 | Complete |
 | OPER-03 | Phase 6 | Pending |
 | OPER-04 | Phase 6 | Pending |

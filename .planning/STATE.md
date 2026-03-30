@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Phase 05 complete
-last_updated: "2026-03-29T23:31:00Z"
-last_activity: 2026-03-29 -- Phase 05 execution completed
+status: executing
+stopped_at: Completed 06-01-PLAN.md
+last_updated: "2026-03-30T00:02:08.004Z"
+last_activity: 2026-03-30
 progress:
   total_phases: 6
   completed_phases: 5
-  total_plans: 18
-  completed_plans: 18
-  percent: 83
+  total_plans: 22
+  completed_plans: 19
+  percent: 86
 ---
 
 # Project State
@@ -25,20 +25,20 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Current Position
 
-Phase: 06 (coolify-launch-hardening) — READY
-Plan: Not started
-Status: Ready to plan Phase 06
-Last activity: 2026-03-29 -- Phase 05 execution completed
+Phase: 06 (coolify-launch-hardening) — EXECUTING
+Plan: 2 of 4
+Status: Ready to execute
+Last activity: 2026-03-30
 
-Progress: [████████░░] 83%
+Progress: [█████████░] 86%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 18
-- Average duration: 9.4 min
-- Total execution time: 2.8 hours
+- Total plans completed: 19
+- Average duration: 9.2 min
+- Total execution time: 2.9 hours
 
 **By Phase:**
 
@@ -52,8 +52,8 @@ Progress: [████████░░] 83%
 
 **Recent Trend:**
 
-- Last 5 plans: 05-aggregate-admin-stats-04 (8 min), 05-aggregate-admin-stats-03 (6 min), 05-aggregate-admin-stats-02 (7 min), 05-aggregate-admin-stats-01 (8 min), 04-result-interpretation-share-loop-04 (14 min)
-- Trend: Stable with admin stats read-model and browser plans landing below the historical average
+- Last 5 plans: 06-coolify-launch-hardening-01 (5 min), 05-aggregate-admin-stats-04 (8 min), 05-aggregate-admin-stats-03 (6 min), 05-aggregate-admin-stats-02 (7 min), 05-aggregate-admin-stats-01 (8 min)
+- Trend: Stable with recent plans continuing to land below the historical average
 
 | Phase 01 P02 | 7 | 2 tasks | 6 files |
 | Phase 01-assessment-contract-scoring-core P03 | 12 | 3 tasks | 7 files |
@@ -65,6 +65,7 @@ Progress: [████████░░] 83%
 | Phase 03 P02 | 9min | 2 tasks | 13 files |
 | Phase 03-mobile-assessment-flow P03 | 14 | 2 tasks | 10 files |
 | Phase 03-mobile-assessment-flow P04 | 13 | 2 tasks | 16 files |
+| Phase 06 P01 | 5 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,8 @@ Recent decisions affecting current work:
 - [Phase 04-result-interpretation-share-loop]: Public results stay result-first on mobile while exposing a persistent top restart CTA instead of branching into a separate share landing page.
 - [Phase 04-result-interpretation-share-loop]: The fresh-start loop reuses DELETE /api/assessment-session so shared-result visitors clear the canonical anonymous draft before returning to `/`.
 - [Phase 04-result-interpretation-share-loop]: Recommendation content remains versioned copy, and the restart recommendation links to the live CTA anchor rather than a bare home-route jump.
+- [Phase 06]: The repo now declares a checked-in Dockerfile instead of relying on Coolify buildpack inference.
+- [Phase 06]: The production image runs the standalone Next.js server as the single web process and does not bundle PostgreSQL concerns.
 
 ### Pending Todos
 
@@ -122,6 +125,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-29T23:31:00Z
-Stopped at: Phase 05 complete
+Last session: 2026-03-30T00:02:07.998Z
+Stopped at: Completed 06-01-PLAN.md
 Resume file: None
