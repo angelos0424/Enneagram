@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-02-PLAN.md
-last_updated: "2026-03-30T00:08:08.788Z"
+stopped_at: Completed 06-03-PLAN.md
+last_updated: "2026-03-30T00:18:02.446Z"
 last_activity: 2026-03-30
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 22
-  completed_plans: 20
+  completed_plans: 21
   percent: 86
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 ## Current Position
 
 Phase: 06 (coolify-launch-hardening) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-03-30
 
@@ -67,6 +67,7 @@ Progress: [█████████░] 86%
 | Phase 03-mobile-assessment-flow P04 | 13 | 2 tasks | 16 files |
 | Phase 06 P01 | 5 | 2 tasks | 5 files |
 | Phase 06-coolify-launch-hardening P02 | 4 | 2 tasks | 6 files |
+| Phase 06 P03 | 8 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -116,6 +117,8 @@ Recent decisions affecting current work:
 - [Phase 06]: The production image runs the standalone Next.js server as the single web process and does not bundle PostgreSQL concerns.
 - [Phase 06-coolify-launch-hardening]: APP_ORIGIN is required only in production so deploys fail fast without burdening local and test env helpers.
 - [Phase 06-coolify-launch-hardening]: Coolify should use /api/health as a process-level liveness check that never queries PostgreSQL.
+- [Phase 06]: Public result preview metadata now derives only from immutable snapshot copy and never from raw answers or admin-only fields.
+- [Phase 06]: Public preview URLs prefer APP_ORIGIN and fall back to localhost outside production so crawler metadata stays absolute during local verification.
 
 ### Pending Todos
 
@@ -128,6 +131,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T00:08:08.782Z
-Stopped at: Completed 06-02-PLAN.md
+Last session: 2026-03-30T00:18:02.439Z
+Stopped at: Completed 06-03-PLAN.md
 Resume file: None

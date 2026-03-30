@@ -115,7 +115,7 @@ Plans:
 Plans:
 - [x] 06-01-PLAN.md — Lock the deterministic Dockerfile and standalone Next.js deployment artifact for Coolify
 - [x] 06-02-PLAN.md — Add the runtime env, health boundary, and Coolify deployment runbook for the separated app/database topology
-- [ ] 06-03-PLAN.md — Ship privacy-safe server-generated result metadata and a route-scoped OG image for public share previews
+- [x] 06-03-PLAN.md — Ship privacy-safe server-generated result metadata and a route-scoped OG image for public share previews
 - [ ] 06-04-PLAN.md — Make PostgreSQL backup/restore explicit with a rehearsal helper, operator checklist, and restore-drill gate
 
 ## Progress
