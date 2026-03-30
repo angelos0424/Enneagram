@@ -50,6 +50,43 @@ async function completeAssessmentAndOpenResult(page: Page) {
 }
 
 test.describe("public result page", () => {
+  test("exposes server metadata for share previews without dropping privacy defaults", async ({
+    page,
+  }) => {
+    const resultUrl = await completeAssessmentAndOpenResult(page);
+    const resultPathname = new URL(resultUrl).pathname;
+
+    await page.goto(resultUrl);
+
+    await expect(page.locator("meta[name='robots']")).toHaveAttribute(
+      "content",
+      /noindex/i,
+    );
+    await expect(page.locator("meta[property='og:type']")).toHaveAttribute(
+      "content",
+      "website",
+    );
+    const openGraphUrl = await page
+      .locator("meta[property='og:url']")
+      .getAttribute("content");
+    const openGraphImageUrl = await page
+      .locator("meta[property='og:image']")
+      .getAttribute("content");
+
+    expect(openGraphUrl).not.toBeNull();
+    expect(openGraphImageUrl).not.toBeNull();
+    expect(() => new URL(openGraphUrl ?? "")).not.toThrow();
+    expect(() => new URL(openGraphImageUrl ?? "")).not.toThrow();
+    expect(new URL(openGraphUrl ?? "").pathname).toBe(resultPathname);
+    expect(new URL(openGraphImageUrl ?? "").pathname).toBe(
+      `${resultPathname}/opengraph-image`,
+    );
+    await expect(page.locator("meta[name='twitter:card']")).toHaveAttribute(
+      "content",
+      "summary_large_image",
+    );
+  });
+
   test("shares or copies the public result link", async ({ page }) => {
     await page.addInitScript(() => {
       Object.defineProperty(navigator, "share", {
