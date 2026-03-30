@@ -42,6 +42,8 @@ function buildResultSnapshot(
     wingType,
     growthType: primaryType === 1 ? 7 : 1,
     stressType: primaryType === 1 ? 4 : 8,
+    resultStatus: "clear",
+    confidenceScore: 24,
     rawScores: {
       1: primaryType === 1 ? 24 : 12,
       2: 12,

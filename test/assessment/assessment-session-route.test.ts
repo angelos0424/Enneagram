@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { getTableColumns } from "drizzle-orm";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { assessmentDefinition } from "@/content/assessments/ko/v1";
+import { assessmentDefinition } from "@/content/assessments";
 import {
   ADMIN_STATS_EVENT_TYPES,
   type AdminStatsEventRepository,

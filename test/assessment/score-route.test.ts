@@ -131,6 +131,8 @@ describe("POST /api/assessments/score", () => {
       wingType: "7",
       growthType: "2",
       stressType: "5",
+      resultStatus: "clear",
+      confidenceScore: 11,
       rawScores: { 1: 10, 2: 20, 3: 30, 4: 40, 5: 50, 6: 60, 7: 70, 8: 80, 9: 90 },
       normalizedScores: { 1: 11, 2: 22, 3: 33, 4: 44, 5: 55, 6: 66, 7: 77, 8: 88, 9: 99 },
       nearbyTypes: [],
@@ -143,13 +145,15 @@ describe("POST /api/assessments/score", () => {
       answers: buildPrimaryFocusedAnswers(8),
     });
     const payload = await response.json();
+    const savedRecord = repositoryState.savedRecord;
 
     expect(response.status).toBe(200);
+    expect(savedRecord).not.toBeNull();
     expect(payload.result.primaryType).toBe(8);
     expect(payload.result.assessmentVersion).toBe(assessmentDefinition.version);
     expect(payload.publicResult).toEqual({
-      publicId: repositoryState.savedRecord.publicId,
-      href: `/results/${repositoryState.savedRecord.publicId}`,
+      publicId: savedRecord!.publicId,
+      href: `/results/${savedRecord!.publicId}`,
     });
   });
 
@@ -166,6 +170,8 @@ describe("POST /api/assessments/score", () => {
       wingType: "4",
       growthType: "8",
       stressType: "7",
+      resultStatus: "clear",
+      confidenceScore: 9,
       rawScores: { 1: 10, 2: 20, 3: 30, 4: 40, 5: 50, 6: 15, 7: 17, 8: 19, 9: 12 },
       normalizedScores: { 1: 10, 2: 20, 3: 30, 4: 40, 5: 50, 6: 15, 7: 17, 8: 19, 9: 12 },
       nearbyTypes: [],
@@ -202,6 +208,8 @@ describe("POST /api/assessments/score", () => {
       wingType: "9",
       growthType: "7",
       stressType: "4",
+      resultStatus: "clear",
+      confidenceScore: 18,
       rawScores: { 1: 90, 2: 20, 3: 15, 4: 13, 5: 10, 6: 12, 7: 22, 8: 18, 9: 25 },
       normalizedScores: { 1: 90, 2: 20, 3: 15, 4: 13, 5: 10, 6: 12, 7: 22, 8: 18, 9: 25 },
       nearbyTypes: [],

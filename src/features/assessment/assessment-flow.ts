@@ -1,4 +1,4 @@
-import { assessmentDefinition } from "@/content/assessments/ko/v1";
+import { assessmentDefinition } from "@/content/assessments";
 
 import type {
   AssessmentAnswer,
@@ -98,7 +98,7 @@ export function getAssessmentFlowSnapshot(
   draft: AssessmentDraft,
 ): AssessmentFlowSnapshot {
   const submissionAnswers = toSubmissionAnswers(draft.answers);
-  const totalQuestions = orderedQuestions.length;
+  const totalQuestions = Number(orderedQuestions.length);
   const answeredCount = submissionAnswers.length;
   const firstUnansweredIndex = orderedQuestions.findIndex(
     (question) => draft.answers[question.id] === undefined,

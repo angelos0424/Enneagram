@@ -26,9 +26,11 @@ class SpyAssessmentResultRepository implements AssessmentResultRepository {
       scoringVersion: snapshot.scoringVersion,
       copyVersion: snapshot.copyVersion,
       primaryType: String(snapshot.primaryType),
-      wingType: String(snapshot.wingType),
+      wingType: snapshot.wingType === null ? null : String(snapshot.wingType),
       growthType: String(snapshot.growthType),
       stressType: String(snapshot.stressType),
+      resultStatus: snapshot.resultStatus,
+      confidenceScore: snapshot.confidenceScore,
       rawScores: snapshot.rawScores,
       normalizedScores: snapshot.normalizedScores,
       nearbyTypes: snapshot.nearbyTypes,
@@ -47,9 +49,14 @@ class SpyAssessmentResultRepository implements AssessmentResultRepository {
           scoringVersion: this.savedSnapshots[0].scoringVersion,
           copyVersion: this.savedSnapshots[0].copyVersion,
           primaryType: String(this.savedSnapshots[0].primaryType),
-          wingType: String(this.savedSnapshots[0].wingType),
+          wingType:
+            this.savedSnapshots[0].wingType === null
+              ? null
+              : String(this.savedSnapshots[0].wingType),
           growthType: String(this.savedSnapshots[0].growthType),
           stressType: String(this.savedSnapshots[0].stressType),
+          resultStatus: this.savedSnapshots[0].resultStatus,
+          confidenceScore: this.savedSnapshots[0].confidenceScore,
           rawScores: this.savedSnapshots[0].rawScores,
           normalizedScores: this.savedSnapshots[0].normalizedScores,
           nearbyTypes: this.savedSnapshots[0].nearbyTypes,
@@ -69,9 +76,14 @@ class SpyAssessmentResultRepository implements AssessmentResultRepository {
           scoringVersion: this.savedSnapshots[0].scoringVersion,
           copyVersion: this.savedSnapshots[0].copyVersion,
           primaryType: String(this.savedSnapshots[0].primaryType),
-          wingType: String(this.savedSnapshots[0].wingType),
+          wingType:
+            this.savedSnapshots[0].wingType === null
+              ? null
+              : String(this.savedSnapshots[0].wingType),
           growthType: String(this.savedSnapshots[0].growthType),
           stressType: String(this.savedSnapshots[0].stressType),
+          resultStatus: this.savedSnapshots[0].resultStatus,
+          confidenceScore: this.savedSnapshots[0].confidenceScore,
           rawScores: this.savedSnapshots[0].rawScores,
           normalizedScores: this.savedSnapshots[0].normalizedScores,
           nearbyTypes: this.savedSnapshots[0].nearbyTypes,
@@ -99,6 +111,8 @@ describe("assessment result persistence contract", () => {
     expect(snapshot.rawScores).toEqual(scoredResult.rawScores);
     expect(snapshot.normalizedScores).toEqual(scoredResult.normalizedScores);
     expect(snapshot.nearbyTypes).toEqual(scoredResult.nearbyTypes);
+    expect(snapshot.resultStatus).toBe(scoredResult.resultStatus);
+    expect(snapshot.confidenceScore).toBe(scoredResult.confidenceScore);
     expect(snapshot.answers).toEqual(answers);
     expect(snapshot.createdAt).toEqual(createdAt);
     expect(snapshot.publicId).toMatch(/^[A-Za-z]+$/);
@@ -139,6 +153,8 @@ describe("assessment result persistence contract", () => {
         "copyVersion",
         "publicId",
         "adminToken",
+        "resultStatus",
+        "confidenceScore",
         "rawScores",
         "normalizedScores",
         "nearbyTypes",

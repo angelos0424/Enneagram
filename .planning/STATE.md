@@ -1,36 +1,36 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: executing
-stopped_at: Completed 06-03-PLAN.md
-last_updated: "2026-03-30T00:18:23.285Z"
+milestone: v2.0
+milestone_name: 에니어그램 검사 정확도 개선
+status: milestone_completed
+stopped_at: null
+last_updated: "2026-03-30T04:20:00.000Z"
 last_activity: 2026-03-30
 progress:
-  total_phases: 6
+  total_phases: 5
   completed_phases: 5
-  total_plans: 22
-  completed_plans: 21
-  percent: 95
+  total_plans: 0
+  completed_plans: 0
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-29)
+See: .planning/PROJECT.md (updated 2026-03-30)
 
 **Core value:** 사용자가 로그인 없이도 모바일에서 빠르게 에니어그램 검사를 완료하고, 이해하기 쉬운 상세 결과를 공유할 수 있어야 한다.
-**Current focus:** Phase 06 — coolify-launch-hardening
+**Current focus:** Milestone v2.0 — 에니어그램 검사 정확도 개선
 
 ## Current Position
 
-Phase: 06 (coolify-launch-hardening) — EXECUTING
-Plan: 4 of 4
-Status: Ready to execute
-Last activity: 2026-03-30
+Phase: 11 — Result UI Overhaul (completed)
+Plan: --
+Status: v2 scoring/content/compatibility work completed; Phase 06-04 operator restore drill remains manual
+Last activity: 2026-03-30 — Completed scoring v2, confidence classification, v2 content, compatibility migration, and result UI overhaul
 
-Progress: [██████████] 95%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
@@ -119,18 +119,22 @@ Recent decisions affecting current work:
 - [Phase 06-coolify-launch-hardening]: Coolify should use /api/health as a process-level liveness check that never queries PostgreSQL.
 - [Phase 06]: Public result preview metadata now derives only from immutable snapshot copy and never from raw answers or admin-only fields.
 - [Phase 06]: Public preview URLs prefer APP_ORIGIN and fall back to localhost outside production so crawler metadata stays absolute during local verification.
+- [Phase 07]: `ko-enneagram-v2` now uses keyed centered scoring and independent normalization while keeping `ko-enneagram-v1` available for stored-result compatibility.
+- [Phase 08]: v2 결과는 `clear | mixed | insufficient_variance` 상태를 저장하고, 날개는 확실할 때만 선택적으로 노출한다.
+- [Phase 10]: `assessment_results`는 `result_status`, `confidence_score`, nullable `wing_type`를 저장하며, `0004` migration으로 기존 결과를 호환시킨다.
+- [Phase 11]: 공개 결과 페이지는 v1 저장 결과에는 기존 위계를 유지하고, v2 저장 결과에는 후보/선명도/이론적 연결선 중심 UI를 렌더링한다.
 
 ### Pending Todos
 
-None yet.
+- Coolify 또는 동일한 운영 환경에서 비프로덕션 PostgreSQL restore drill을 1회 수행하고 `docs/operations/postgres-restore-checklist.md`에 결과를 기록해야 한다.
 
 ### Blockers/Concerns
 
-- 한국어 문항 세트와 점수 규칙의 품질 검증이 부족하면 이후 모든 결과 신뢰도에 영향을 준다.
-- 공유 미리보기의 실제 채널 동작과 Coolify 배포 복구 절차는 Phase 06에서 검증이 필요하다.
+- 운영자 restore drill은 실제 Coolify/PostgreSQL 접근 권한이 있어야 마무리된다.
+- 한국어 v2 문항 세트는 구조 개선은 끝났지만, 도메인 전문가 검토가 추가되면 해석 품질을 더 끌어올릴 수 있다.
 
 ## Session Continuity
 
-Last session: 2026-03-30T00:18:02.439Z
-Stopped at: Completed 06-03-PLAN.md
+Last session: 2026-03-30T04:20:00.000Z
+Stopped at: Milestone v2.0 implementation complete; optional operator restore drill pending
 Resume file: None

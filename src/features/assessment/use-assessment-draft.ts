@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { assessmentDefinition } from "@/content/assessments/ko/v1";
+import { assessmentDefinition } from "@/content/assessments";
 
 import {
   buildAssessmentDraft,

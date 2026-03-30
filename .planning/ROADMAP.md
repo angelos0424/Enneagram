@@ -4,11 +4,15 @@
 
 이 로드맵은 익명 모바일 검사, 서버 권위 점수 계산, 영구 스냅샷 결과 링크, 공유 루프, 집계형 관리자 통계, Coolify 운영까지를 한 번에 이어지는 사용자 가치 단위로 나눈다. 각 phase는 다음 phase를 열어주는 계약을 먼저 고정하고, 공유된 결과가 나중에도 같은 내용을 유지하는 것을 핵심 전제로 둔다.
 
+v2.0 마일스톤은 구조적 편향을 제거하고, 결과를 "정확한 진단"이 아니라 "해석 가능한 성향 프로필"로 정직하게 제시하며, 기존 v1 결과를 깨지 않으면서 v2로 안전하게 이행한다. 순서는 왜곡 제거 -> scoring v2 도입 -> 문항 재작성 -> 해석 품질 검토의 흐름을 따른다.
+
 ## Phases
 
 **Phase Numbering:**
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+
+### Milestone v1.0 — 에니어그램 모바일 테스트 사이트
 
 - [x] **Phase 1: Assessment Contract & Scoring Core** - 버전된 문항과 서버 점수 계산 규칙을 고정한다. (completed 2026-03-29)
 - [x] **Phase 2: Persistent Result Snapshots** - 저장된 결과 스냅샷과 영구 공유 링크를 제공한다. (completed 2026-03-29)
@@ -16,6 +20,14 @@
 - [x] **Phase 4: Result Interpretation & Share Loop** - 결과 이해와 공유받은 사용자의 재검사 유입 루프를 완성한다. (completed 2026-03-29)
 - [x] **Phase 5: Aggregate Admin Stats** - 재식별 위험을 억제한 보호된 운영 통계를 제공한다. (completed 2026-03-29)
 - [ ] **Phase 6: Coolify Launch Hardening** - 배포, 백업, 메타데이터, 운영 복구 기준을 갖춘다.
+
+### Milestone v2.0 — 에니어그램 검사 정확도 개선
+
+- [x] **Phase 7: Scoring Engine v2** - centered scoring과 독립 정규화로 구조적 편향을 제거한다. (completed 2026-03-30)
+- [x] **Phase 8: Confidence Classification & Optional Wing** - 낮은 신뢰도 상태와 선택적 wing으로 억지 확정을 멈춘다. (completed 2026-03-30)
+- [x] **Phase 9: v2 Assessment Content** - 36문항 이상의 다차원 문항 세트로 측정 품질을 높인다. (completed 2026-03-30)
+- [x] **Phase 10: Version Compatibility & Migration** - v1 결과를 보존하면서 v2 결과를 올바른 경로로 렌더링한다. (completed 2026-03-30)
+- [x] **Phase 11: Result UI Overhaul** - 결과 화면을 정직한 위계와 표현으로 재구성한다. (completed 2026-03-30)
 
 ## Phase Details
 
@@ -118,10 +130,69 @@ Plans:
 - [x] 06-03-PLAN.md — Ship privacy-safe server-generated result metadata and a route-scoped OG image for public share previews
 - [ ] 06-04-PLAN.md — Make PostgreSQL backup/restore explicit with a rehearsal helper, operator checklist, and restore-drill gate
 
+### Phase 7: Scoring Engine v2
+**Goal**: 시스템이 centered scoring과 독립 정규화를 사용하여 균일 응답에서 특정 유형으로 쏠리지 않는 공정한 점수를 산출할 수 있다.
+**Depends on**: Phase 6
+**Requirements**: SCORE-01, SCORE-02, SCORE-03, SCORE-04, SCORE-05, DBCO-01, TEST-01, TEST-05, TEST-06
+**Success Criteria** (what must be TRUE):
+  1. 전 문항 동일 응답 시 모든 유형이 동점이 되어 1번 유형으로 고정되지 않는다.
+  2. 역문항의 부호가 반전 적용되어, 같은 응답값이라도 역문항에서는 반대 방향으로 점수가 계산된다.
+  3. 유형별 점수가 독립적으로 0-100 범위로 정규화되어, 9개 유형 점수의 합이 100을 강제하지 않는다.
+  4. 각 문항이 keyedType, reverse, dimension 속성을 명시적으로 가지며, 자동 생성 가중치를 사용하지 않는다.
+  5. `ko-enneagram-v2` assessment version과 대응하는 scoring version이 정의되어 v1과 구분된다.
+**Plans**: TBD
+
+### Phase 8: Confidence Classification & Optional Wing
+**Goal**: 시스템이 애매한 결과를 억지로 한 유형으로 확정하지 않고, 결과 신뢰도와 wing 유무를 정직하게 판정할 수 있다.
+**Depends on**: Phase 7
+**Requirements**: CONF-01, CONF-02, CONF-03, CONF-04, DBCO-02, DBCO-03, TEST-02, TEST-03, TEST-04
+**Success Criteria** (what must be TRUE):
+  1. 전 문항 동일 응답이나 분산이 극히 낮은 응답이 `insufficient_variance`로 판정된다.
+  2. 1위와 2위 유형 점수 격차가 작은 응답이 `mixed`로 판정된다.
+  3. wing이 불명확할 때 `wingType: null`이 반환되고, 임계값 이상 우세할 때만 wing이 확정된다.
+  4. 결과에 1위-2위 격차 기반 `confidence_score` 수치가 포함된다.
+  5. `assessment_results` 테이블에 `result_status`가 저장되고 `wing_type`이 nullable로 동작한다.
+**Plans**: TBD
+
+### Phase 9: v2 Assessment Content
+**Goal**: v2 문항 세트가 유형당 다차원 문항과 혼동쌍 분리 문항을 갖추어, 측정 품질과 판별력이 v1보다 향상된다.
+**Depends on**: Phase 7
+**Requirements**: CONT-01, CONT-02, CONT-03, CONT-04, CONT-05, CONT-06, TEST-07
+**Success Criteria** (what must be TRUE):
+  1. v2 문항 세트가 최소 36문항(유형당 4문항)으로 구성되어 있다.
+  2. 각 유형의 문항이 핵심 동기, 주의 초점, 방어 패턴, 대인 반응 중 서로 다른 dimension을 다룬다.
+  3. 혼동이 잦은 유형쌍(1vs6, 2vs9, 3vs8, 4vs5, 6vs9, 7vs8)을 분리하는 문항이 포함되어 있다.
+  4. 역문항이 포함되어 있고, 54문항까지 확장 가능한 구조로 정의되어 있다.
+  5. 유형당 최소 문항 수와 역문항 비율을 검증하는 definition 테스트가 통과한다.
+**Plans**: TBD
+
+### Phase 10: Version Compatibility & Migration
+**Goal**: 기존 v1 결과가 재채점 없이 원본 그대로 유지되고, 공개 결과 페이지가 저장된 버전에 따라 올바른 렌더링 경로를 선택한다.
+**Depends on**: Phase 8, Phase 9
+**Requirements**: DBCO-04, DBCO-05
+**Success Criteria** (what must be TRUE):
+  1. `ko-enneagram-v1`으로 저장된 기존 결과가 재채점되지 않고, 저장 시점의 버전 트리오(assessmentVersion, scoringVersion, copyVersion)를 그대로 유지한다.
+  2. 공개 결과 페이지가 저장된 버전 정보에 따라 v1 렌더링 경로와 v2 렌더링 경로를 자동으로 분기한다.
+**Plans**: TBD
+
+### Phase 11: Result UI Overhaul
+**Goal**: 사용자가 결과 화면에서 정직한 위계와 표현으로 자신의 성향 프로필을 이해하고, 단정적이지 않은 해석을 읽을 수 있다.
+**Depends on**: Phase 10
+**Requirements**: RUI-01, RUI-02, RUI-03, RUI-04, RUI-05, RUI-06, TEST-08
+**Success Criteria** (what must be TRUE):
+  1. 결과 화면이 주유형 후보 > 근접 유형 > 결과 선명도 > 날개 후보 > 성장/스트레스 참고 순서로 표시된다.
+  2. wing이 null일 때 "날개는 뚜렷하지 않음"이 표시되고 UI가 깨지지 않는다.
+  3. 성장/스트레스 방향이 "이론적 연결선"임을 명시하는 참고 정보로 하향 표시된다.
+  4. mixed/insufficient_variance 결과에 대해 적절한 안내 문구가 렌더링된다.
+  5. 결과 표현이 "가장 가까운 유형 후보" 톤으로 바뀌어 단정적 표현이 줄어든다.
+**Plans**: TBD
+**UI hint**: yes
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11
+Note: Phase 9 depends on Phase 7 (not Phase 8), so Phase 8 and Phase 9 can execute in parallel if desired.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -130,4 +201,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 3. Mobile Assessment Flow | 4/4 | Complete | 2026-03-29 |
 | 4. Result Interpretation & Share Loop | 4/4 | Complete | 2026-03-29 |
 | 5. Aggregate Admin Stats | 4/4 | Complete | 2026-03-29 |
-| 6. Coolify Launch Hardening | 1/4 | In Progress | - |
+| 6. Coolify Launch Hardening | 3/4 | In Progress | - |
+| 7. Scoring Engine v2 | n/a | Complete | 2026-03-30 |
+| 8. Confidence Classification & Optional Wing | n/a | Complete | 2026-03-30 |
+| 9. v2 Assessment Content | n/a | Complete | 2026-03-30 |
+| 10. Version Compatibility & Migration | n/a | Complete | 2026-03-30 |
+| 11. Result UI Overhaul | n/a | Complete | 2026-03-30 |

@@ -1,13 +1,22 @@
 export type EnneagramType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export type LikertValue = 1 | 2 | 3 | 4 | 5;
+export type AssessmentDimension =
+  | "motivation"
+  | "attention"
+  | "defense"
+  | "interpersonal";
+export type AssessmentResultStatus =
+  | "clear"
+  | "mixed"
+  | "insufficient_variance";
 
 export type LikertOption = {
   readonly value: LikertValue;
   readonly label: string;
 };
 
-export type AssessmentQuestion = {
+export type WeightedAssessmentQuestion = {
   readonly id: string;
   readonly prompt: string;
   readonly typeWeights: Record<
@@ -16,13 +25,27 @@ export type AssessmentQuestion = {
   >;
 };
 
-export type AssessmentDefinition = {
+export type KeyedAssessmentQuestion = {
+  readonly id: string;
+  readonly prompt: string;
+  readonly keyedType: EnneagramType;
+  readonly reverse: boolean;
+  readonly dimension: AssessmentDimension;
+};
+
+export type AssessmentQuestion =
+  | WeightedAssessmentQuestion
+  | KeyedAssessmentQuestion;
+
+export type AssessmentDefinition<
+  TQuestion extends AssessmentQuestion = AssessmentQuestion,
+> = {
   readonly version: string;
   readonly locale: "ko-KR";
   readonly scoringVersion: string;
   readonly copyVersion: string;
   readonly likertOptions: readonly LikertOption[];
-  readonly questions: readonly AssessmentQuestion[];
+  readonly questions: readonly TQuestion[];
 };
 
 export type NearbyTypeScore = {

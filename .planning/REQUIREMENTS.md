@@ -1,139 +1,110 @@
-# Requirements: 에니어그램 모바일 테스트 사이트
+# Requirements: 에니어그램 모바일 테스트 사이트 — Milestone v2.0
 
-**Defined:** 2026-03-29
+**Defined:** 2026-03-30
+**Milestone:** v2.0 — 에니어그램 검사 정확도 개선
 **Core Value:** 사용자가 로그인 없이도 모바일에서 빠르게 에니어그램 검사를 완료하고, 이해하기 쉬운 상세 결과를 공유할 수 있어야 한다.
-
-## v1 Requirements
-
-### Assessment Foundation
-
-- [x] **ASMT-01**: 운영자는 버전이 명시된 한국어 에니어그램 문항 세트와 선택지를 관리 가능한 형태로 유지할 수 있다.
-- [x] **ASMT-02**: 시스템은 제출된 응답을 서버에서 계산하여 주 유형을 산출할 수 있다.
-- [x] **ASMT-03**: 시스템은 제출된 응답을 서버에서 계산하여 유형별 점수 분포를 산출할 수 있다.
-- [x] **ASMT-04**: 시스템은 산출된 주 유형과 점수 분포를 바탕으로 날개를 결정할 수 있다.
-- [x] **ASMT-05**: 시스템은 주 유형을 기준으로 성장 방향과 스트레스 방향을 결정할 수 있다.
-- [x] **ASMT-06**: 시스템은 결과 저장 시 문항 버전과 계산 버전을 함께 기록할 수 있다.
-
-### Assessment Experience
-
-- [x] **FLOW-01**: 사용자는 로그인 없이 모바일에서 즉시 검사를 시작할 수 있다.
-- [x] **FLOW-02**: 사용자는 모바일 화면에 최적화된 방식으로 문항에 응답할 수 있다.
-- [x] **FLOW-03**: 사용자는 검사 진행 중 현재 진행 상태를 확인할 수 있다.
-- [x] **FLOW-04**: 사용자는 세션 중 새로고침 또는 일시 중단 후에도 진행 중인 응답을 복구할 수 있다.
-- [x] **FLOW-05**: 사용자는 모든 필수 문항 응답 후 검사를 제출할 수 있다.
-
-### Results
-
-- [x] **RSLT-01**: 사용자는 검사 완료 직후 자신의 주 유형을 결과 페이지 상단에서 확인할 수 있다.
-- [x] **RSLT-02**: 사용자는 결과 페이지에서 자신의 날개를 확인할 수 있다.
-- [x] **RSLT-03**: 사용자는 결과 페이지에서 유형별 점수 분포를 시각적으로 확인할 수 있다.
-- [x] **RSLT-04**: 사용자는 결과 페이지에서 성장 방향과 스트레스 방향을 확인할 수 있다.
-- [x] **RSLT-05**: 사용자는 결과 페이지에서 주 유형 해설 카드를 읽을 수 있다.
-- [x] **RSLT-06**: 사용자는 결과 페이지에서 해석 유의사항과 결과의 비진단적 성격을 확인할 수 있다.
-- [x] **RSLT-07**: 시스템은 공유 결과 페이지를 저장된 스냅샷으로 렌더링하여 이후 로직 변경에도 동일 결과를 유지할 수 있다.
-
-### Sharing And Recommendation
-
-- [x] **SHAR-01**: 시스템은 각 완료 결과에 대해 추측 불가능한 영구 공유 링크를 생성할 수 있다.
-- [x] **SHAR-02**: 사용자는 결과 페이지에서 공유 링크를 복사하거나 모바일 공유 기능으로 전달할 수 있다.
-- [x] **SHAR-03**: 공유 링크를 연 사용자는 공개 결과 페이지를 로그인 없이 확인할 수 있다.
-- [x] **SHAR-04**: 공유 결과 페이지 상단에는 항상 `검사해보기` 버튼이 표시된다.
-- [x] **SHAR-05**: 공유 결과 페이지에서 `검사해보기`를 누른 사용자는 새 검사 흐름으로 진입할 수 있다.
-- [x] **SHAR-06**: 시스템은 공유 결과 페이지에 검색엔진 비노출 및 기본 프라이버시 보호 설정을 적용할 수 있다.
-- [x] **SHAR-07**: 결과 페이지는 공유받은 사용자에게 다음 행동을 제안하는 추천 섹션을 보여줄 수 있다.
-
-### Admin Stats
-
-- [x] **STAT-01**: 관리자만 보호된 통계 화면에 접근할 수 있다.
-- [x] **STAT-02**: 관리자는 날짜별 검사 시작 수와 완료 수를 확인할 수 있다.
-- [x] **STAT-03**: 관리자는 주 유형 분포를 확인할 수 있다.
-- [x] **STAT-04**: 관리자는 날개 분포를 확인할 수 있다.
-- [x] **STAT-05**: 관리자는 공유 결과 페이지 유입 후 `검사해보기` 클릭 수를 확인할 수 있다.
-- [x] **STAT-06**: 시스템은 재식별 위험이 있는 소표본 통계를 그대로 노출하지 않는다.
-
-### Operations And Deployment
-
-- [x] **OPER-01**: 시스템은 Coolify에서 웹 앱과 PostgreSQL을 분리된 서비스로 배포할 수 있다.
-- [x] **OPER-02**: 시스템은 결과 영구 보관을 위해 PostgreSQL 영속 스토리지를 사용한다.
-- [ ] **OPER-03**: 운영자는 데이터베이스 백업 구성을 통해 결과 데이터를 복구할 수 있다.
-- [x] **OPER-04**: 시스템은 결과 페이지 공유 미리보기를 위한 메타데이터를 서버에서 생성할 수 있다.
 
 ## v2 Requirements
 
-### Result Confidence And Refinement
+### Scoring Engine
 
-- **CONF-01**: 사용자는 근접 유형 비교 뷰를 통해 상위 2~3개 유형 차이를 확인할 수 있다.
-- **CONF-02**: 사용자는 불확실한 결과에 대해 보정용 재질문 또는 재검사 흐름을 진행할 수 있다.
+- [ ] **SCORE-01**: 시스템은 centered scoring(-2..+2)으로 응답을 변환하여, 전 문항 동일 응답 시 전 유형 0점이 되어 특정 유형으로 쏠리지 않아야 한다.
+- [ ] **SCORE-02**: 시스템은 역문항(reverse)을 지원하여 부호를 반전 적용할 수 있어야 한다.
+- [ ] **SCORE-03**: 시스템은 유형별 독립 정규화(0-100)를 적용하여, 9개 유형 점수의 합이 100을 강제하지 않아야 한다.
+- [ ] **SCORE-04**: 각 문항은 dimension(motivation/attention/defense/interpersonal) 태그를 가져야 한다.
+- [ ] **SCORE-05**: 시스템은 `buildTypeWeights()` 자동 생성 방식 대신, 문항별 명시적 `keyedType`과 `reverse` 플래그로 스코어링해야 한다.
 
-### Sharing Enhancements
+### Confidence & Wing
 
-- **SHAR-08**: 시스템은 공유 결과에 최적화된 OG 이미지 또는 공유 카드 이미지를 생성할 수 있다.
-- **SHAR-09**: 시스템은 카카오톡 등 주요 공유 채널별 미리보기 품질을 최적화할 수 있다.
+- [ ] **CONF-01**: 시스템은 결과에 `ResultStatus`(clear/mixed/insufficient_variance)를 산출하여, 모든 응답을 억지로 한 유형으로 확정하지 않아야 한다.
+- [ ] **CONF-02**: 시스템은 응답 분산이 매우 낮으면 `insufficient_variance`, 1위-2위 격차가 작으면 `mixed`, 그 외 `clear`로 판정해야 한다.
+- [ ] **CONF-03**: 시스템은 wing이 불명확할 때 `wingType: null`을 반환하고, 임계값 이상 우세할 때만 wing을 확정해야 한다.
+- [ ] **CONF-04**: 시스템은 1위-2위 점수 격차 기반의 `confidence_score` 수치를 산출해야 한다.
 
-### Analytics Expansion
+### Assessment Content
 
-- **STAT-07**: 관리자는 유입 소스별 전환율을 확인할 수 있다.
-- **STAT-08**: 관리자는 결과 페이지 조회 상위 링크를 확인할 수 있다.
+- [ ] **CONT-01**: v2 문항 세트는 최소 36문항(유형당 4문항)으로 구성되어야 한다.
+- [ ] **CONT-02**: 각 유형의 문항은 서로 다른 dimension(핵심 동기, 주의 초점, 방어 패턴, 대인 반응)을 다뤄야 한다.
+- [ ] **CONT-03**: 혼동이 잦은 유형쌍(1vs6, 2vs9, 3vs8, 4vs5, 6vs9, 7vs8)을 분리하는 문항이 포함되어야 한다.
+- [ ] **CONT-04**: 역문항이 포함되어 무의식적 일괄 체크를 줄여야 한다.
+- [ ] **CONT-05**: v2 문항 세트는 54문항(유형당 6문항)까지 확장 가능한 구조여야 한다.
+- [ ] **CONT-06**: 문항 작성 시 사회적 바람직성 편향을 줄이고, 행동보다 동기를 드러내는 표현을 사용해야 한다.
+
+### Result UI
+
+- [ ] **RUI-01**: 결과 화면은 주유형 후보 > 근접 유형 > 결과 선명도 > 날개 후보 > 성장/스트레스 참고 순서로 위계를 재정렬해야 한다.
+- [ ] **RUI-02**: wing이 null일 때 "날개는 뚜렷하지 않음"을 표시하고, UI가 깨지지 않아야 한다.
+- [ ] **RUI-03**: 성장/스트레스 방향은 "현재 응답에서 별도로 측정된 결과가 아니라 이론적 연결선"임을 명시하는 참고 정보로 하향 표시해야 한다.
+- [ ] **RUI-04**: 정규화 점수 분포 명칭을 "상대 강도 지표" 또는 "유형별 반응 지표"로 변경해야 한다.
+- [ ] **RUI-05**: mixed/insufficient_variance 결과에 대해 적절한 안내 문구를 렌더링해야 한다.
+- [ ] **RUI-06**: 결과 표현을 "가장 가까운 유형 후보" 톤으로 바꿔 단정적 표현을 줄여야 한다.
+
+### DB & Compatibility
+
+- [ ] **DBCO-01**: `ko-enneagram-v2`를 새 assessment version으로 추가하고, v2 전용 scoring/copy version을 정의해야 한다.
+- [ ] **DBCO-02**: `assessment_results` 테이블에 `result_status` 필드를 추가해야 한다.
+- [ ] **DBCO-03**: `wing_type`을 nullable로 변경해야 한다.
+- [ ] **DBCO-04**: 기존 `ko-enneagram-v1` 결과는 재채점하지 않고, 저장 시점의 버전 트리오를 그대로 유지해야 한다.
+- [ ] **DBCO-05**: 공개 결과 페이지는 저장된 `assessmentVersion`, `scoringVersion`, `copyVersion`에 따라 올바른 렌더링 경로를 선택해야 한다.
+
+### Test Coverage
+
+- [ ] **TEST-01**: 전 문항 동일 응답 시 1번 유형 고정이 나오지 않는 테스트가 있어야 한다.
+- [ ] **TEST-02**: 전 문항 3점일 때 `insufficient_variance`가 되는 테스트가 있어야 한다.
+- [ ] **TEST-03**: top1/top2 격차가 작을 때 `mixed`가 되는 테스트가 있어야 한다.
+- [ ] **TEST-04**: wing이 불명확하면 null이 되는 테스트가 있어야 한다.
+- [ ] **TEST-05**: 역문항이 반대로 계산되는 테스트가 있어야 한다.
+- [ ] **TEST-06**: 유형별 독립 정규화가 합 100을 강제하지 않는 테스트가 있어야 한다.
+- [ ] **TEST-07**: 유형당 최소 문항 수와 역문항 비율을 검증하는 definition 테스트가 있어야 한다.
+- [ ] **TEST-08**: 낮은 신뢰도 결과 문구, wing 없음 상태, 성장/스트레스 참고 표시를 검증하는 UI 테스트가 있어야 한다.
+
+## Future Requirements
+
+- 54문항 이상 확장 시 별도 "상세 검사" 모드 분리
+- 모집단 기반 백분위 정규화 (충분한 데이터 확보 후)
+- 문항 난이도/판별력 통계 기반 문항 선별
 
 ## Out of Scope
 
-| Feature | Reason |
-|---------|--------|
-| 사용자 회원가입/로그인 | 초기 버전은 익명 진입과 공유 루프 검증이 핵심이다 |
-| 사용자 프로필 및 결과 히스토리 관리 | 계정 시스템 없이 유지하기 어렵고 MVP 검증 범위를 넘는다 |
-| 친구 그래프, 댓글, 커뮤니티 기능 | 핵심 검사 경험과 무관한 고복잡도 기능이다 |
-| 전문가 코칭, 상담 연결, 마켓플레이스 | 제품 범주가 테스트 서비스에서 서비스 비즈니스로 커진다 |
-| 일지, 습관 추적, 장기 성장 프로그램 | 지속 사용 기능은 초기 검증 대상이 아니다 |
-| 궁합/관계 분석 엔진 | 단일 사용자 결과 경험보다 우선순위가 낮다 |
-| 다국어 지원 | 질문과 결과는 한국어만 우선 제공한다 |
-| 공개 결과 페이지의 인덱싱 허용 | 영구 링크는 유지하되 공개 확산은 제한해야 한다 |
-| 원시 이벤트 다운로드형 관리자 기능 | 익명 서비스의 재식별 위험을 높인다 |
+- RHETI 수준의 144문항 정밀 진단 — 모바일 빠른 완료 목표와 충돌
+- v1 결과 재채점 — 기존 공유 링크 안정성 보장
+- 다국어 v2 문항 — 한국어 전용 유지
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ASMT-01 | Phase 1 | Complete |
-| ASMT-02 | Phase 1 | Complete |
-| ASMT-03 | Phase 1 | Complete |
-| ASMT-04 | Phase 1 | Complete |
-| ASMT-05 | Phase 1 | Complete |
-| ASMT-06 | Phase 1 | Complete |
-| FLOW-01 | Phase 3 | Complete |
-| FLOW-02 | Phase 3 | Complete |
-| FLOW-03 | Phase 3 | Complete |
-| FLOW-04 | Phase 3 | Complete |
-| FLOW-05 | Phase 3 | Complete |
-| RSLT-01 | Phase 4 | Complete |
-| RSLT-02 | Phase 4 | Complete |
-| RSLT-03 | Phase 4 | Complete |
-| RSLT-04 | Phase 4 | Complete |
-| RSLT-05 | Phase 4 | Complete |
-| RSLT-06 | Phase 4 | Complete |
-| RSLT-07 | Phase 2 | Complete |
-| SHAR-01 | Phase 2 | Complete |
-| SHAR-02 | Phase 4 | Complete |
-| SHAR-03 | Phase 2 | Complete |
-| SHAR-04 | Phase 4 | Complete |
-| SHAR-05 | Phase 4 | Complete |
-| SHAR-06 | Phase 2 | Complete |
-| SHAR-07 | Phase 4 | Complete |
-| STAT-01 | Phase 5 | Complete |
-| STAT-02 | Phase 5 | Complete |
-| STAT-03 | Phase 5 | Complete |
-| STAT-04 | Phase 5 | Complete |
-| STAT-05 | Phase 5 | Complete |
-| STAT-06 | Phase 5 | Complete |
-| OPER-01 | Phase 6 | Complete |
-| OPER-02 | Phase 2 | Complete |
-| OPER-03 | Phase 6 | Pending |
-| OPER-04 | Phase 6 | Complete |
-
-**Coverage:**
-- v1 requirements: 35 total
-- Mapped to phases: 35
-- Unmapped: 0
-
----
-*Requirements defined: 2026-03-29*
-*Last updated: 2026-03-29 after Phase 5 completion*
+| SCORE-01 | Phase 7 | Pending |
+| SCORE-02 | Phase 7 | Pending |
+| SCORE-03 | Phase 7 | Pending |
+| SCORE-04 | Phase 7 | Pending |
+| SCORE-05 | Phase 7 | Pending |
+| CONF-01 | Phase 8 | Pending |
+| CONF-02 | Phase 8 | Pending |
+| CONF-03 | Phase 8 | Pending |
+| CONF-04 | Phase 8 | Pending |
+| CONT-01 | Phase 9 | Pending |
+| CONT-02 | Phase 9 | Pending |
+| CONT-03 | Phase 9 | Pending |
+| CONT-04 | Phase 9 | Pending |
+| CONT-05 | Phase 9 | Pending |
+| CONT-06 | Phase 9 | Pending |
+| RUI-01 | Phase 11 | Pending |
+| RUI-02 | Phase 11 | Pending |
+| RUI-03 | Phase 11 | Pending |
+| RUI-04 | Phase 11 | Pending |
+| RUI-05 | Phase 11 | Pending |
+| RUI-06 | Phase 11 | Pending |
+| DBCO-01 | Phase 7 | Pending |
+| DBCO-02 | Phase 8 | Pending |
+| DBCO-03 | Phase 8 | Pending |
+| DBCO-04 | Phase 10 | Pending |
+| DBCO-05 | Phase 10 | Pending |
+| TEST-01 | Phase 7 | Pending |
+| TEST-02 | Phase 8 | Pending |
+| TEST-03 | Phase 8 | Pending |
+| TEST-04 | Phase 8 | Pending |
+| TEST-05 | Phase 7 | Pending |
+| TEST-06 | Phase 7 | Pending |
+| TEST-07 | Phase 9 | Pending |
+| TEST-08 | Phase 11 | Pending |

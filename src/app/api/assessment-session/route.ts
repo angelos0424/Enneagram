@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { ZodError } from "zod";
 
-import { assessmentDefinition } from "@/content/assessments/ko/v1";
+import { assessmentDefinition } from "@/content/assessments";
 import {
   ADMIN_STATS_EVENT_TYPES,
   DrizzleAdminStatsEventRepository,

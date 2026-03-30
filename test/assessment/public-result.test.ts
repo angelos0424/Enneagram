@@ -10,6 +10,8 @@ import type { Metadata } from "next";
 
 import { typeCopyDefinition } from "@/content/type-copy/ko/v1";
 import { assessmentDefinition } from "@/content/assessments/ko/v1";
+import { assessmentDefinitionV2 } from "@/content/assessments/ko/v2";
+import { typeCopyDefinitionV2 } from "@/content/type-copy/ko/v2";
 import type { AssessmentResultRecord } from "@/db/schema";
 import { buildTypeDominantAnswers } from "./fixtures";
 
@@ -79,6 +81,8 @@ function buildStoredRecord(publicId: string): AssessmentResultRecord {
     wingType: "7",
     growthType: "2",
     stressType: "5",
+    resultStatus: "clear",
+    confidenceScore: 17,
     rawScores: { 1: 12, 2: 24, 3: 32, 4: 28, 5: 16, 6: 20, 7: 40, 8: 48, 9: 14 },
     normalizedScores: { 1: 25, 2: 50, 3: 67, 4: 58, 5: 33, 6: 42, 7: 83, 8: 100, 9: 29 },
     nearbyTypes: [
@@ -88,6 +92,45 @@ function buildStoredRecord(publicId: string): AssessmentResultRecord {
     ],
     answers: buildTypeDominantAnswers(8),
     createdAt: new Date("2026-03-29T02:00:00.000Z"),
+  };
+}
+
+function buildStoredRecordV2(publicId: string): AssessmentResultRecord {
+  return {
+    id: "result-row-v2",
+    publicId,
+    adminToken: "AdminTokenForPublicResultPageV2",
+    assessmentVersion: assessmentDefinitionV2.version,
+    scoringVersion: assessmentDefinitionV2.scoringVersion,
+    copyVersion: typeCopyDefinitionV2.copyVersion,
+    primaryType: "6",
+    wingType: null,
+    growthType: "9",
+    stressType: "3",
+    resultStatus: "mixed",
+    confidenceScore: 0,
+    rawScores: { 1: 0, 2: 1, 3: 4, 4: 0, 5: 1, 6: 5, 7: 0, 8: -1, 9: 4 },
+    normalizedScores: {
+      1: 50,
+      2: 56.3,
+      3: 75,
+      4: 50,
+      5: 56.3,
+      6: 81.3,
+      7: 50,
+      8: 43.8,
+      9: 75,
+    },
+    nearbyTypes: [
+      { typeId: 3, rawScore: 4, normalizedScore: 75, gapFromPrimary: 1 },
+      { typeId: 9, rawScore: 4, normalizedScore: 75, gapFromPrimary: 1 },
+      { typeId: 2, rawScore: 1, normalizedScore: 56.3, gapFromPrimary: 4 },
+    ],
+    answers: assessmentDefinitionV2.questions.map((question) => ({
+      questionId: question.id,
+      value: 3,
+    })),
+    createdAt: new Date("2026-03-30T02:00:00.000Z"),
   };
 }
 
@@ -186,6 +229,25 @@ describe("public result page", () => {
     expect(markup.indexOf("정규화 점수 분포")).toBeLessThan(
       markup.indexOf(typeCopyDefinition.entries[8].disclaimer.title),
     );
+  });
+
+  it("renders v2 results with candidate tone, clarity guidance, and optional wing messaging", async () => {
+    repositoryState.record = buildStoredRecordV2("PublicResultV2Candidate");
+
+    const { default: PublicResultPage } = await import("@/app/results/[publicId]/page");
+    const markup = renderToStaticMarkup(
+      await PublicResultPage({
+        params: Promise.resolve({ publicId: repositoryState.record.publicId }),
+      }),
+    );
+
+    expect(markup).toContain("가장 가까운 유형 후보");
+    expect(markup).toContain("결과 선명도");
+    expect(markup).toContain("혼합형");
+    expect(markup).toContain("날개는 뚜렷하지 않음");
+    expect(markup).toContain("상대 강도 지표");
+    expect(markup).toContain("이론적 연결선");
+    expect(markup).toContain("CANDIDATE");
   });
 
   it("uses the route not-found behavior when the public id does not exist", async () => {

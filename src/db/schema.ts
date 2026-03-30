@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, jsonb, real } from "drizzle-orm/pg-core";
 
 import type { AssessmentDraftSessionSnapshot } from "@/features/assessment/types";
 import type { AssessmentResultSnapshotDraft } from "@/domain/assessment/result-snapshot";
@@ -11,9 +11,13 @@ export const assessmentResults = pgTable("assessment_results", {
   scoringVersion: text("scoring_version").notNull(),
   copyVersion: text("copy_version").notNull(),
   primaryType: text("primary_type").notNull(),
-  wingType: text("wing_type").notNull(),
+  wingType: text("wing_type"),
   growthType: text("growth_type").notNull(),
   stressType: text("stress_type").notNull(),
+  resultStatus: text("result_status")
+    .$type<AssessmentResultSnapshotDraft["resultStatus"]>()
+    .notNull(),
+  confidenceScore: real("confidence_score").notNull(),
   rawScores: jsonb("raw_scores")
     .$type<AssessmentResultSnapshotDraft["rawScores"]>()
     .notNull(),

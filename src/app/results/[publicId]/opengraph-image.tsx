@@ -2,8 +2,9 @@ import { ImageResponse } from "next/og";
 import { notFound } from "next/navigation";
 
 import { DrizzleAssessmentResultRepository } from "@/db/repositories/assessment-result-repository";
+import { ASSESSMENT_VERSION_V2 } from "@/domain/assessment/constants";
 import { resolveResultCopy } from "@/domain/assessment/result-copy";
-import type { EnneagramType } from "@/domain/assessment/types";
+import type { AssessmentResultStatus, EnneagramType } from "@/domain/assessment/types";
 
 export const alt = "에니어그램 결과 미리보기";
 export const contentType = "image/png";
@@ -12,6 +13,20 @@ export const size = {
   width: 1200,
   height: 630,
 };
+
+function buildV2OgSummary(
+  resultStatus: AssessmentResultStatus,
+): string {
+  if (resultStatus === "mixed") {
+    return "한 가지로 단정하기보다 근접 유형을 함께 읽는 편이 적절한 결과예요.";
+  }
+
+  if (resultStatus === "insufficient_variance") {
+    return "응답이 고르게 분포되어 재응답과 비교가 특히 중요한 결과예요.";
+  }
+
+  return "이번 응답에서 가장 가까운 유형 후보를 먼저 보여드려요.";
+}
 
 type PublicResultOgImageProps = {
   params: Promise<{ publicId: string }>;
@@ -29,8 +44,24 @@ export default async function OpenGraphImage({
   }
 
   const primaryType = Number(record.primaryType) as EnneagramType;
-  const wingType = Number(record.wingType) as EnneagramType;
+  const wingType =
+    record.wingType === null ? null : (Number(record.wingType) as EnneagramType);
   const copy = resolveResultCopy(record.copyVersion, primaryType);
+  const isV2 = record.assessmentVersion === ASSESSMENT_VERSION_V2;
+  const summary = isV2
+    ? buildV2OgSummary(record.resultStatus as AssessmentResultStatus)
+    : copy.summary;
+  const statItems = isV2
+    ? [
+        { label: "유형 후보", value: `${primaryType}` },
+        { label: "날개 후보", value: wingType === null ? "없음" : `${wingType}` },
+        { label: "근접 유형", value: record.nearbyTypes[0]?.typeId?.toString() ?? "-" },
+      ]
+    : [
+        { label: "주 유형", value: `${primaryType}` },
+        { label: "날개", value: wingType === null ? "-" : `${wingType}` },
+        { label: "근접 유형", value: record.nearbyTypes[0]?.typeId?.toString() ?? "-" },
+      ];
 
   return new ImageResponse(
     (
@@ -104,7 +135,7 @@ export default async function OpenGraphImage({
                   color: "#44403c",
                 }}
               >
-                {copy.summary}
+                {summary}
               </div>
             </div>
             <div
@@ -114,11 +145,7 @@ export default async function OpenGraphImage({
                 marginTop: "auto",
               }}
             >
-              {[
-                { label: "주 유형", value: `${primaryType}` },
-                { label: "날개", value: `${wingType}` },
-                { label: "근접 유형", value: record.nearbyTypes[0]?.typeId?.toString() ?? "-" },
-              ].map((item) => (
+              {statItems.map((item) => (
                 <div
                   key={item.label}
                   style={{
@@ -175,18 +202,18 @@ export default async function OpenGraphImage({
                 gap: "10px",
               }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  fontSize: "26px",
-                  fontWeight: 700,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  color: "#92400e",
-                }}
-              >
-                Type
-              </div>
+                <div
+                  style={{
+                    display: "flex",
+                    fontSize: "26px",
+                    fontWeight: 700,
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: "#92400e",
+                  }}
+                >
+                  {isV2 ? "Candidate" : "Type"}
+                </div>
               <div
                 style={{
                   display: "flex",

@@ -1,11 +1,27 @@
 import type { Metadata } from "next";
 
 import { DrizzleAssessmentResultRepository } from "@/db/repositories/assessment-result-repository";
+import { ASSESSMENT_VERSION_V2 } from "@/domain/assessment/constants";
 import { resolveResultCopy } from "@/domain/assessment/result-copy";
-import type { EnneagramType } from "@/domain/assessment/types";
+import type { AssessmentResultStatus, EnneagramType } from "@/domain/assessment/types";
 
 function resolveMetadataBase(): URL {
   return new URL(process.env.APP_ORIGIN ?? "http://localhost:3000");
+}
+
+function buildV2MetadataDescription(
+  primaryType: EnneagramType,
+  resultStatus: AssessmentResultStatus,
+): string {
+  if (resultStatus === "mixed") {
+    return `${primaryType}번을 포함한 근접 유형을 함께 읽는 성향 프로필 결과예요.`;
+  }
+
+  if (resultStatus === "insufficient_variance") {
+    return "응답이 고르게 분포되어 재응답과 근접 유형 비교가 권장되는 성향 프로필 결과예요.";
+  }
+
+  return `${primaryType}번이 가장 가까운 유형 후보로 나타난 성향 프로필 결과예요.`;
 }
 
 export async function buildSnapshotMetadata(publicId: string): Promise<Metadata> {
@@ -27,9 +43,16 @@ export async function buildSnapshotMetadata(publicId: string): Promise<Metadata>
     record.copyVersion,
     Number(record.primaryType) as EnneagramType,
   );
+  const primaryType = Number(record.primaryType) as EnneagramType;
+  const isV2 = record.assessmentVersion === ASSESSMENT_VERSION_V2;
   const metadataBase = resolveMetadataBase();
-  const title = `${copy.title} 결과`;
-  const description = copy.summary;
+  const title = isV2 ? `${copy.title} 유형 후보 결과` : `${copy.title} 결과`;
+  const description = isV2
+    ? buildV2MetadataDescription(
+        primaryType,
+        record.resultStatus as AssessmentResultStatus,
+      )
+    : copy.summary;
   const resultPath = `/results/${publicId}`;
   const imagePath = `${resultPath}/opengraph-image`;
   const resultUrl = new URL(resultPath, metadataBase).toString();

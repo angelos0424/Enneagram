@@ -1,4 +1,4 @@
-import { asc, eq, sql } from "drizzle-orm";
+import { asc, eq, isNotNull, sql } from "drizzle-orm";
 
 import { typeCopyDefinition } from "@/content/type-copy/ko/v1";
 import {
@@ -176,20 +176,28 @@ export class DrizzleAdminStatsRepository {
       dimension === "primary"
         ? assessmentResults.primaryType
         : assessmentResults.wingType;
-
-    const rows = await this.getDb()
+    const baseQuery = this.getDb()
       .select({
         key: column,
         count: sql<number>`count(*)::int`,
       })
-      .from(assessmentResults)
+      .from(assessmentResults);
+    const rows = await (dimension === "wing"
+      ? baseQuery.where(isNotNull(assessmentResults.wingType))
+      : baseQuery)
       .groupBy(column)
       .orderBy(asc(column));
 
-    return rows.map((row) => ({
-      key: row.key,
-      count: Number(row.count),
-    }));
+    return rows.flatMap((row) =>
+      row.key === null
+        ? []
+        : [
+            {
+              key: row.key,
+              count: Number(row.count),
+            },
+          ],
+    );
   }
 
   private async readEventDailyCountsFromMemory(
@@ -232,6 +240,11 @@ export class DrizzleAdminStatsRepository {
     for (const result of this.resultMemoryStore?.values() ?? []) {
       const key =
         dimension === "primary" ? result.primaryType : result.wingType;
+
+      if (key === null) {
+        continue;
+      }
+
       grouped.set(key, (grouped.get(key) ?? 0) + 1);
     }
 

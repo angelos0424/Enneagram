@@ -2,8 +2,12 @@ import React, { type JSX } from "react";
 import { notFound } from "next/navigation";
 
 import { DrizzleAssessmentResultRepository } from "@/db/repositories/assessment-result-repository";
+import { ASSESSMENT_VERSION_V2 } from "@/domain/assessment/constants";
 import { resolveResultCopy } from "@/domain/assessment/result-copy";
-import type { EnneagramType } from "@/domain/assessment/types";
+import type {
+  AssessmentResultStatus,
+  EnneagramType,
+} from "@/domain/assessment/types";
 
 import {
   ResultSnapshotView,
@@ -55,10 +59,18 @@ export default async function PublicResultPage({
     notFound();
   }
 
+  const wingType =
+    record.wingType === null ? null : (Number(record.wingType) as EnneagramType);
+  const isV2 = record.assessmentVersion === ASSESSMENT_VERSION_V2;
+
   const snapshot: ResultSnapshotViewModel = {
     publicId: record.publicId,
+    assessmentVersion: record.assessmentVersion,
+    resultStatus: record.resultStatus as AssessmentResultStatus,
+    confidenceScore: record.confidenceScore,
+    isV2,
     primaryType: Number(record.primaryType) as EnneagramType,
-    wingType: Number(record.wingType) as EnneagramType,
+    wingType,
     growthType: Number(record.growthType) as EnneagramType,
     stressType: Number(record.stressType) as EnneagramType,
     normalizedScores: record.normalizedScores,
@@ -76,10 +88,10 @@ export default async function PublicResultPage({
       record.copyVersion,
       Number(record.primaryType) as EnneagramType,
     ),
-    wingCopy: resolveResultCopy(
-      record.copyVersion,
-      Number(record.wingType) as EnneagramType,
-    ),
+    wingCopy:
+      wingType === null
+        ? null
+        : resolveResultCopy(record.copyVersion, wingType),
     growthCopy: resolveResultCopy(
       record.copyVersion,
       Number(record.growthType) as EnneagramType,

@@ -22,6 +22,19 @@
 
 - [ ] 운영자가 Coolify 배포와 백업 복구 기준을 갖춘 운영 환경을 준비할 수 있어야 한다.
 
+## Current Milestone: v2.0 에니어그램 검사 정확도 개선
+
+**Goal:** 구조적 편향을 제거하고, 결과를 "정확한 진단"이 아니라 "해석 가능한 성향 프로필"로 정직하게 제시하며, 기존 v1 결과를 깨지 않으면서 v2로 안전하게 이행한다.
+
+**Target features:**
+- 1번 유형 고정 편향 제거 (centered scoring 도입)
+- low-confidence 상태 추가 (clear/mixed/insufficient_variance)
+- wing 강제 확정 제거 (optional wing)
+- 독립 정규화 방식 교체 (합 100% -> 유형별 독립 지표)
+- 문항 수 확대 및 재작성 (18 -> 36+ 문항, 역문항, 혼동쌍 분리)
+- 결과 화면 카피 정직하게 개선 (위계 재정렬, 참고 정보 하향)
+- 성장/스트레스 방향을 참고 정보로 표시 위상 조정
+
 ### Out of Scope
 
 - 회원가입 및 로그인 기능 — 초기 버전은 익명 검사와 결과 공유에 집중한다.
@@ -83,4 +96,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-29 after Phase 5 completion*
+*Last updated: 2026-03-30 after milestone v2.0 initialization*
