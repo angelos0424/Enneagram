@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-01-PLAN.md
-last_updated: "2026-03-30T00:02:08.004Z"
+stopped_at: Completed 06-02-PLAN.md
+last_updated: "2026-03-30T00:08:08.788Z"
 last_activity: 2026-03-30
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 22
-  completed_plans: 19
+  completed_plans: 20
   percent: 86
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 ## Current Position
 
 Phase: 06 (coolify-launch-hardening) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-03-30
 
@@ -66,6 +66,7 @@ Progress: [█████████░] 86%
 | Phase 03-mobile-assessment-flow P03 | 14 | 2 tasks | 10 files |
 | Phase 03-mobile-assessment-flow P04 | 13 | 2 tasks | 16 files |
 | Phase 06 P01 | 5 | 2 tasks | 5 files |
+| Phase 06-coolify-launch-hardening P02 | 4 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -113,6 +114,8 @@ Recent decisions affecting current work:
 - [Phase 04-result-interpretation-share-loop]: Recommendation content remains versioned copy, and the restart recommendation links to the live CTA anchor rather than a bare home-route jump.
 - [Phase 06]: The repo now declares a checked-in Dockerfile instead of relying on Coolify buildpack inference.
 - [Phase 06]: The production image runs the standalone Next.js server as the single web process and does not bundle PostgreSQL concerns.
+- [Phase 06-coolify-launch-hardening]: APP_ORIGIN is required only in production so deploys fail fast without burdening local and test env helpers.
+- [Phase 06-coolify-launch-hardening]: Coolify should use /api/health as a process-level liveness check that never queries PostgreSQL.
 
 ### Pending Todos
 
@@ -125,6 +128,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T00:02:07.998Z
-Stopped at: Completed 06-01-PLAN.md
+Last session: 2026-03-30T00:08:08.782Z
+Stopped at: Completed 06-02-PLAN.md
 Resume file: None
