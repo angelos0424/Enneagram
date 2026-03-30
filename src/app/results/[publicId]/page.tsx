@@ -15,6 +15,27 @@ type PublicResultPageProps = {
   params: Promise<{ publicId: string }>;
 };
 
+const centers = [
+  { label: "장형", typeIds: [8, 9, 1] as const },
+  { label: "가슴형", typeIds: [2, 3, 4] as const },
+  { label: "머리형", typeIds: [5, 6, 7] as const },
+] as const;
+
+function resolveCenterType(
+  normalizedScores: Record<EnneagramType, number>,
+  typeIds: readonly EnneagramType[],
+) {
+  return [...typeIds].sort((left, right) => {
+    const scoreDifference = normalizedScores[right] - normalizedScores[left];
+
+    if (scoreDifference !== 0) {
+      return scoreDifference;
+    }
+
+    return left - right;
+  })[0];
+}
+
 export async function generateMetadata({
   params,
 }: PublicResultPageProps) {
@@ -42,6 +63,15 @@ export default async function PublicResultPage({
     stressType: Number(record.stressType) as EnneagramType,
     normalizedScores: record.normalizedScores,
     nearbyTypes: record.nearbyTypes,
+    centers: centers.map((center) => {
+      const typeId = resolveCenterType(record.normalizedScores, center.typeIds);
+
+      return {
+        label: center.label,
+        typeId,
+        detail: resolveResultCopy(record.copyVersion, typeId).title,
+      };
+    }),
     copy: resolveResultCopy(
       record.copyVersion,
       Number(record.primaryType) as EnneagramType,

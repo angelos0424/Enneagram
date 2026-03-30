@@ -18,6 +18,12 @@ type NearbyTypeView = {
   gapFromPrimary: number;
 };
 
+type CenterSummaryView = {
+  label: "장형" | "가슴형" | "머리형";
+  typeId: EnneagramType;
+  detail: string;
+};
+
 export type ResultSnapshotViewModel = {
   publicId: string;
   primaryType: EnneagramType;
@@ -26,6 +32,7 @@ export type ResultSnapshotViewModel = {
   stressType: EnneagramType;
   normalizedScores: Record<EnneagramType, number>;
   nearbyTypes: NearbyTypeView[];
+  centers: readonly CenterSummaryView[];
   copy: TypeCopyEntry;
   wingCopy: TypeCopyEntry;
   growthCopy: TypeCopyEntry;
@@ -64,6 +71,8 @@ export function ResultSnapshotView({
       detail: snapshot.stressCopy.title,
     },
   ] as const;
+
+  const centerItems = snapshot.centers;
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.16),_transparent_34%),linear-gradient(180deg,_#fcfbf7_0%,_#f2ead9_100%)] px-4 py-6 text-stone-950">
@@ -152,6 +161,36 @@ export function ResultSnapshotView({
               </div>
             ))}
           </dl>
+        </section>
+
+        <section
+          aria-labelledby="center-heading"
+          className="rounded-[2rem] border border-stone-950/10 bg-white px-5 py-5 shadow-[0_18px_45px_rgba(120,53,15,0.08)]"
+        >
+          <div className="mb-4">
+            <h2 id="center-heading" className="text-lg font-semibold text-stone-950">
+              센터별 강세
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-stone-600">
+              장형, 가슴형, 머리형 안에서 가장 높게 나온 유형을 함께 보면 반응 패턴을 더 빠르게 읽을 수 있어요.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-3">
+            {centerItems.map((item) => (
+              <div
+                key={item.label}
+                className="rounded-[1.4rem] border border-stone-200 bg-stone-50 px-4 py-4"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
+                  {item.label}
+                </p>
+                <div className="mt-2 flex items-baseline gap-3">
+                  <p className="text-2xl font-semibold text-stone-950">{item.typeId}</p>
+                  <p className="text-sm leading-6 text-stone-600">{item.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section

@@ -48,21 +48,6 @@ export function AssessmentExperience() {
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_42%),linear-gradient(180deg,_#fcfbf7_0%,_#f4efe2_100%)] px-4 py-6 text-stone-950">
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-md flex-col gap-5">
-        <section className="rounded-[2rem] border border-stone-950/10 bg-white/88 p-5 shadow-[0_20px_60px_rgba(68,50,24,0.12)] backdrop-blur">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-700">
-            Anonymous Enneagram
-          </p>
-          <h1 className="mt-3 text-[clamp(2rem,8vw,2.8rem)] font-semibold leading-none tracking-[-0.04em] text-stone-950">
-            지금 바로
-            <br />
-            에니어그램 검사를 시작해보세요.
-          </h1>
-          <p className="mt-3 text-sm leading-6 text-stone-700">
-            로그인 없이 바로 진행할 수 있어요. 한 번에 한 문항씩 집중해서 답하고,
-            현재 진행 상태를 계속 확인할 수 있습니다.
-          </p>
-        </section>
-
         <section className="rounded-[2rem] border border-stone-950/10 bg-stone-950 px-5 py-4 text-stone-50 shadow-[0_24px_60px_rgba(28,25,23,0.26)]">
           <div className="flex items-end justify-between gap-3">
             <div>

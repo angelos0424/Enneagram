@@ -146,6 +146,11 @@ describe("public result page", () => {
     expect(markup).toContain("2");
     expect(markup).toContain("스트레스 방향");
     expect(markup).toContain("5");
+    expect(markup).toContain("장형");
+    expect(markup).toContain("가슴형");
+    expect(markup).toContain("머리형");
+    expect(markup).toContain(typeCopyDefinition.entries[3].title);
+    expect(markup).toContain(typeCopyDefinition.entries[7].title);
     expect(markup).toContain(typeCopyDefinition.entries[7].title);
     expect(markup).toContain(typeCopyDefinition.entries[2].title);
     expect(markup).toContain(typeCopyDefinition.entries[5].title);
