@@ -15,15 +15,18 @@ describe("/api/health route", () => {
     const { GET } = await import("../../src/app/api/health/route");
 
     const response = await GET();
+    const payload = await response.json();
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toMatchObject({
+    expect(payload).toEqual({
       ok: true,
       service: "web",
       checks: {
         process: "up",
       },
+      timestamp: expect.any(String),
     });
+    expect(() => new Date(payload.timestamp).toISOString()).not.toThrow();
 
     expect(connectSpy).not.toHaveBeenCalled();
   });
