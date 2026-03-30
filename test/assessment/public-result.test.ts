@@ -6,6 +6,7 @@ import {
   it,
   vi,
 } from "vitest";
+import type { Metadata } from "next";
 
 import { typeCopyDefinition } from "@/content/type-copy/ko/v1";
 import { assessmentDefinition } from "@/content/assessments/ko/v1";
@@ -25,6 +26,8 @@ const repositoryState: {
 const scoringState = {
   scoreAssessment: vi.fn(),
 };
+
+const originalEnv = process.env;
 
 vi.mock("@/db/repositories/assessment-result-repository", () => {
   class MockAssessmentResultRepository {
@@ -93,6 +96,10 @@ describe("public result page", () => {
     repositoryState.findByPublicIdCalls = [];
     repositoryState.record = null;
     scoringState.scoreAssessment.mockReset();
+    process.env = {
+      ...originalEnv,
+      APP_ORIGIN: "https://enneagram.example.com",
+    };
   });
 
   it("loads the stored snapshot by publicId and does not re-score the result", async () => {
@@ -188,12 +195,17 @@ describe("public result page", () => {
   });
 
   it("declares noindex metadata defaults for public result pages", async () => {
+    repositoryState.record = buildStoredRecord("PrivacyFirstPublicResult");
     const { buildSnapshotMetadata } = await import(
       "@/app/results/[publicId]/snapshot-metadata"
     );
     const { generateMetadata } = await import("@/app/results/[publicId]/page");
 
-    expect(buildSnapshotMetadata("PrivacyFirstPublicResult").robots).toEqual({
+    const metadata = (await buildSnapshotMetadata(
+      "PrivacyFirstPublicResult",
+    )) as Metadata;
+
+    expect(metadata.robots).toEqual({
       index: false,
       follow: false,
     });
@@ -207,6 +219,71 @@ describe("public result page", () => {
         follow: false,
       },
     });
+  });
+
+  it("builds absolute metadata from the immutable stored snapshot", async () => {
+    repositoryState.record = buildStoredRecord("PreviewReadySnapshot");
+
+    const { buildSnapshotMetadata } = await import(
+      "@/app/results/[publicId]/snapshot-metadata"
+    );
+
+    const metadata = (await buildSnapshotMetadata(
+      repositoryState.record.publicId,
+    )) as Metadata;
+    const expectedTitle = `${typeCopyDefinition.entries[8].title} 결과`;
+    const expectedDescription = typeCopyDefinition.entries[8].summary;
+    const expectedUrl = new URL(
+      `/results/${repositoryState.record.publicId}`,
+      "https://enneagram.example.com",
+    ).toString();
+    const expectedImage = new URL(
+      `/results/${repositoryState.record.publicId}/opengraph-image`,
+      "https://enneagram.example.com",
+    ).toString();
+
+    expect(metadata.metadataBase?.toString()).toBe("https://enneagram.example.com/");
+    expect(metadata.title).toBe(expectedTitle);
+    expect(metadata.description).toBe(expectedDescription);
+    expect(metadata.openGraph).toMatchObject({
+      title: expectedTitle,
+      description: expectedDescription,
+      type: "website",
+      locale: "ko_KR",
+      url: expectedUrl,
+      images: [
+        {
+          url: expectedImage,
+          alt: expectedTitle,
+        },
+      ],
+    });
+    expect(metadata.twitter).toMatchObject({
+      card: "summary_large_image",
+      title: expectedTitle,
+      description: expectedDescription,
+      images: [expectedImage],
+    });
+  });
+
+  it("keeps preview metadata and OG URLs free of raw answers and admin-only tokens", async () => {
+    repositoryState.record = buildStoredRecord("PrivacyLeakRegression");
+
+    const { buildSnapshotMetadata } = await import(
+      "@/app/results/[publicId]/snapshot-metadata"
+    );
+
+    const metadata = (await buildSnapshotMetadata(
+      repositoryState.record.publicId,
+    )) as Metadata;
+    const serializedMetadata = JSON.stringify(metadata);
+
+    expect(serializedMetadata).toContain(
+      `/results/${repositoryState.record.publicId}/opengraph-image`,
+    );
+    expect(serializedMetadata).not.toContain(repositoryState.record.adminToken);
+    expect(serializedMetadata).not.toContain(JSON.stringify(repositoryState.record.answers));
+    expect(serializedMetadata).not.toContain("AdminTokenForPublicResultPageTest");
   });
 
   it("applies strict referrer protection only to public snapshot routes", async () => {
