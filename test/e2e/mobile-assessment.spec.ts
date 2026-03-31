@@ -24,10 +24,12 @@ test.describe("mobile assessment flow", () => {
   test("shows the anonymous mobile entry surface", async ({ page }) => {
     await gotoAssessment(page);
 
-    await expect(page.getByText("0 / 18", { exact: true }).last()).toBeVisible();
+    await expect(
+      page.getByText(`0 / ${assessmentDefinition.questions.length}`, { exact: true }).last(),
+    ).toBeVisible();
     await expect(
       page.getByRole("heading", {
-        name: "나는 기준에 맞지 않는 상황을 보면 그냥 넘기기 어렵다.",
+        name: assessmentDefinition.questions[0]!.prompt,
       }),
     ).toBeVisible();
     await expect(page.getByRole("button", { name: "결과 만들기" })).toBeDisabled();
