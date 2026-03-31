@@ -99,6 +99,23 @@ describe("mobile assessment flow contract", () => {
     );
   });
 
+  it("preserves an explicitly saved current question after selecting an answer", () => {
+    const answers = createEmptyAnswerMap();
+    answers[assessmentDefinition.questions[0]!.id] = 5;
+
+    const session = buildAssessmentDraftSessionSnapshot(
+      {
+        assessmentVersion: assessmentDefinition.version,
+        answers,
+      },
+      assessmentDefinition.questions[0]!.id,
+    );
+
+    expect(session.progress.currentQuestionId).toBe(
+      assessmentDefinition.questions[0]!.id,
+    );
+  });
+
   it("resumes on the final question when a hydrated server draft is complete", () => {
     const answers = createEmptyAnswerMap();
 

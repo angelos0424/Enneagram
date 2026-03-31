@@ -55,6 +55,10 @@ function buildEnv(overrides?: Partial<NodeJS.ProcessEnv>) {
   });
 }
 
+function buildRecentSessionTime() {
+  return new Date(Date.now() - 5 * 60 * 1000);
+}
+
 describe("admin auth contract", () => {
   beforeEach(() => {
     redirectMock.mockClear();
@@ -198,7 +202,7 @@ describe("admin auth contract", () => {
 
   it("redirects unauthenticated or invalid sessions away from protected admin routes", async () => {
     const { createAdminSessionToken } = await import("@/domain/admin-auth");
-    const validToken = createAdminSessionToken(buildEnv(), new Date("2026-03-29T16:00:00.000Z"));
+    const validToken = createAdminSessionToken(buildEnv(), buildRecentSessionTime());
 
     vi.stubEnv("DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:5432/enneagram");
     vi.stubEnv("NODE_ENV", "test");

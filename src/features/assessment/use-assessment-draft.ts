@@ -163,9 +163,8 @@ export function useAssessmentDraft() {
         [question.id]: value,
       },
     };
-    const nextIndex = Math.min(currentIndex + 1, assessmentDefinition.questions.length - 1);
 
-    void persistDraft(nextDraft, nextIndex);
+    void persistDraft(nextDraft, currentIndex);
   }
 
   function moveToPreviousQuestion() {
@@ -173,7 +172,9 @@ export function useAssessmentDraft() {
       return;
     }
 
-    setCurrentIndex((index) => Math.max(0, index - 1));
+    const nextIndex = Math.max(0, currentIndex - 1);
+
+    void persistDraft(draft, nextIndex);
   }
 
   function moveToNextQuestion() {
@@ -183,7 +184,12 @@ export function useAssessmentDraft() {
       return;
     }
 
-    setCurrentIndex((index) => Math.min(index + 1, assessmentDefinition.questions.length - 1));
+    const nextIndex = Math.min(
+      currentIndex + 1,
+      assessmentDefinition.questions.length - 1,
+    );
+
+    void persistDraft(draft, nextIndex);
   }
 
   function applySessionSnapshot(session: AssessmentDraftSessionSnapshot) {

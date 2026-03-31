@@ -24,10 +24,12 @@ test.describe("mobile assessment flow", () => {
   test("shows the anonymous mobile entry surface", async ({ page }) => {
     await gotoAssessment(page);
 
-    await expect(page.getByText("0 / 18", { exact: true }).last()).toBeVisible();
+    await expect(
+      page.getByText(`0 / ${assessmentDefinition.questions.length}`, { exact: true }).last(),
+    ).toBeVisible();
     await expect(
       page.getByRole("heading", {
-        name: "나는 기준에 맞지 않는 상황을 보면 그냥 넘기기 어렵다.",
+        name: assessmentDefinition.questions[0]!.prompt,
       }),
     ).toBeVisible();
     await expect(page.getByRole("button", { name: "결과 만들기" })).toBeDisabled();
@@ -53,9 +55,10 @@ test.describe("mobile assessment flow", () => {
     ).toBeVisible();
     await expect(
       page.getByRole("heading", {
-        name: assessmentDefinition.questions[1]!.prompt,
+        name: assessmentDefinition.questions[0]!.prompt,
       }),
     ).toBeVisible();
+    await expect(page.getByText("5점 선택")).toBeVisible();
 
     await page.reload();
 
@@ -64,17 +67,32 @@ test.describe("mobile assessment flow", () => {
     ).toBeVisible();
     await expect(
       page.getByRole("heading", {
-        name: assessmentDefinition.questions[1]!.prompt,
-      }),
-    ).toBeVisible();
-
-    await page.getByRole("button", { name: "이전 문항" }).click();
-    await expect(
-      page.getByRole("heading", {
         name: assessmentDefinition.questions[0]!.prompt,
       }),
     ).toBeVisible();
     await expect(page.getByText("5점 선택")).toBeVisible();
+
+    const moveNextResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/assessment-session/draft") &&
+        response.request().method() === "PATCH" &&
+        response.ok(),
+    );
+    await page.getByRole("button", { name: "다음 문항" }).click();
+    await moveNextResponse;
+    await expect(
+      page.getByRole("heading", {
+        name: assessmentDefinition.questions[1]!.prompt,
+      }),
+    ).toBeVisible();
+
+    await page.reload();
+
+    await expect(
+      page.getByRole("heading", {
+        name: assessmentDefinition.questions[1]!.prompt,
+      }),
+    ).toBeVisible();
   });
 
   test("redirects to the saved public result page after submit", async ({ page }) => {
@@ -94,6 +112,18 @@ test.describe("mobile assessment flow", () => {
       await expect(strongestAgreeButton).toBeEnabled();
       await strongestAgreeButton.click();
       await saveDraftResponse;
+
+      if (index < assessmentDefinition.questions.length - 1) {
+        const moveNextResponse = page.waitForResponse(
+          (response) =>
+            response.url().includes("/api/assessment-session/draft") &&
+            response.request().method() === "PATCH" &&
+            response.ok(),
+        );
+
+        await page.getByRole("button", { name: "다음 문항" }).click();
+        await moveNextResponse;
+      }
     }
 
     const submitResponse = page.waitForResponse(
