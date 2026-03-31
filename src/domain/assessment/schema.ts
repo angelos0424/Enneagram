@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const assessmentAnswerSchema = z.object({
+export const assessmentLikertAnswerSchema = z.object({
   questionId: z.string().min(1),
   value: z.union([
     z.literal(1),
@@ -10,6 +10,16 @@ export const assessmentAnswerSchema = z.object({
     z.literal(5),
   ]),
 });
+
+export const assessmentForcedChoiceAnswerSchema = z.object({
+  questionId: z.string().min(1),
+  selectedSide: z.union([z.literal("left"), z.literal("right")]),
+});
+
+export const assessmentAnswerSchema = z.union([
+  assessmentLikertAnswerSchema,
+  assessmentForcedChoiceAnswerSchema,
+]);
 
 export const assessmentSubmissionSchema = z.object({
   assessmentVersion: z.string().min(1),

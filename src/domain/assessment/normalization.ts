@@ -52,10 +52,35 @@ export function normalizeIndependentScores(
   };
 }
 
+export function normalizeForcedChoiceScores(
+  rawScores: Record<EnneagramType, number>,
+  exposureCounts: Record<EnneagramType, number>,
+): Record<EnneagramType, number> {
+  return {
+    1: normalizeForcedChoiceScore(rawScores[1], exposureCounts[1]),
+    2: normalizeForcedChoiceScore(rawScores[2], exposureCounts[2]),
+    3: normalizeForcedChoiceScore(rawScores[3], exposureCounts[3]),
+    4: normalizeForcedChoiceScore(rawScores[4], exposureCounts[4]),
+    5: normalizeForcedChoiceScore(rawScores[5], exposureCounts[5]),
+    6: normalizeForcedChoiceScore(rawScores[6], exposureCounts[6]),
+    7: normalizeForcedChoiceScore(rawScores[7], exposureCounts[7]),
+    8: normalizeForcedChoiceScore(rawScores[8], exposureCounts[8]),
+    9: normalizeForcedChoiceScore(rawScores[9], exposureCounts[9]),
+  };
+}
+
 function normalizeCenteredScore(rawScore: number, maxAbsoluteScore: number): number {
   if (maxAbsoluteScore <= 0) {
     return 50;
   }
 
   return Math.round((((rawScore + maxAbsoluteScore) / (maxAbsoluteScore * 2)) * 1000)) / 10;
+}
+
+function normalizeForcedChoiceScore(rawScore: number, exposureCount: number): number {
+  if (exposureCount <= 0) {
+    return 0;
+  }
+
+  return Math.round((rawScore / exposureCount) * 1000) / 10;
 }

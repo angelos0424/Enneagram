@@ -1,15 +1,18 @@
 export type EnneagramType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export type LikertValue = 1 | 2 | 3 | 4 | 5;
+export type ForcedChoiceSide = "left" | "right";
 export type AssessmentDimension =
   | "motivation"
   | "attention"
   | "defense"
   | "interpersonal";
+export type AssessmentPairCategory = "baseline" | "discriminator";
 export type AssessmentResultStatus =
   | "clear"
   | "mixed"
   | "insufficient_variance";
+export type AssessmentResponseStyle = "likert" | "forced-choice";
 
 export type LikertOption = {
   readonly value: LikertValue;
@@ -33,9 +36,23 @@ export type KeyedAssessmentQuestion = {
   readonly dimension: AssessmentDimension;
 };
 
+export type ForcedChoiceAssessmentStatement = {
+  readonly prompt: string;
+  readonly keyedType: EnneagramType;
+  readonly dimension: AssessmentDimension;
+};
+
+export type ForcedChoiceAssessmentQuestion = {
+  readonly id: string;
+  readonly left: ForcedChoiceAssessmentStatement;
+  readonly right: ForcedChoiceAssessmentStatement;
+  readonly pairCategory: AssessmentPairCategory;
+};
+
 export type AssessmentQuestion =
   | WeightedAssessmentQuestion
-  | KeyedAssessmentQuestion;
+  | KeyedAssessmentQuestion
+  | ForcedChoiceAssessmentQuestion;
 
 export type AssessmentDefinition<
   TQuestion extends AssessmentQuestion = AssessmentQuestion,
@@ -44,9 +61,24 @@ export type AssessmentDefinition<
   readonly locale: "ko-KR";
   readonly scoringVersion: string;
   readonly copyVersion: string;
+  readonly responseStyle: AssessmentResponseStyle;
   readonly likertOptions: readonly LikertOption[];
   readonly questions: readonly TQuestion[];
 };
+
+export type LikertAssessmentAnswer = {
+  readonly questionId: string;
+  readonly value: LikertValue;
+};
+
+export type ForcedChoiceAssessmentAnswer = {
+  readonly questionId: string;
+  readonly selectedSide: ForcedChoiceSide;
+};
+
+export type AssessmentAnswer =
+  | LikertAssessmentAnswer
+  | ForcedChoiceAssessmentAnswer;
 
 export type NearbyTypeScore = {
   readonly typeId: EnneagramType;

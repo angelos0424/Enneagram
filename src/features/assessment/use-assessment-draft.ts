@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { assessmentDefinition } from "@/content/assessments";
+import type { ForcedChoiceAssessmentQuestion } from "@/domain/assessment/types";
 
 import {
   buildAssessmentDraft,
@@ -11,7 +12,7 @@ import {
 } from "./assessment-flow";
 import { submitAssessment, type SubmitAssessmentResponse } from "./submit-assessment";
 import type {
-  AssessmentAnswerValue,
+  AssessmentDraftAnswerValue,
   AssessmentDraft,
   AssessmentDraftSessionSnapshot,
 } from "./types";
@@ -149,7 +150,7 @@ export function useAssessmentDraft() {
     }
   }
 
-  function selectAnswer(value: AssessmentAnswerValue) {
+  function selectAnswer(value: AssessmentDraftAnswerValue) {
     const question = assessmentDefinition.questions[currentIndex];
 
     if (!question) {
@@ -165,6 +166,18 @@ export function useAssessmentDraft() {
     };
 
     void persistDraft(nextDraft, currentIndex);
+  }
+
+  function selectForcedChoiceAnswer(selectedSide: "left" | "right") {
+    const question = assessmentDefinition.questions[currentIndex] as
+      | ForcedChoiceAssessmentQuestion
+      | undefined;
+
+    if (!question || !("left" in question)) {
+      return;
+    }
+
+    selectAnswer(selectedSide);
   }
 
   function moveToPreviousQuestion() {
@@ -218,6 +231,7 @@ export function useAssessmentDraft() {
     moveToNextQuestion,
     moveToPreviousQuestion,
     selectAnswer,
+    selectForcedChoiceAnswer,
     submitCurrentDraft,
   };
 }

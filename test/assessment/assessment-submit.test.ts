@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { assessmentDefinition } from "@/content/assessments";
+import type { ForcedChoiceAssessmentQuestion } from "@/domain/assessment/types";
 import {
   getSubmitAssessmentRedirectHref,
   submitAssessment,
@@ -10,6 +11,8 @@ import {
 const fetchMock = vi.fn();
 
 vi.stubGlobal("fetch", fetchMock);
+
+const questions = assessmentDefinition.questions as readonly ForcedChoiceAssessmentQuestion[];
 
 describe("assessment submit client contract", () => {
   afterEach(() => {
@@ -54,7 +57,7 @@ describe("assessment submit client contract", () => {
     const payload = await submitAssessment({
       assessmentVersion: assessmentDefinition.version,
       answers: {
-        [assessmentDefinition.questions[0]!.id]: 5,
+        [questions[0]!.id]: "left",
       },
     });
 

@@ -1,10 +1,12 @@
 import type { AssessmentSubmission } from "@/domain/assessment/schema";
+import type { AssessmentAnswer, AssessmentQuestion } from "@/domain/assessment/types";
 
-export type AssessmentAnswerValue = AssessmentSubmission["answers"][number]["value"];
-export type AssessmentAnswer = AssessmentSubmission["answers"][number];
+export type AssessmentDraftAnswerValue =
+  | Extract<AssessmentAnswer, { value: number }>["value"]
+  | Extract<AssessmentAnswer, { selectedSide: string }>["selectedSide"];
 
 export type AssessmentAnswerMap = Partial<
-  Record<AssessmentAnswer["questionId"], AssessmentAnswerValue>
+  Record<AssessmentAnswer["questionId"], AssessmentDraftAnswerValue>
 >;
 
 export type AssessmentDraft = {
@@ -33,3 +35,5 @@ export type AssessmentProgress = {
   isComplete: boolean;
   canSubmit: boolean;
 };
+
+export type AssessmentQuestionView = AssessmentQuestion;

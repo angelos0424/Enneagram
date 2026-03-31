@@ -1,6 +1,6 @@
 "use client";
 
-import { likertOptions } from "@/content/assessments";
+import type { ForcedChoiceAssessmentQuestion } from "@/domain/assessment/types";
 
 import { getAssessmentFlowSnapshot, getOrderedQuestions } from "./assessment-flow";
 import { getSubmitAssessmentRedirectHref } from "./submit-assessment";
@@ -18,15 +18,21 @@ export function AssessmentExperience() {
     isSubmitting,
     moveToNextQuestion,
     moveToPreviousQuestion,
-    selectAnswer,
+    selectForcedChoiceAnswer,
     submitCurrentDraft,
     submitErrorMessage,
   } = useAssessmentDraft();
   const snapshot = getAssessmentFlowSnapshot(draft);
 
   const activeIndex = Math.min(currentIndex, orderedQuestions.length - 1);
-  const question = orderedQuestions[activeIndex] ?? null;
+  const question = (orderedQuestions[activeIndex] ?? null) as ForcedChoiceAssessmentQuestion | null;
   const selectedValue = question ? draft.answers[question.id] : undefined;
+  const selectedChoiceLabel =
+    selectedValue === "left"
+      ? "왼쪽 진술 선택"
+      : selectedValue === "right"
+        ? "오른쪽 진술 선택"
+        : "미응답";
   const statusMessage = isHydrating
     ? "이전 응답을 불러오는 중..."
     : isSaving
@@ -98,44 +104,46 @@ export function AssessmentExperience() {
                 질문 {String(activeIndex + 1).padStart(2, "0")}
               </p>
               <h2 className="mt-3 text-2xl font-semibold leading-tight tracking-[-0.03em] text-stone-950">
-                {question?.prompt}
+                둘 중 지금 더 가까운 설명을 골라 주세요.
               </h2>
+              <p className="mt-3 text-sm leading-6 text-stone-600">
+                간이 검사이며 자기이해 참고용입니다. 더 맞는 한 문장을 고르면 됩니다.
+              </p>
             </div>
             <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-900">
-              {selectedValue ? `${selectedValue}점 선택` : "미응답"}
+              {selectedChoiceLabel}
             </div>
           </div>
 
           <div className="mt-6 grid gap-3">
-            {likertOptions.map((option) => {
-              const isSelected = option.value === selectedValue;
+            {question
+              ? ([
+                  { side: "left", prompt: question.left.prompt, label: "왼쪽 진술" },
+                  { side: "right", prompt: question.right.prompt, label: "오른쪽 진술" },
+                ] as const).map((option) => {
+                  const isSelected = selectedValue === option.side;
 
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => selectAnswer(option.value)}
-                  disabled={isHydrating || isSaving || isSubmitting}
-                  className={`flex w-full items-center gap-4 rounded-[1.6rem] border px-4 py-4 text-left transition ${
-                    isSelected
-                      ? "border-amber-500 bg-amber-50 text-stone-950 shadow-[0_10px_30px_rgba(245,158,11,0.18)]"
-                      : "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-white"
-                  } disabled:cursor-wait disabled:opacity-60`}
-                  aria-pressed={isSelected}
-                >
-                  <span
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${
-                      isSelected
-                        ? "bg-amber-500 text-white"
-                        : "bg-white text-stone-500 ring-1 ring-stone-200"
-                    }`}
-                  >
-                    {option.value}
-                  </span>
-                  <span className="text-sm leading-6">{option.label}</span>
-                </button>
-              );
-            })}
+                  return (
+                    <button
+                      key={option.side}
+                      type="button"
+                      onClick={() => selectForcedChoiceAnswer(option.side)}
+                      disabled={isHydrating || isSaving || isSubmitting}
+                      className={`w-full rounded-[1.6rem] border px-4 py-4 text-left transition ${
+                        isSelected
+                          ? "border-amber-500 bg-amber-50 text-stone-950 shadow-[0_10px_30px_rgba(245,158,11,0.18)]"
+                          : "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-white"
+                      } disabled:cursor-wait disabled:opacity-60`}
+                      aria-pressed={isSelected}
+                    >
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
+                        {option.label}
+                      </p>
+                      <p className="mt-3 text-base leading-7">{option.prompt}</p>
+                    </button>
+                  );
+                })
+              : null}
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3">

@@ -260,6 +260,7 @@ export const assessmentDefinitionV2 = {
   locale: "ko-KR",
   scoringVersion: SCORING_VERSION_V2,
   copyVersion: COPY_VERSION_V2,
+  responseStyle: "likert",
   likertOptions,
   questions: assessmentQuestionsV2,
 } as const satisfies AssessmentDefinition<KeyedAssessmentQuestion>;

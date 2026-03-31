@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { notFound } from "next/navigation";
 
 import { DrizzleAssessmentResultRepository } from "@/db/repositories/assessment-result-repository";
-import { ASSESSMENT_VERSION_V2 } from "@/domain/assessment/constants";
+import { ASSESSMENT_VERSION_V1 } from "@/domain/assessment/constants";
 import { resolveResultCopy } from "@/domain/assessment/result-copy";
 import type { AssessmentResultStatus, EnneagramType } from "@/domain/assessment/types";
 
@@ -47,11 +47,11 @@ export default async function OpenGraphImage({
   const wingType =
     record.wingType === null ? null : (Number(record.wingType) as EnneagramType);
   const copy = resolveResultCopy(record.copyVersion, primaryType);
-  const isV2 = record.assessmentVersion === ASSESSMENT_VERSION_V2;
-  const summary = isV2
+  const isModern = record.assessmentVersion !== ASSESSMENT_VERSION_V1;
+  const summary = isModern
     ? buildV2OgSummary(record.resultStatus as AssessmentResultStatus)
     : copy.summary;
-  const statItems = isV2
+  const statItems = isModern
     ? [
         { label: "유형 후보", value: `${primaryType}` },
         { label: "날개 후보", value: wingType === null ? "없음" : `${wingType}` },
@@ -212,7 +212,7 @@ export default async function OpenGraphImage({
                     color: "#92400e",
                   }}
                 >
-                  {isV2 ? "Candidate" : "Type"}
+                  {isModern ? "Candidate" : "Type"}
                 </div>
               <div
                 style={{
