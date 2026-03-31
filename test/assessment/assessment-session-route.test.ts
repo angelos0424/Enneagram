@@ -10,7 +10,6 @@ import {
   type AdminStatsEventRepository,
 } from "@/db/repositories/admin-stats-event-repository";
 import {
-  DrizzleAssessmentDraftSessionRepository,
   type AssessmentDraftSessionRepository,
 } from "@/db/repositories/assessment-draft-session-repository";
 import {
