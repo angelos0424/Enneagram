@@ -4,6 +4,7 @@ import { getTableColumns } from "drizzle-orm";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { assessmentDefinition } from "@/content/assessments";
+import { assessmentDefinition as assessmentDefinitionV1 } from "@/content/assessments/ko/v1";
 import {
   ADMIN_STATS_EVENT_TYPES,
   type AdminStatsEventRepository,
@@ -285,6 +286,21 @@ function buildDraftSnapshot(): AssessmentDraftSessionSnapshot {
   };
 }
 
+function buildLegacyDraftSnapshot(): AssessmentDraftSessionSnapshot {
+  return {
+    assessmentVersion: assessmentDefinitionV1.version,
+    answers: {
+      [assessmentDefinitionV1.questions[0]!.id]: 5,
+    },
+    progress: {
+      answeredCount: 1,
+      totalQuestions: assessmentDefinitionV1.questions.length,
+      currentQuestionId: assessmentDefinitionV1.questions[1]!.id,
+      isComplete: false,
+    },
+  };
+}
+
 describe("assessment draft session contract", () => {
   it("defines an opaque anonymous assessment cookie boundary", () => {
     const token = createAssessmentDraftSessionToken();
@@ -500,6 +516,84 @@ describe("assessment session routes", () => {
     });
     expect(cookieStore.setCalls).toHaveLength(0);
     expect(adminStatsEventRepository.events).toEqual([]);
+  });
+
+  it("resets a stored legacy-version draft session during active-version bootstrap", async () => {
+    const legacySnapshot = buildLegacyDraftSnapshot();
+    const cookieStore = new FakeCookiesStore({
+      [ASSESSMENT_DRAFT_SESSION_COOKIE.name]: "legacy-token",
+    });
+    const repository = new FakeDraftSessionRepository(
+      new Map([
+        [
+          "legacy-token",
+          {
+            id: "draft-legacy-token",
+            sessionToken: "legacy-token",
+            assessmentVersion: legacySnapshot.assessmentVersion,
+            draftAnswers: legacySnapshot.answers,
+            draftProgress: legacySnapshot.progress,
+            createdAt: new Date("2026-03-29T12:00:00.000Z"),
+            updatedAt: new Date("2026-03-29T12:00:00.000Z"),
+          },
+        ],
+      ]),
+    );
+    const adminStatsEventRepository = new FakeAdminStatsEventRepository();
+
+    cookiesMock.mockResolvedValue(cookieStore);
+    repositoryConstructorMock.mockImplementation(() => repository);
+    adminStatsEventRepositoryConstructorMock.mockImplementation(
+      () => adminStatsEventRepository,
+    );
+
+    const routeModule = await import("@/app/api/assessment-session/route");
+    const postResponse = await routeModule.POST(
+      new Request("http://localhost/api/assessment-session", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          assessmentVersion: assessmentDefinition.version,
+        }),
+      }),
+    );
+    const getResponse = await routeModule.GET();
+
+    await expect(postResponse.json()).resolves.toEqual({
+      session: {
+        assessmentVersion: assessmentDefinition.version,
+        answers: {},
+        progress: {
+          answeredCount: 0,
+          totalQuestions: assessmentDefinition.questions.length,
+          currentQuestionId: assessmentDefinition.questions[0]!.id,
+          isComplete: false,
+        },
+      },
+    });
+    await expect(getResponse.json()).resolves.toEqual({
+      session: {
+        assessmentVersion: assessmentDefinition.version,
+        answers: {},
+        progress: {
+          answeredCount: 0,
+          totalQuestions: assessmentDefinition.questions.length,
+          currentQuestionId: assessmentDefinition.questions[0]!.id,
+          isComplete: false,
+        },
+      },
+    });
+    expect(cookieStore.setCalls).toEqual([
+      {
+        name: ASSESSMENT_DRAFT_SESSION_COOKIE.name,
+        value: "legacy-token",
+        options: ASSESSMENT_DRAFT_SESSION_COOKIE.options,
+      },
+    ]);
+    expect(adminStatsEventRepository.events).toHaveLength(1);
+    expect(adminStatsEventRepository.events[0]?.eventType).toBe(
+      ADMIN_STATS_EVENT_TYPES.assessmentStarted,
+    );
   });
 
   it("clears the canonical draft session through an explicit delete boundary", async () => {
