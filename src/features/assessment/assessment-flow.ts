@@ -2,6 +2,7 @@ import { assessmentDefinition } from "@/content/assessments";
 import type {
   AssessmentAnswer,
   ForcedChoiceAssessmentQuestion,
+  ForcedChoiceSide,
 } from "@/domain/assessment/types";
 
 import type {
@@ -13,6 +14,10 @@ import type {
 } from "./types";
 
 const orderedQuestions = assessmentDefinition.questions as readonly ForcedChoiceAssessmentQuestion[];
+
+function isForcedChoiceSide(value: unknown): value is ForcedChoiceSide {
+  return value === "left" || value === "right";
+}
 
 export type AssessmentFlowSnapshot = AssessmentProgress & {
   assessmentVersion: AssessmentDraft["assessmentVersion"];
@@ -64,11 +69,11 @@ export function toSubmissionAnswers(answers: AssessmentAnswerMap): AssessmentAns
   return orderedQuestions.flatMap((question) => {
     const value = answers[question.id];
 
-    if (value === undefined) {
+    if (!isForcedChoiceSide(value)) {
       return [];
     }
 
-    return [{ questionId: question.id, selectedSide: value as "left" | "right" }];
+    return [{ questionId: question.id, selectedSide: value }];
   });
 }
 

@@ -185,6 +185,31 @@ function buildStoredRecordV3(publicId: string): AssessmentResultRecord {
   };
 }
 
+function buildStoredRecordV3WithoutPrimaryDiscriminatorEvidence(
+  publicId: string,
+): AssessmentResultRecord {
+  const pairAnswers = buildForcedChoiceAnswersForType(8).map((answer) => {
+    const question = assessmentDefinitionV3.questions.find(
+      (candidate) => candidate.id === answer.questionId,
+    )!;
+    const pairTypeIds = [question.left.keyedType, question.right.keyedType];
+
+    if (!pairTypeIds.includes(3) || !pairTypeIds.includes(8)) {
+      return answer;
+    }
+
+    return {
+      questionId: answer.questionId,
+      selectedSide: question.left.keyedType === 3 ? ("left" as const) : ("right" as const),
+    };
+  });
+
+  return {
+    ...buildStoredRecordV3(publicId),
+    answers: pairAnswers,
+  };
+}
+
 describe("public result page", () => {
   beforeEach(() => {
     repositoryState.findByPublicIdCalls = [];
@@ -323,6 +348,22 @@ describe("public result page", () => {
     expect(markup).toContain("왜 이 유형이 나왔는지");
     expect(markup).toContain("나는 약해 보이기보다 직접 나서서 통제권을 잡는 편이 더 편하다.");
     expect(markup).toContain("8번과 3번을 가르는 문항");
+  });
+
+  it("does not cite a discriminator answer as decisive evidence when that answer favored the secondary type", async () => {
+    repositoryState.record = buildStoredRecordV3WithoutPrimaryDiscriminatorEvidence(
+      "PublicResultV3NoPrimaryDiscriminator",
+    );
+
+    const { default: PublicResultPage } = await import("@/app/results/[publicId]/page");
+    const markup = renderToStaticMarkup(
+      await PublicResultPage({
+        params: Promise.resolve({ publicId: repositoryState.record.publicId }),
+      }),
+    );
+
+    expect(markup).not.toContain("8번과 3번을 가르는 문항");
+    expect(markup).toContain("8번 후보 점수를 올렸어요.");
   });
 
   it("uses the route not-found behavior when the public id does not exist", async () => {

@@ -209,7 +209,14 @@ function buildForcedChoiceQuestionEvidenceSummary(
 
     const typeIds = [question.left.keyedType, question.right.keyedType];
 
-    return typeIds.includes(primaryType) && typeIds.includes(secondaryType);
+    const selectedStatement =
+      answer.selectedSide === "left" ? question.left : question.right;
+
+    return (
+      typeIds.includes(primaryType) &&
+      typeIds.includes(secondaryType) &&
+      selectedStatement.keyedType === primaryType
+    );
   });
 
   if (!directDiscriminator) {

@@ -109,6 +109,16 @@ describe("mobile assessment flow contract", () => {
     expect(session.progress.currentQuestionId).toBe(questions[0]!.id);
   });
 
+  it("drops invalid non-forced-choice draft values instead of serializing them into submit payloads", () => {
+    const answers = createEmptyAnswerMap();
+    answers[questions[0]!.id] = 5;
+    answers[questions[1]!.id] = "right";
+
+    expect(toSubmissionAnswers(answers)).toEqual([
+      { questionId: questions[1]!.id, selectedSide: "right" },
+    ]);
+  });
+
   it("resumes on the final question when a hydrated server draft is complete", () => {
     const answers = createEmptyAnswerMap();
 
