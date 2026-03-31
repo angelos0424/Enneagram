@@ -26,7 +26,9 @@ ENV PORT=3000
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/drizzle ./drizzle
+COPY --from=builder /app/scripts/ops/apply-db-migrations.cjs ./scripts/ops/apply-db-migrations.cjs
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["/bin/sh", "-c", "node scripts/ops/apply-db-migrations.cjs && node server.js"]

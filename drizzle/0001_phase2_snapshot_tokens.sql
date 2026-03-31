@@ -1,4 +1,4 @@
-CREATE TABLE "assessment_results" (
+CREATE TABLE IF NOT EXISTS "assessment_results" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"public_id" text NOT NULL,
 	"admin_token" text NOT NULL,

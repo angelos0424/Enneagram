@@ -8,6 +8,8 @@ import { getEnv } from "../../src/env";
 const projectRoot = path.resolve(__dirname, "../..");
 const dockerfilePath = path.join(projectRoot, "Dockerfile");
 const dockerignorePath = path.join(projectRoot, ".dockerignore");
+const packageJsonPath = path.join(projectRoot, "package.json");
+const migrationScriptPath = path.join(projectRoot, "scripts/ops/apply-db-migrations.cjs");
 
 describe("deployment artifact contract", () => {
   it("locks standalone next output while preserving the public result referrer policy", async () => {
@@ -40,10 +42,17 @@ describe("deployment artifact contract", () => {
   it("keeps the container contract focused on the web app instead of bundling postgres", () => {
     const dockerfile = readFileSync(dockerfilePath, "utf8");
     const dockerignore = readFileSync(dockerignorePath, "utf8");
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8")) as {
+      scripts?: Record<string, string>;
+    };
 
     expect(dockerfile).toContain("FROM node:24");
-    expect(dockerfile).toMatch(
-      /node["\s,]+["']?\.next\/standalone\/server\.js["']?/,
+    expect(dockerfile).toContain("COPY --from=builder /app/drizzle ./drizzle");
+    expect(dockerfile).toContain(
+      "COPY --from=builder /app/scripts/ops/apply-db-migrations.cjs ./scripts/ops/apply-db-migrations.cjs",
+    );
+    expect(dockerfile).toContain(
+      'CMD ["/bin/sh", "-c", "node scripts/ops/apply-db-migrations.cjs && node server.js"]',
     );
     expect(dockerfile).not.toMatch(/postgres|postgis|pg_ctl|docker-compose|compose\.ya?ml/i);
 
@@ -51,6 +60,9 @@ describe("deployment artifact contract", () => {
     expect(dockerignore).toContain(".next");
     expect(dockerignore).toContain("node_modules");
     expect(dockerignore).not.toMatch(/postgres|pgdata/i);
+
+    expect(existsSync(migrationScriptPath)).toBe(true);
+    expect(packageJson.scripts?.["db:migrate"]).toBe("node scripts/ops/apply-db-migrations.cjs");
   });
 
   it("requires APP_ORIGIN when parsing the production runtime contract", () => {

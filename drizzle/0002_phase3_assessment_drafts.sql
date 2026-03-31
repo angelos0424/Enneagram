@@ -1,4 +1,4 @@
-CREATE TABLE "assessment_draft_sessions" (
+CREATE TABLE IF NOT EXISTS "assessment_draft_sessions" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"session_token" text NOT NULL,
 	"assessment_version" text NOT NULL,
