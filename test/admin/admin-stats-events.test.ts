@@ -209,7 +209,7 @@ describe("admin stats event contract", () => {
 
     if (existsSync("drizzle/0003_phase5_admin_stats_events.sql")) {
       expect(readFileSync("drizzle/0003_phase5_admin_stats_events.sql", "utf8")).toContain(
-        'CREATE TABLE "admin_stats_events"',
+        'CREATE TABLE IF NOT EXISTS "admin_stats_events"',
       );
     }
   });
