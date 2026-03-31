@@ -61,6 +61,10 @@ async function readCanonicalDraft() {
   };
 }
 
+function isActiveAssessmentVersion(version: string) {
+  return version === assessmentDefinition.version;
+}
+
 export async function GET() {
   const draft = await readCanonicalDraft();
 
@@ -102,7 +106,7 @@ export async function POST(request: Request) {
 
     const existingDraft = await readCanonicalDraft();
 
-    if (existingDraft) {
+    if (existingDraft && isActiveAssessmentVersion(existingDraft.session.assessmentVersion)) {
       return Response.json(
         {
           session: toSnapshot(existingDraft.session),
@@ -113,9 +117,13 @@ export async function POST(request: Request) {
 
     const repository = new DrizzleAssessmentDraftSessionRepository();
     const adminStatsEventRepository = new DrizzleAdminStatsEventRepository();
-    const sessionToken = createAssessmentDraftSessionToken();
+    const sessionToken = existingDraft?.sessionToken ?? createAssessmentDraftSessionToken();
     const session = buildEmptyDraftSession();
     const now = new Date();
+
+    if (existingDraft) {
+      await repository.deleteDraftSession(existingDraft.sessionToken);
+    }
 
     await repository.createDraftSession({
       sessionToken,
