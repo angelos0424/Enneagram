@@ -16,6 +16,7 @@ export function AssessmentExperience() {
     isHydrating,
     isSaving,
     isSubmitting,
+    moveToNextQuestion,
     moveToPreviousQuestion,
     selectForcedChoiceAnswer,
     submitCurrentDraft,
@@ -145,14 +146,28 @@ export function AssessmentExperience() {
               : null}
           </div>
 
-          <div className="mt-6">
+          <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               type="button"
               onClick={moveToPreviousQuestion}
               disabled={activeIndex === 0 || isHydrating || isSaving || isSubmitting}
-              className="w-full rounded-full border border-stone-300 px-4 py-3 text-sm font-medium text-stone-700 transition disabled:cursor-not-allowed disabled:border-stone-200 disabled:text-stone-400"
+              className="rounded-full border border-stone-300 px-4 py-3 text-sm font-medium text-stone-700 transition disabled:cursor-not-allowed disabled:border-stone-200 disabled:text-stone-400"
             >
               이전 문항
+            </button>
+            <button
+              type="button"
+              onClick={moveToNextQuestion}
+              disabled={
+                activeIndex === orderedQuestions.length - 1 ||
+                selectedValue === undefined ||
+                isHydrating ||
+                isSaving ||
+                isSubmitting
+              }
+              className="rounded-full bg-stone-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-300"
+            >
+              다음 문항
             </button>
           </div>
 
