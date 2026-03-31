@@ -109,6 +109,21 @@ describe("mobile assessment flow contract", () => {
     expect(session.progress.currentQuestionId).toBe(questions[0]!.id);
   });
 
+  it("restores the explicitly saved next question after recording an answer", () => {
+    const answers = createEmptyAnswerMap();
+    answers[questions[0]!.id] = "left";
+
+    const session = buildAssessmentDraftSessionSnapshot(
+      {
+        assessmentVersion: assessmentDefinition.version,
+        answers,
+      },
+      questions[1]!.id,
+    );
+
+    expect(session.progress.currentQuestionId).toBe(questions[1]!.id);
+  });
+
   it("drops invalid non-forced-choice draft values instead of serializing them into submit payloads", () => {
     const answers = createEmptyAnswerMap();
     answers[questions[0]!.id] = 5;

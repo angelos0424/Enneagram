@@ -165,7 +165,12 @@ export function useAssessmentDraft() {
       },
     };
 
-    void persistDraft(nextDraft, currentIndex);
+    const nextIndex = Math.min(
+      currentIndex + 1,
+      assessmentDefinition.questions.length - 1,
+    );
+
+    void persistDraft(nextDraft, nextIndex);
   }
 
   function selectForcedChoiceAnswer(selectedSide: "left" | "right") {
@@ -186,21 +191,6 @@ export function useAssessmentDraft() {
     }
 
     const nextIndex = Math.max(0, currentIndex - 1);
-
-    void persistDraft(draft, nextIndex);
-  }
-
-  function moveToNextQuestion() {
-    const question = assessmentDefinition.questions[currentIndex];
-
-    if (!question || draft.answers[question.id] === undefined) {
-      return;
-    }
-
-    const nextIndex = Math.min(
-      currentIndex + 1,
-      assessmentDefinition.questions.length - 1,
-    );
 
     void persistDraft(draft, nextIndex);
   }
@@ -228,7 +218,6 @@ export function useAssessmentDraft() {
     isSubmitting,
     errorMessage,
     submitErrorMessage,
-    moveToNextQuestion,
     moveToPreviousQuestion,
     selectAnswer,
     selectForcedChoiceAnswer,
