@@ -31,7 +31,7 @@ async function completeAssessmentAndOpenResult(page: Page) {
         response.ok(),
     );
 
-    await page.getByRole("button", { name: /5\s*매우 잘 맞는다/ }).click();
+    await page.getByRole("button", { name: /왼쪽 진술/ }).click();
     await saveDraftResponse;
   }
 

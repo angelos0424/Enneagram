@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { DrizzleAssessmentResultRepository } from "@/db/repositories/assessment-result-repository";
-import { ASSESSMENT_VERSION_V2 } from "@/domain/assessment/constants";
+import { ASSESSMENT_VERSION_V1 } from "@/domain/assessment/constants";
 import { resolveResultCopy } from "@/domain/assessment/result-copy";
 import type { AssessmentResultStatus, EnneagramType } from "@/domain/assessment/types";
 
@@ -44,10 +44,10 @@ export async function buildSnapshotMetadata(publicId: string): Promise<Metadata>
     Number(record.primaryType) as EnneagramType,
   );
   const primaryType = Number(record.primaryType) as EnneagramType;
-  const isV2 = record.assessmentVersion === ASSESSMENT_VERSION_V2;
+  const isModern = record.assessmentVersion !== ASSESSMENT_VERSION_V1;
   const metadataBase = resolveMetadataBase();
-  const title = isV2 ? `${copy.title} 유형 후보 결과` : `${copy.title} 결과`;
-  const description = isV2
+  const title = isModern ? `${copy.title} 유형 후보 결과` : `${copy.title} 결과`;
+  const description = isModern
     ? buildV2MetadataDescription(
         primaryType,
         record.resultStatus as AssessmentResultStatus,

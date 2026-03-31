@@ -405,7 +405,7 @@ describe("assessment draft session contract", () => {
 
     if (existsSync("drizzle/0002_phase3_assessment_drafts.sql")) {
       expect(readFileSync("drizzle/0002_phase3_assessment_drafts.sql", "utf8")).toContain(
-        'CREATE TABLE "assessment_draft_sessions"',
+        'CREATE TABLE IF NOT EXISTS "assessment_draft_sessions"',
       );
     }
   });

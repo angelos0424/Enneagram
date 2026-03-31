@@ -11,8 +11,11 @@ import type { Metadata } from "next";
 import { typeCopyDefinition } from "@/content/type-copy/ko/v1";
 import { assessmentDefinition } from "@/content/assessments/ko/v1";
 import { assessmentDefinitionV2 } from "@/content/assessments/ko/v2";
+import { assessmentDefinitionV3 } from "@/content/assessments/ko/v3";
 import { typeCopyDefinitionV2 } from "@/content/type-copy/ko/v2";
+import { typeCopyDefinitionV3 } from "@/content/type-copy/ko/v3";
 import type { AssessmentResultRecord } from "@/db/schema";
+import type { EnneagramType } from "@/domain/assessment/types";
 import { buildTypeDominantAnswers } from "./fixtures";
 
 const notFoundError = new Error("NEXT_NOT_FOUND");
@@ -134,6 +137,54 @@ function buildStoredRecordV2(publicId: string): AssessmentResultRecord {
   };
 }
 
+function buildForcedChoiceAnswersForType(typeId: EnneagramType) {
+  return assessmentDefinitionV3.questions.map((question) => ({
+    questionId: question.id,
+    selectedSide:
+      question.left.keyedType === typeId
+        ? ("left" as const)
+        : question.right.keyedType === typeId
+          ? ("right" as const)
+          : ("left" as const),
+  }));
+}
+
+function buildStoredRecordV3(publicId: string): AssessmentResultRecord {
+  return {
+    id: "result-row-v3",
+    publicId,
+    adminToken: "AdminTokenForPublicResultPageV3",
+    assessmentVersion: assessmentDefinitionV3.version,
+    scoringVersion: assessmentDefinitionV3.scoringVersion,
+    copyVersion: typeCopyDefinitionV3.copyVersion,
+    primaryType: "8",
+    wingType: null,
+    growthType: "2",
+    stressType: "5",
+    resultStatus: "mixed",
+    confidenceScore: 8.3,
+    rawScores: { 1: 4, 2: 2, 3: 9, 4: 1, 5: 3, 6: 4, 7: 8, 8: 10, 9: 3 },
+    normalizedScores: {
+      1: 33.3,
+      2: 16.7,
+      3: 75,
+      4: 8.3,
+      5: 25,
+      6: 33.3,
+      7: 66.7,
+      8: 83.3,
+      9: 25,
+    },
+    nearbyTypes: [
+      { typeId: 3, rawScore: 9, normalizedScore: 75, gapFromPrimary: 1 },
+      { typeId: 7, rawScore: 8, normalizedScore: 66.7, gapFromPrimary: 2 },
+      { typeId: 1, rawScore: 4, normalizedScore: 33.3, gapFromPrimary: 6 },
+    ],
+    answers: buildForcedChoiceAnswersForType(8),
+    createdAt: new Date("2026-03-31T02:00:00.000Z"),
+  };
+}
+
 describe("public result page", () => {
   beforeEach(() => {
     repositoryState.findByPublicIdCalls = [];
@@ -197,6 +248,11 @@ describe("public result page", () => {
     expect(markup).toContain(typeCopyDefinition.entries[7].title);
     expect(markup).toContain(typeCopyDefinition.entries[2].title);
     expect(markup).toContain(typeCopyDefinition.entries[5].title);
+    expect(markup).toContain("왜 이 유형이 나왔는지");
+    expect(markup).toContain("상위 3개 유형 점수");
+    expect(markup).toContain("간이 검사이며 자기이해 참고용입니다.");
+    expect(markup).toContain("나는 중요한 순간에 주도권을 잡고 밀어붙이는 편이다.");
+    expect(markup).toContain("매우 잘 맞는다");
     expect(markup).toContain("100");
     expect(markup).toContain(typeCopyDefinition.entries[8].summary);
     expect(markup).toContain(typeCopyDefinition.entries[8].detailCards[0].title);
@@ -248,6 +304,25 @@ describe("public result page", () => {
     expect(markup).toContain("상대 강도 지표");
     expect(markup).toContain("이론적 연결선");
     expect(markup).toContain("CANDIDATE");
+  });
+
+  it("renders v3 results with forced-choice rationale and non-diagnostic wing guidance", async () => {
+    repositoryState.record = buildStoredRecordV3("PublicResultV3Candidate");
+
+    const { default: PublicResultPage } = await import("@/app/results/[publicId]/page");
+    const markup = renderToStaticMarkup(
+      await PublicResultPage({
+        params: Promise.resolve({ publicId: repositoryState.record.publicId }),
+      }),
+    );
+
+    expect(markup).toContain("가장 가까운 유형 후보");
+    expect(markup).toContain("한 가지로 단정하기보다 근접 유형을 함께 읽는 편이 적절해요.");
+    expect(markup).toContain("날개는 이번 버전에서 확정하지 않음");
+    expect(markup).toContain("상위 3개 유형 점수");
+    expect(markup).toContain("왜 이 유형이 나왔는지");
+    expect(markup).toContain("나는 약해 보이기보다 직접 나서서 통제권을 잡는 편이 더 편하다.");
+    expect(markup).toContain("8번과 3번을 가르는 문항");
   });
 
   it("uses the route not-found behavior when the public id does not exist", async () => {

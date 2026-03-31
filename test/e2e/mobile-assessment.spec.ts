@@ -2,6 +2,9 @@ import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
 import { assessmentDefinition } from "@/content/assessments";
+import type { ForcedChoiceAssessmentQuestion } from "@/domain/assessment/types";
+
+const questions = assessmentDefinition.questions as readonly ForcedChoiceAssessmentQuestion[];
 
 async function gotoAssessment(page: Page) {
   for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -28,9 +31,7 @@ test.describe("mobile assessment flow", () => {
       page.getByText(`0 / ${assessmentDefinition.questions.length}`, { exact: true }).last(),
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", {
-        name: assessmentDefinition.questions[0]!.prompt,
-      }),
+      page.getByText(questions[0]!.left.prompt, { exact: true }),
     ).toBeVisible();
     await expect(page.getByRole("button", { name: "결과 만들기" })).toBeDisabled();
   });
@@ -45,32 +46,24 @@ test.describe("mobile assessment flow", () => {
         response.ok(),
     );
 
-    const strongestAgreeButton = page.getByRole("button", { name: /5\s*매우 잘 맞는다/ });
+    const selectLeftButton = page.getByRole("button", { name: /왼쪽 진술/ });
 
-    await expect(strongestAgreeButton).toBeEnabled();
-    await strongestAgreeButton.click();
+    await expect(selectLeftButton).toBeEnabled();
+    await selectLeftButton.click();
     await saveDraftResponse;
     await expect(
       page.getByText(`1 / ${assessmentDefinition.questions.length}`, { exact: true }).last(),
     ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: assessmentDefinition.questions[0]!.prompt,
-      }),
-    ).toBeVisible();
-    await expect(page.getByText("5점 선택")).toBeVisible();
+    await expect(page.getByText(questions[0]!.left.prompt, { exact: true })).toBeVisible();
+    await expect(page.getByText("왼쪽 진술 선택")).toBeVisible();
 
     await page.reload();
 
     await expect(
       page.getByText(`1 / ${assessmentDefinition.questions.length}`, { exact: true }).last(),
     ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: assessmentDefinition.questions[0]!.prompt,
-      }),
-    ).toBeVisible();
-    await expect(page.getByText("5점 선택")).toBeVisible();
+    await expect(page.getByText(questions[0]!.left.prompt, { exact: true })).toBeVisible();
+    await expect(page.getByText("왼쪽 진술 선택")).toBeVisible();
 
     const moveNextResponse = page.waitForResponse(
       (response) =>
@@ -80,19 +73,11 @@ test.describe("mobile assessment flow", () => {
     );
     await page.getByRole("button", { name: "다음 문항" }).click();
     await moveNextResponse;
-    await expect(
-      page.getByRole("heading", {
-        name: assessmentDefinition.questions[1]!.prompt,
-      }),
-    ).toBeVisible();
+    await expect(page.getByText(questions[1]!.left.prompt, { exact: true })).toBeVisible();
 
     await page.reload();
 
-    await expect(
-      page.getByRole("heading", {
-        name: assessmentDefinition.questions[1]!.prompt,
-      }),
-    ).toBeVisible();
+    await expect(page.getByText(questions[1]!.left.prompt, { exact: true })).toBeVisible();
   });
 
   test("redirects to the saved public result page after submit", async ({ page }) => {
@@ -105,12 +90,10 @@ test.describe("mobile assessment flow", () => {
           response.request().method() === "PATCH" &&
           response.ok(),
       );
-      const strongestAgreeButton = page.getByRole("button", {
-        name: /5\s*매우 잘 맞는다/,
-      });
+      const selectLeftButton = page.getByRole("button", { name: /왼쪽 진술/ });
 
-      await expect(strongestAgreeButton).toBeEnabled();
-      await strongestAgreeButton.click();
+      await expect(selectLeftButton).toBeEnabled();
+      await selectLeftButton.click();
       await saveDraftResponse;
 
       if (index < assessmentDefinition.questions.length - 1) {

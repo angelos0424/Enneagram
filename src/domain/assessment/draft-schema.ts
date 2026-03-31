@@ -1,8 +1,14 @@
 import { z } from "zod";
 
-import { assessmentAnswerSchema } from "@/domain/assessment/schema";
+import {
+  assessmentForcedChoiceAnswerSchema,
+  assessmentLikertAnswerSchema,
+} from "@/domain/assessment/schema";
 
-const assessmentDraftAnswerValueSchema = assessmentAnswerSchema.shape.value;
+const assessmentDraftAnswerValueSchema = z.union([
+  assessmentLikertAnswerSchema.shape.value,
+  assessmentForcedChoiceAnswerSchema.shape.selectedSide,
+]);
 
 export const assessmentDraftProgressSchema = z.object({
   answeredCount: z.number().int().min(0),

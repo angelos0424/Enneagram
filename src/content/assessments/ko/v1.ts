@@ -105,6 +105,7 @@ export const assessmentDefinition = {
   locale: "ko-KR",
   scoringVersion: SCORING_VERSION,
   copyVersion: COPY_VERSION,
+  responseStyle: "likert",
   likertOptions,
   questions: assessmentQuestions,
 } as const satisfies AssessmentDefinition<WeightedAssessmentQuestion>;

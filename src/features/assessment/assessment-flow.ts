@@ -1,7 +1,10 @@
 import { assessmentDefinition } from "@/content/assessments";
-
 import type {
   AssessmentAnswer,
+  ForcedChoiceAssessmentQuestion,
+} from "@/domain/assessment/types";
+
+import type {
   AssessmentAnswerMap,
   AssessmentDraft,
   AssessmentDraftProgress,
@@ -9,7 +12,7 @@ import type {
   AssessmentProgress,
 } from "./types";
 
-const orderedQuestions = assessmentDefinition.questions;
+const orderedQuestions = assessmentDefinition.questions as readonly ForcedChoiceAssessmentQuestion[];
 
 export type AssessmentFlowSnapshot = AssessmentProgress & {
   assessmentVersion: AssessmentDraft["assessmentVersion"];
@@ -61,7 +64,11 @@ export function toSubmissionAnswers(answers: AssessmentAnswerMap): AssessmentAns
   return orderedQuestions.flatMap((question) => {
     const value = answers[question.id];
 
-    return value === undefined ? [] : [{ questionId: question.id, value }];
+    if (value === undefined) {
+      return [];
+    }
+
+    return [{ questionId: question.id, selectedSide: value as "left" | "right" }];
   });
 }
 

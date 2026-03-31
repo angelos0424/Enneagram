@@ -1,24 +1,31 @@
 import { assessmentDefinition } from "@/content/assessments/ko/v1";
 import { assessmentDefinitionV2 } from "@/content/assessments/ko/v2";
+import { assessmentDefinitionV3 } from "@/content/assessments/ko/v3";
 import { NEARBY_TYPE_LIMIT } from "@/domain/assessment/constants";
 import { growthStressMap, wingAdjacencyMap } from "@/domain/assessment/mappings";
 import {
+  normalizeForcedChoiceScores,
   normalizeIndependentScores,
   normalizeRawScores,
 } from "@/domain/assessment/normalization";
 import type { AssessmentSubmission } from "@/domain/assessment/schema";
 import type {
   AssessmentDefinition,
+  AssessmentAnswer,
   AssessmentResultStatus,
+  ForcedChoiceAssessmentAnswer,
+  ForcedChoiceAssessmentQuestion,
   KeyedAssessmentQuestion,
   EnneagramType,
   NearbyTypeScore,
+  LikertAssessmentAnswer,
   WeightedAssessmentQuestion,
 } from "@/domain/assessment/types";
 
 const supportedAssessments: Record<string, AssessmentDefinition> = {
   [assessmentDefinition.version]: assessmentDefinition,
   [assessmentDefinitionV2.version]: assessmentDefinitionV2,
+  [assessmentDefinitionV3.version]: assessmentDefinitionV3,
 };
 
 const enneagramTypes = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const satisfies readonly EnneagramType[];
@@ -68,14 +75,16 @@ export function scoreAssessment(
   assertQuestionCoverage(definition, submission.answers);
 
   const answerByQuestionId = new Map(
-    submission.answers.map((answer) => [answer.questionId, answer.value] as const),
+    submission.answers.map((answer) => [answer.questionId, answer] as const),
   );
   const scores = isWeightedAssessmentDefinition(definition)
     ? scoreWeightedAssessment(definition, answerByQuestionId)
-    : scoreKeyedAssessment(
-        definition as AssessmentDefinition<KeyedAssessmentQuestion>,
-        answerByQuestionId,
-      );
+    : isForcedChoiceAssessmentDefinition(definition)
+      ? scoreForcedChoiceAssessment(definition, answerByQuestionId)
+      : scoreKeyedAssessment(
+          definition as AssessmentDefinition<KeyedAssessmentQuestion>,
+          answerByQuestionId,
+        );
   const sortedTypeIds = [...enneagramTypes].sort((leftTypeId, rightTypeId) => {
     const rawScoreDelta = scores.rawScores[rightTypeId] - scores.rawScores[leftTypeId];
 
@@ -86,9 +95,11 @@ export function scoreAssessment(
     return leftTypeId - rightTypeId;
   });
   const primaryType = sortedTypeIds[0];
-  const wingType = isWeightedAssessmentDefinition(definition)
-    ? resolveLegacyWingType(primaryType, scores.rawScores)
-    : resolveOptionalWingType(primaryType, scores.rawScores, scores.resultStatus);
+  const wingType = isForcedChoiceAssessmentDefinition(definition)
+    ? null
+    : isWeightedAssessmentDefinition(definition)
+      ? resolveLegacyWingType(primaryType, scores.rawScores)
+      : resolveOptionalWingType(primaryType, scores.rawScores, scores.resultStatus);
   const nearbyTypes = sortedTypeIds
     .filter((typeId) => typeId !== primaryType)
     .slice(0, NEARBY_TYPE_LIMIT)
@@ -185,9 +196,29 @@ function isWeightedAssessmentDefinition(
   return definition.questions.every((question) => "typeWeights" in question);
 }
 
+function isForcedChoiceAssessmentDefinition(
+  definition: AssessmentDefinition,
+): definition is AssessmentDefinition<ForcedChoiceAssessmentQuestion> {
+  return definition.questions.every(
+    (question) => "left" in question && "right" in question,
+  );
+}
+
+function isLikertAnswer(
+  answer: AssessmentAnswer | undefined,
+): answer is LikertAssessmentAnswer {
+  return Boolean(answer && "value" in answer);
+}
+
+function isForcedChoiceAnswer(
+  answer: AssessmentAnswer | undefined,
+): answer is ForcedChoiceAssessmentAnswer {
+  return Boolean(answer && "selectedSide" in answer);
+}
+
 function scoreWeightedAssessment(
   definition: AssessmentDefinition<WeightedAssessmentQuestion>,
-  answerByQuestionId: Map<string, AssessmentSubmission["answers"][number]["value"]>,
+  answerByQuestionId: Map<string, AssessmentSubmission["answers"][number]>,
 ): {
   rawScores: Record<EnneagramType, number>;
   normalizedScores: Record<EnneagramType, number>;
@@ -196,9 +227,9 @@ function scoreWeightedAssessment(
   const rawScores = buildEmptyRawScores();
 
   for (const question of definition.questions) {
-    const answerValue = answerByQuestionId.get(question.id);
+    const answer = answerByQuestionId.get(question.id);
 
-    if (!answerValue) {
+    if (!isLikertAnswer(answer)) {
       throw new AssessmentScoringError(
         "INCOMPLETE_ANSWER_COVERAGE",
         `Missing answer for question ${question.id}`,
@@ -206,7 +237,7 @@ function scoreWeightedAssessment(
     }
 
     for (const typeId of enneagramTypes) {
-      rawScores[typeId] += question.typeWeights[typeId][answerValue - 1];
+      rawScores[typeId] += question.typeWeights[typeId][answer.value - 1];
     }
   }
 
@@ -219,7 +250,7 @@ function scoreWeightedAssessment(
 
 function scoreKeyedAssessment(
   definition: AssessmentDefinition<KeyedAssessmentQuestion>,
-  answerByQuestionId: Map<string, AssessmentSubmission["answers"][number]["value"]>,
+  answerByQuestionId: Map<string, AssessmentSubmission["answers"][number]>,
 ): {
   rawScores: Record<EnneagramType, number>;
   normalizedScores: Record<EnneagramType, number>;
@@ -230,9 +261,9 @@ function scoreKeyedAssessment(
   const answerValues: number[] = [];
 
   for (const question of definition.questions) {
-    const answerValue = answerByQuestionId.get(question.id);
+    const answer = answerByQuestionId.get(question.id);
 
-    if (!answerValue) {
+    if (!isLikertAnswer(answer)) {
       throw new AssessmentScoringError(
         "INCOMPLETE_ANSWER_COVERAGE",
         `Missing answer for question ${question.id}`,
@@ -240,9 +271,9 @@ function scoreKeyedAssessment(
     }
 
     itemCountsByType[question.keyedType] += 1;
-    answerValues.push(answerValue);
+    answerValues.push(answer.value);
 
-    const centeredScore = question.reverse ? 3 - answerValue : answerValue - 3;
+    const centeredScore = question.reverse ? 3 - answer.value : answer.value - 3;
     rawScores[question.keyedType] += centeredScore;
   }
 
@@ -268,6 +299,55 @@ function scoreKeyedAssessment(
     uniqueAnswerValues.size <= 1
       ? "insufficient_variance"
       : topGap <= 1
+        ? "mixed"
+        : "clear";
+
+  return {
+    rawScores,
+    normalizedScores,
+    resultStatus,
+  };
+}
+
+function scoreForcedChoiceAssessment(
+  definition: AssessmentDefinition<ForcedChoiceAssessmentQuestion>,
+  answerByQuestionId: Map<string, AssessmentSubmission["answers"][number]>,
+): {
+  rawScores: Record<EnneagramType, number>;
+  normalizedScores: Record<EnneagramType, number>;
+  resultStatus: AssessmentResultStatus;
+} {
+  const rawScores = buildEmptyRawScores();
+  const exposureCounts = buildEmptyRawScores();
+
+  for (const question of definition.questions) {
+    const answer = answerByQuestionId.get(question.id);
+
+    if (!isForcedChoiceAnswer(answer)) {
+      throw new AssessmentScoringError(
+        "INCOMPLETE_ANSWER_COVERAGE",
+        `Missing answer for question ${question.id}`,
+      );
+    }
+
+    exposureCounts[question.left.keyedType] += 1;
+    exposureCounts[question.right.keyedType] += 1;
+    rawScores[
+      answer.selectedSide === "left" ? question.left.keyedType : question.right.keyedType
+    ] += 1;
+  }
+
+  const normalizedScores = normalizeForcedChoiceScores(rawScores, exposureCounts);
+  const sortedTypeIds = [...enneagramTypes].sort(
+    (leftTypeId, rightTypeId) =>
+      rawScores[rightTypeId] - rawScores[leftTypeId] || leftTypeId - rightTypeId,
+  );
+  const topGap = rawScores[sortedTypeIds[0]] - rawScores[sortedTypeIds[1]];
+  const topThreeGap = rawScores[sortedTypeIds[0]] - rawScores[sortedTypeIds[2]];
+  const resultStatus: AssessmentResultStatus =
+    topGap === 0 || topThreeGap <= 1
+      ? "insufficient_variance"
+      : topGap <= 2
         ? "mixed"
         : "clear";
 
